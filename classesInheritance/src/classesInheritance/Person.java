@@ -6,6 +6,7 @@ public abstract class Person {
 	private String address;
 	private short age;
 	
+	
 	public Person(String name, short age) {
 		super();
 		this.name = name;
