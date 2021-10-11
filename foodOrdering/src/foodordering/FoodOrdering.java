@@ -35,7 +35,7 @@ public class FoodOrdering {
     	Connection connection = DriverManager.getConnection(url); //this is attempting to open the connection to the server -Jack
     	System.out.println("Connected"); //Display a message to show it successfully connected -Jack
     	
-    	if(rOrC=="Restaurant Enter" || rOrC=="R E") //checking if they input Restaurant or R for shorthand testing -Jack
+    	if(rOrC.equals("Restaurant Enter") || rOrC.equals("R E")) //checking if they input Restaurant or R for shorthand testing -Jack
     	{
     		Restaurant r1 = new Restaurant(); //create a new Restaurant object that the user will enter information into, will eventually be sent to database -Jack
     		System.out.println("\nEnter Restaurant Name: "); //very repetitive, will be done better later, all of these will just get the information to fill out Restaurant -Jack
@@ -53,7 +53,7 @@ public class FoodOrdering {
     		
     		//TODO: input Restaurant data into database - Jack
     	}
-    	else if(rOrC=="Customer Enter" || rOrC=="C E")
+    	else if(rOrC.equals("Customer Enter") || rOrC.equals("C E"))
     	{
     		Customer c1 = new Customer(); //create a new Customer object that the user will enter information into, will eventually be sent to database -Jack
     		System.out.println("\nEnter First Name: ");
@@ -76,14 +76,14 @@ public class FoodOrdering {
     		
     		//TODO: input Customer data into database - Jack
     	}
-    	else if(rOrC=="Restaurant See" || rOrC=="R S")
+    	else if(rOrC.equals("Restaurant See") || rOrC.equals("R S"))
     	{
     		String sql="SELECT * FROM Restaurant;"; //code to get all data from the restaurant -Jack
     		Statement statement = connection.createStatement(); //This is how SQL statements will be inputed -Jack
     		statement.executeUpdate(sql); //command to execute the SQL statement -Jack
     		//TODO: Pull Restaurant data from database and display it to user -Jack
     	}
-    	else if(rOrC=="Customer See" || rOrC=="C S")
+    	else if(rOrC.equals("Customer See") || rOrC.equals("C S"))
     	{
     		String sql="SELECT * FROM Customer;"; //code to get all data from the Customer -Jack
     		Statement statement = connection.createStatement(); //This is how SQL statements will be inputed -Jack
