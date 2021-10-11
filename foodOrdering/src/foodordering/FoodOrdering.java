@@ -27,7 +27,7 @@ public class FoodOrdering {
     	String user ="NT Service\\MSSQL$SQLEXPRESS"; //not needed right now but might be needed for remote access -Jack
     	String password="bcs430group3"; // same as above comment -Jack
     	Scanner scin = new Scanner(System.in); //Scanner is used to get data from the user -Jack
-    	String rOrC="";
+    	String userIn="";
     	 //right now this is an empty string but it will contain the actual SQL statements and then be passed to the execute update method -Jack
     	
     	
@@ -35,11 +35,11 @@ public class FoodOrdering {
     	{
     		Connection connection = DriverManager.getConnection(url); //this is attempting to open the connection to the server -Jack
     		System.out.println("Connected"); //Display a message to show it successfully connected -Jack
-    		while(!rOrC.equals("STOP")) //Once again is temporary, for now this is so it can be tested and accessed multiple times, will eventually have a nicer UI -Jack
+    		while(!userIn.equals("STOP")) //Once again is temporary, for now this is so it can be tested and accessed multiple times, will eventually have a nicer UI -Jack
     		{
-    			System.out.println("Please let us know if you are a Restaurant or Customer and if you owuld like to enter or see data: "); //For now this well be used to see if a Restaurant or Customer is being added -Jack
-    			rOrC = scin.nextLine(); //code to put the user input into a String -Jack
-    			if(rOrC.equals("Restaurant Enter") || rOrC.equals("R E")) //checking if they input Restaurant or R for shorthand testing -Jack
+    			System.out.println("Please let us know what you'd like to do:  "); //For now this well be used to see if a Restaurant or Customer is being added and other functionality -Jack
+    			userIn = scin.nextLine(); //code to put the user input into a String -Jack
+    			if(userIn.equals("Restaurant Enter") || userIn.equals("R E")) //checking if they input Restaurant or R for shorthand testing -Jack
     			{
     				Restaurant r1 = new Restaurant(); //create a new Restaurant object that the user will enter information into, will eventually be sent to database -Jack
     				System.out.println("\nEnter Restaurant Name: "); //very repetitive, will be done better later, all of these will just get the information to fill out Restaurant -Jack
@@ -57,7 +57,7 @@ public class FoodOrdering {
     		
     				//TODO: input Restaurant data into database - Jack
     			}
-    			else if(rOrC.equals("Customer Enter") || rOrC.equals("C E"))
+    			else if(userIn.equals("Customer Enter") || userIn.equals("C E"))
     			{
     				Customer c1 = new Customer(); //create a new Customer object that the user will enter information into, will eventually be sent to database -Jack
     				System.out.println("\nEnter First Name: ");
@@ -80,20 +80,23 @@ public class FoodOrdering {
     		
     				//TODO: input Customer data into database - Jack
     			}
-    			else if(rOrC.equals("Restaurant See") || rOrC.equals("R S"))
+    			else if(userIn.equals("Restaurant See") || userIn.equals("R S"))
     			{
     				restaurantData(connection);
     			}
-    			else if(rOrC.equals("Customer See") || rOrC.equals("C S"))
+    			else if(userIn.equals("Customer See") || userIn.equals("C S"))
     			{
     				customerData(connection);
     			}
+    			else if(userIn.equals("Zipcode search") || userIn.equals("Z S"))
+    			{
     		
-    			System.out.println("\nEnter a zipcode to search for restaurants in that zip code: ");
-    			String searchZip = scin.nextLine();
-    			String sql="SELECT * FROM Restaurant WHERE customerZip="+searchZip+";"; //code to get all data from the restaurant -Jack
-    			Statement statement = connection.createStatement(); //this isn't used yet but is how SQL statements will be inputed -Jack
-    			statement.executeUpdate(sql);
+    				System.out.println("\nEnter a zipcode to search for restaurants in that zip code: ");
+    				String searchZip = scin.nextLine();
+    				String sql="SELECT * FROM Restaurant WHERE customerZip="+searchZip+";"; //code to get all data from the restaurant -Jack
+    				Statement statement = connection.createStatement(); //this isn't used yet but is how SQL statements will be inputed -Jack
+    				statement.executeUpdate(sql);
+    			}
     	
     		}
     	}
