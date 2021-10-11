@@ -33,6 +33,7 @@ public class FoodOrdering {
     	
     	try {
     	Connection connection = DriverManager.getConnection(url); //this is attempting to open the connection to the server -Jack
+    	System.out.println("Connected"); //Display a message to show it successfully connected -Jack
     	
     	if(rOrC=="Restaurant Enter" || rOrC=="R E") //checking if they input Restaurant or R for shorthand testing -Jack
     	{
@@ -78,19 +79,24 @@ public class FoodOrdering {
     	else if(rOrC=="Restaurant See" || rOrC=="R S")
     	{
     		String sql="SELECT * FROM Restaurant;"; //code to get all data from the restaurant -Jack
-    		Statement statement = connection.createStatement(); //this isn't used yet but is how SQL statements will be inputed -Jack
+    		Statement statement = connection.createStatement(); //This is how SQL statements will be inputed -Jack
     		statement.executeUpdate(sql); //command to execute the SQL statement -Jack
     		//TODO: Pull Restaurant data from database and display it to user -Jack
     	}
     	else if(rOrC=="Customer See" || rOrC=="C S")
     	{
-    		String sql="SELECT * FROM Customer;"; //code to get all data from the restaurant -Jack
-    		Statement statement = connection.createStatement(); //this isn't used yet but is how SQL statements will be inputed -Jack
+    		String sql="SELECT * FROM Customer;"; //code to get all data from the Customer -Jack
+    		Statement statement = connection.createStatement(); //This is how SQL statements will be inputed -Jack
     		statement.executeUpdate(sql); //command to execute the SQL statement -Jack
     		//TODO: Pull Customer data from database and display it to user -Jack
     	}
+    	System.out.println("\nEnter a zipcode to search for restaurants in that zip code: ");
+    	String searchZip = scin.nextLine();
+    	String sql="SELECT * FROM Restaurant WHERE customerZip="+searchZip+";"; //code to get all data from the restaurant -Jack
+		Statement statement = connection.createStatement(); //this isn't used yet but is how SQL statements will be inputed -Jack
+		statement.executeUpdate(sql);
     	
-    	System.out.println("Connected"); //Display a message to show it successfully connected -Jack
+    	
     	}catch (SQLException e) { //catch an error -Jack
     		System.out.println("ERROR"); //display that there was an error -Jack
     		e.printStackTrace(); //display what the error was -Jack
