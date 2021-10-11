@@ -27,9 +27,13 @@ public class FoodOrdering {
     	String password="bcs430group3"; // same as above comment -Jack
     	Scanner scin = new Scanner(System.in); //Scanner is used to get data from the user -Jack
     	
-    	String sql=""; //right now this is an empty string but it will contain the actual SQL statements and then be passed to the execute update method -Jack
+    	 //right now this is an empty string but it will contain the actual SQL statements and then be passed to the execute update method -Jack
     	System.out.println("Please let us know if you are a Restaurant or Customer and if you owuld like to enter or see data: "); //For now this well be used to see if a Restaurant or Customer is being added -Jack
     	String rOrC = scin.nextLine(); //code to put the user input into a String -Jack
+    	
+    	try {
+    	Connection connection = DriverManager.getConnection(url); //this is attempting to open the connection to the server -Jack
+    	
     	if(rOrC=="Restaurant Enter" || rOrC=="R E") //checking if they input Restaurant or R for shorthand testing -Jack
     	{
     		Restaurant r1 = new Restaurant(); //create a new Restaurant object that the user will enter information into, will eventually be sent to database -Jack
@@ -73,17 +77,19 @@ public class FoodOrdering {
     	}
     	else if(rOrC=="Restaurant See" || rOrC=="R S")
     	{
+    		String sql="SELECT * FROM Restaurant;"; //code to get all data from the restaurant -Jack
+    		Statement statement = connection.createStatement(); //this isn't used yet but is how SQL statements will be inputed -Jack
+    		statement.executeUpdate(sql); //command to execute the SQL statement -Jack
     		//TODO: Pull Restaurant data from database and display it to user -Jack
     	}
     	else if(rOrC=="Customer See" || rOrC=="C S")
     	{
+    		String sql="SELECT * FROM Customer;"; //code to get all data from the restaurant -Jack
+    		Statement statement = connection.createStatement(); //this isn't used yet but is how SQL statements will be inputed -Jack
+    		statement.executeUpdate(sql); //command to execute the SQL statement -Jack
     		//TODO: Pull Customer data from database and display it to user -Jack
     	}
-    	try {
-    	Connection connection = DriverManager.getConnection(url); //this is attempting to open the connection to the server -Jack
-    	Statement statement = connection.createStatement(); //this isn't used yet but is how SQL statements will be inputed -Jack
-    	//statement.executeUpdate(sql); //so this is the statement that will execute the SQL code, I have it commented as I haven't written any SQL yet, a string goes in the parenthesis
-    	//which is the SQL statement -Jack
+    	
     	System.out.println("Connected"); //Display a message to show it successfully connected -Jack
     	}catch (SQLException e) { //catch an error -Jack
     		System.out.println("ERROR"); //display that there was an error -Jack
