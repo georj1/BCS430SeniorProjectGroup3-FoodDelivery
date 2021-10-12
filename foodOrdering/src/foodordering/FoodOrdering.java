@@ -7,6 +7,7 @@ package foodordering;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Scanner;
@@ -23,7 +24,7 @@ public class FoodOrdering {
     public static void main(String[] args) 
     {
         // TODO code application logic here
-    	String url = "jdbc:sqlserver://DESKTOP-NJ7L5JK\\sqlexpress;databaseName=master;integratedSecurity=true;"; //this is the server URL on my local machine -Jack
+    	String url = "jdbc:sqlserver://DESKTOP-NJ7L5JK\\sqlexpress;integratedSecurity=true;databaseName=master;"; //this is the server URL on my local machine -Jack
     	String user ="NT Service\\MSSQL$SQLEXPRESS"; //not needed right now but might be needed for remote access -Jack
     	String password="bcs430group3"; // same as above comment -Jack
     	Scanner scin = new Scanner(System.in); //Scanner is used to get data from the user -Jack
@@ -56,6 +57,7 @@ public class FoodOrdering {
     				r1.setRestaurantType(scin.nextLine());
     		
     				//TODO: input Restaurant data into database - Jack
+    				insertRestaurant(r1, connection); //Call the method that inserts the data -Jack
     			}
     			else if(userIn.equals("Customer Enter") || userIn.equals("C E"))
     			{
@@ -65,8 +67,8 @@ public class FoodOrdering {
     				System.out.println("\nEnter Last Name: ");
     				c1.setCustomerLName(scin.nextLine());
     				System.out.println("\nEnter Email: ");
-    				c1.setCustomerEmail(scin.nextLine());
-    				System.out.println("\nEnter Phone Number: ");
+    				//c1.setCustomerEmail(scin.nextLine());
+    				//System.out.println("\nEnter Phone Number: ");
     				c1.setCustomerPhone(scin.nextLine());
     				System.out.println("\nEnter City: ");
     				c1.setCustomerCity(scin.nextLine());
@@ -79,23 +81,22 @@ public class FoodOrdering {
     				//Same as Restaurant code -Jack
     		
     				//TODO: input Customer data into database - Jack
+    				insertCustomer(c1, connection); //Call the method that inserts the data -Jack
     			}
     			else if(userIn.equals("Restaurant See") || userIn.equals("R S"))
     			{
-    				restaurantData(connection);
+    				restaurantData(connection); //Call the method that shows the data -Ahsan
     			}
     			else if(userIn.equals("Customer See") || userIn.equals("C S"))
     			{
-    				customerData(connection);
+    				customerData(connection); //Call the method that shows the data -Ahsan
     			}
     			else if(userIn.equals("Zipcode search") || userIn.equals("Z S"))
     			{
     		
-    				System.out.println("\nEnter a zipcode to search for restaurants in that zip code: ");
+    				System.out.println("\nEnter a zipcode to search for restaurants in that zip code: "); 
     				String searchZip = scin.nextLine();
-    				String sql="SELECT * FROM Restaurant WHERE customerZip="+searchZip+";"; //code to get all data from the restaurant -Jack
-    				Statement statement = connection.createStatement(); //this isn't used yet but is how SQL statements will be inputed -Jack
-    				statement.executeUpdate(sql);
+    				rZipSearch(searchZip, connection); //call the method to search for restaurants in a certain zip code -Jack
     			}
     	
     		}
@@ -112,8 +113,15 @@ public class FoodOrdering {
     	String sql = "SELECT * FROM Customer"; // will get all data regarding customer - ahsan
     	Statement statement;
 		try {
+			ResultSet rs;
 			statement = connection.createStatement();
-			statement.executeUpdate(sql); //execute SQL statement
+			rs = statement.executeQuery(sql); //execute sql statement
+			while(rs.next())
+			{
+				String s = rs.getString("FirstName")+ ", "+rs.getString("LastName")+ ", "+rs.getString("City")+", "+rs.getString("Street")+", "+rs.getString("State")+", "+rs.getString("ZipCode")+", "+rs.getString("Email");
+				System.out.println(s);
+				//The above displays the information and breaks the rows into a ResultSet which we then pull the data from to display - Ahsan
+			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -126,11 +134,68 @@ public class FoodOrdering {
     	String sql = "SELECT * FROM Restaurant"; // will get all data from restaurant - ahsan
     	Statement statement;
 		try {
+			ResultSet rs;
 			statement = connection.createStatement();
-			statement.executeUpdate(sql); //execute sql statement
+			rs = statement.executeQuery(sql); //execute sql statement
+			while(rs.next())
+			{
+				String s = rs.getString("RestaurantName")+ ": "+rs.getString("City")+", "+rs.getString("Street")+", "+rs.getString("State")+", "+rs.getString("ZipCode")+", "+rs.getString("RestaurantType")+", "+rs.getString("RestaurantRating");
+				System.out.println(s);
+				//The above displays the information and breaks the rows into a ResultSet which we then pull the data from to display - Ahsan
+			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}	
     } 
+    public static void insertRestaurant(Restaurant r1, Connection connection)
+    {
+    	
+    	String rInsert = "USE master INSERT [dbo].[Restaurant] ([RestaurantName], [City], [Street], [State], [ZipCode], [RestaurantType], [RestaurantRating]) VALUES ('"+ r1.getRestaurantName()+"', '" + r1.getRestaurantCity()+"', '"+r1.getRestaurantStreet()+"', '"+r1.getRestaurantState()+"', "+r1.getRestaurantZip()+", '"+r1.getRestaurantType()+"', NULL);";
+    	Statement statement;
+		try {
+			statement = connection.createStatement();
+			statement.executeUpdate(rInsert); //execute sql statement
+			System.out.print("Restaurant data succesfully inserted: \n");
+			//The above inserts new data into the DB and then alerts the user that it was successful -Jack
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}	
+    	
+    }
+    public static void insertCustomer(Customer c1, Connection connection)
+    {
+    	
+    	String cInsert = "USE master INSERT [dbo].[Customer] ([LastName], [FirstName], [City], [Street], [State], [ZipCode], [Email]) VALUES ('"+ c1.getCustomerLName()+"', '" + c1.getCustomerFName()+"', '"+c1.getCustomerCity()+"', '"+c1.getCustomerStreet()+"', '"+c1.getCustomerState()+"', "+c1.getCustomerZip()+", '"+c1.getCustomerEmail()+"');";
+    	Statement statement;
+		try {
+			statement = connection.createStatement();
+			statement.executeUpdate(cInsert); //execute sql statement
+			System.out.print("Customer data succesfully inserted: \n");
+			//The above inserts new data into the DB and then alerts the user that it was successful -Jack
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}	
+    }
+    public static void rZipSearch(String searchZip, Connection connection)
+    {
+    	String sql="SELECT * FROM [dbo].[Restaurant] WHERE ZipCode="+searchZip+";"; //code to get all data from the restaurant -Jack
+		Statement statement;
+		try {
+			ResultSet rs;
+			statement = connection.createStatement();
+			rs = statement.executeQuery(sql); //execute sql statement
+			while(rs.next())
+			{
+				String s = rs.getString("RestaurantName")+ ": "+rs.getString("City")+", "+rs.getString("Street")+", "+rs.getString("State")+", "+rs.getString("ZipCode")+", "+rs.getString("RestaurantType")+", "+rs.getString("RestaurantRating");
+				System.out.println(s);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} //this isn't used yet but is how SQL statements will be inputed -Jack
+		
+    }
 }
