@@ -23,7 +23,6 @@ public class FoodOrdering {
      */
     public static void main(String[] args) 
     {
-        // TODO code application logic here
     	String url = "jdbc:sqlserver://DESKTOP-NJ7L5JK\\sqlexpress;integratedSecurity=true;databaseName=master;"; //this is the server URL on my local machine -Jack
     	String user ="NT Service\\MSSQL$SQLEXPRESS"; //not needed right now but might be needed for remote access -Jack
     	String password="bcs430group3"; // same as above comment -Jack
@@ -55,8 +54,7 @@ public class FoodOrdering {
     				r1.setRestaurantZip(scin.nextLine());
     				System.out.println("\nEnter Restaurant Type: "); 
     				r1.setRestaurantType(scin.nextLine());
-    		
-    				//TODO: input Restaurant data into database - Jack
+    				
     				insertRestaurant(r1, connection); //Call the method that inserts the data -Jack
     			}
     			else if(userIn.equals("Customer Enter") || userIn.equals("C E"))
@@ -80,7 +78,6 @@ public class FoodOrdering {
     				c1.setCustomerZip(scin.nextLine());
     				//Same as Restaurant code -Jack
     		
-    				//TODO: input Customer data into database - Jack
     				insertCustomer(c1, connection); //Call the method that inserts the data -Jack
     			}
     			else if(userIn.equals("Restaurant See") || userIn.equals("R S"))
@@ -123,7 +120,6 @@ public class FoodOrdering {
 				//The above displays the information and breaks the rows into a ResultSet which we then pull the data from to display - Ahsan
 			}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
     	
@@ -144,7 +140,6 @@ public class FoodOrdering {
 				//The above displays the information and breaks the rows into a ResultSet which we then pull the data from to display - Ahsan
 			}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}	
     } 
@@ -159,7 +154,6 @@ public class FoodOrdering {
 			System.out.print("Restaurant data succesfully inserted: \n");
 			//The above inserts new data into the DB and then alerts the user that it was successful -Jack
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}	
     	
@@ -175,7 +169,6 @@ public class FoodOrdering {
 			System.out.print("Customer data succesfully inserted: \n");
 			//The above inserts new data into the DB and then alerts the user that it was successful -Jack
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}	
     }
@@ -193,7 +186,6 @@ public class FoodOrdering {
 				System.out.println(s);
 			}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} //this isn't used yet but is how SQL statements will be inputed -Jack
 		
