@@ -33,6 +33,7 @@ public class FoodOrdering {
     	
     	try 
     	{
+    		//Test
     		Connection connection = DriverManager.getConnection(url); //this is attempting to open the connection to the server -Jack
     		System.out.println("Connected"); //Display a message to show it successfully connected -Jack
     		while(!userIn.equals("STOP")) //Once again is temporary, for now this is so it can be tested and accessed multiple times, will eventually have a nicer UI -Jack
