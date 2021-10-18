@@ -21,3 +21,18 @@ CREATE TABLE Restaurant (
 	RestaurantRating varchar(5)
 	PRIMARY KEY(RestaurantID)
 );
+
+CREATE TABLE FoodItem (
+	FoodItemID int NOT NULL IDENTITY(1,1),
+	FoodName	varChar(55),
+	FoodPrice    Float,
+	calories	int
+	PRIMARY KEY(FoodItemID)
+);
+
+CREATE TABLE Menu (
+	MenuID int Not NULL IDENTITY(1,1),
+	FoodItemID int not Null
+	PRIMARY KEY(MenuID),
+	FOREIGN KEY (FoodItemID) REFERENCES FoodItem(FoodItemID)
+);
