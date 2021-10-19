@@ -183,7 +183,7 @@ public class FoodOrdering {
 			rs = statement.executeQuery(sql); //execute sql statement
 			while(rs.next())
 			{
-				String s = rs.getString("RestaurantName")+ ": "+rs.getString("City")+", "+rs.getString("Street")+", "+rs.getString("State")+", "+rs.getString("ZipCode")+", "+rs.getString("RestaurantType")+", "+rs.getString("RestaurantRating");
+				String s = "[" + rs.getString("RestaurantID") + "] "+ rs.getString("RestaurantName")+ ": "+rs.getString("City")+", "+rs.getString("Street")+", "+rs.getString("State")+", "+rs.getString("ZipCode")+", "+rs.getString("RestaurantType")+", "+rs.getString("RestaurantRating");
 				System.out.println(s);
 			}
 		} catch (SQLException e) {
