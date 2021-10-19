@@ -17,6 +17,10 @@ public class Restaurant {
 	private double rating;
 	private ArrayList<FoodItem> menu = new ArrayList<>(); //menu for now, may change this later -Jack
 	    
+	public Restaurant()
+    {
+		
+    }
 	public Restaurant(int restaurantID, String restaurantName, String restaurantCity, String restaurantState, String restaurantStreet, String restaurantZip, String restaurantType, double rating)
 	{
 		this.restaurantID=restaurantID;
