@@ -26,7 +26,10 @@ CREATE TABLE FoodItem (
 	FoodItemID int NOT NULL IDENTITY(1,1),
 	FoodName	varChar(55),
 	FoodPrice    Float,
-	calories	int
+	calories	int,
+	description	varChar(255),
+	type		varChar(55),
+	prepTime	varChar(50)
 	PRIMARY KEY(FoodItemID)
 );
 
