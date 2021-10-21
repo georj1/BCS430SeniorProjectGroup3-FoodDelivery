@@ -48,7 +48,7 @@ public class FoodOrdering {
     					+ "\n[6] Search Restaurnts by Zip Code"
     					+ "\n[0] Exit"); //For now this well be used to see if a Restaurant or Customer is being added and other functionality -Jack
     			userIn = scin.nextInt(); //code to put the user input into a String -Jack
-    			switch(userIn)
+    			switch(userIn) //Temporary make naviagtion easier while waiting for Java FX -Jack
     			{
     			case 0: 
     				break;
@@ -103,7 +103,7 @@ public class FoodOrdering {
     				Scanner selectR = new Scanner(System.in); //Scanner is used to get data from the user -Jack
     		    	int rSelectIn=0;
     		    	rSelectIn=selectR.nextInt();
-    		    	selectRestaurant(connection, rSelectIn);
+    		    	selectRestaurant(connection, rSelectIn); //method to sekect a restaurant based on the number they clicked which is just the restaurant id -Jack
     				break;
     			case 6:
     				System.out.println("\nEnter a zipcode to search for restaurants in that zip code: "); 
@@ -262,7 +262,7 @@ public class FoodOrdering {
 			rs = statement.executeQuery(sql); //execute sql statement
 			while(rs.next())
 			{
-				String s = rs.getString("RestaurantName")+ ": "+rs.getString("City")+", "+rs.getString("Street")+", "+rs.getString("State")+", "+rs.getString("ZipCode")+", "+rs.getString("RestaurantType")+", "+rs.getString("RestaurantRating");
+				String s = rs.getString("RestaurantName")+ ": "+rs.getString("City")+", "+rs.getString("Street")+", "+rs.getString("State")+", "+rs.getString("ZipCode")+", "+rs.getString("RestaurantType")+", "+rs.getString("RestaurantRating"); //Display the Restaurant for now, will eventually be the menu -Jack
 				System.out.println(s);
 			}
 		} catch (SQLException e) {
