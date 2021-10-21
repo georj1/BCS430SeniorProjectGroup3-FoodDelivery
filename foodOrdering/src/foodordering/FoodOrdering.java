@@ -276,6 +276,10 @@ public class FoodOrdering {
 			while(rs.next())
 			{
 				currentCustomer.setCustomerID(rs.getInt("customerID"));
+				currentCustomer.setCustomerFName(rs.getString("firstName"));
+				currentCustomer.setCustomerLName(rs.getString("lastName"));
+				currentCustomer.setCustomerEmail(rs.getString("email"));
+				currentCustomer.setCustomerPhone(rs.getString("phone"));
 				String s = rs.getString("firstName")+ ": "+rs.getString("lastName")+", "+rs.getString("email")+", "+rs.getString("phone"); //Display the Customer for now, will eventually be the menu -Jack
 				System.out.println(s);
 			}
