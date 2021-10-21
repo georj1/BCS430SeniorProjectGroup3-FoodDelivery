@@ -3,7 +3,7 @@ package foodordering;
 public class Customer {
 	private int customerID;
 	
-	
+	//TODO: Fix Customer Class so it accurately reflects the Customer Table
 	private String customerFName, customerLName, customerEmail, customerPhone, customerCity, customerState, customerStreet, customerZip;
      public Customer() 
      {

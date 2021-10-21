@@ -21,7 +21,8 @@ public class FoodOrdering {
     /**
      * @param args the command line arguments
      */
-	private static Restaurant selectedRestaurant = new Restaurant(); //This is a restaurant dataType that will store the seleceted restaurant so that it can be used to get the menu -Jack
+	private static Restaurant selectedRestaurant = new Restaurant(); //This is a restaurant dataType that will store the selected restaurant so that it can be used to get the menu -Jack
+	private static Customer currentCustomer = new Customer();
     public static void main(String[] args) 
     {
     	
@@ -48,6 +49,7 @@ public class FoodOrdering {
     					+ "\n[4] View Customers"
     					+ "\n[5] Select a Restaurant"
     					+ "\n[6] Search Restaurnts by Zip Code"
+    					+ "\n[7] After Selecting a Restaurant, create an order"
     					+ "\n[0] Exit"); //For now this well be used to see if a Restaurant or Customer is being added and other functionality -Jack
     			userIn = scin.nextInt(); //code to put the user input into a String -Jack
     			switch(userIn) //Temporary make naviagtion easier while waiting for Java FX -Jack
@@ -112,54 +114,21 @@ public class FoodOrdering {
     				System.out.println("\nEnter a zipcode to search for restaurants in that zip code: "); 
     				String searchZip = scSin.nextLine();
     				rZipSearch(searchZip, connection);
+    				
+    			//TODO: Implement a method that allows the customer to add and remove food from an order
+    			case 7:
+    				String cEmail;
+    				System.out.println("Please enter your email linked to your account: ");
+    				Scanner cIn = new Scanner(System.in);
+    				cEmail=cIn.nextLine();
+    				getCurrentCustomer(connection, cEmail);
+    			//TODO: Implement a method that allows the restaurant to enter and remove menu items
+    				
+    			//TODO: Implement a method to search for restaurants based on the Type of Restaurant, pulling from the Type table to give them options
     			default:
     				break;
     			
     			}
-    			/*
-    			if(userIn.equals("Restaurant Enter") || userIn.equals("R E")) //checking if they input Restaurant or R for shorthand testing -Jack
-    			{
-    				Restaurant r1 = new Restaurant(); //create a new Restaurant object that the user will enter information into, will eventually be sent to database -Jack
-    				System.out.println("\nEnter Restaurant Name: "); //very repetitive, will be done better later, all of these will just get the information to fill out Restaurant -Jack
-    				r1.setRestaurantName(scin.nextLine()); //set the RestaurantName of our temporary Restaurant to what they enter, could be error checked later -Jack
-    				System.out.println("\nEnter Restaurant City: "); 
-    				r1.setRestaurantCity(scin.nextLine()); 
-    				System.out.println("\nEnter Restaurant State: "); 
-    				r1.setRestaurantState(scin.nextLine());
-    				System.out.println("\nEnter Restaurant Street: "); 
-    				r1.setRestaurantStreet(scin.nextLine());
-    				System.out.println("\nEnter Restaurant Zip: "); 
-    				r1.setRestaurantZip(scin.nextLine());
-    				System.out.println("\nEnter Restaurant Type: "); 
-    				r1.setRestaurantType(scin.nextLine());
-    				
-    				insertRestaurant(r1, connection); //Call the method that inserts the data -Jack
-    			}
-    			else if(userIn.equals("Customer Enter") || userIn.equals("C E"))
-    			{
-    				
-    			}
-    			else if(userIn.equals("Restaurant See") || userIn.equals("R S"))
-    			{
-    				showRestaurants(connection); //Call the method that shows the data -Ahsan
-    				System.out.println("Enter the nummber of the restaurant you want to order from: ");
-    				Scanner selectR = new Scanner(System.in); //Scanner is used to get data from the user -Jack
-    		    	int rSelectIn=0;
-    		    	rSelectIn=selectR.nextInt();
-    		    	selectRestaurant(connection, rSelectIn);
-    			}
-    			else if(userIn.equals("Customer See") || userIn.equals("C S"))
-    			{
-    				customerData(connection); //Call the method that shows the data -Ahsan
-    			}
-    			else if(userIn.equals("Zipcode search") || userIn.equals("Z S"))
-    			{
-    		
-    				System.out.println("\nEnter a zipcode to search for restaurants in that zip code: "); 
-    				String searchZip = scin.nextLine();
-    				rZipSearch(searchZip, connection); //call the method to search for restaurants in a certain zip code -Jack
-    			}
-    	*/
     		}
     	}
     	catch (SQLException e) 
@@ -257,7 +226,7 @@ public class FoodOrdering {
     }
     public static void selectRestaurant(Connection connection, int rSelect)
     {
-    	String sql="SELECT * FROM [dbo].[Restaurant] WHERE RestaurantID="+rSelect+";"; //code to get the restaurant based on the ID the customer selected, will need to have the menu added -Jack
+    	String sql="SELECT restaurantID, restaurantName, menuID, Restaurant.restaurantTypeID, restaurantType, AVG(ratingScore) AS restaurantAverageRating FROM [dbo].[Restaurant] JOIN RestaurantType ON Restaurant.restaurantTypeID=RestaurantType.restaurantTypeID JOIN Rating ON Restaurant.ratingID=Rating.RatingID WHERE RestaurantID="+rSelect+";"; //code to get the restaurant based on the ID the customer selected, will need to have the menu added -Jack
 		Statement statement;
 		try {
 			ResultSet rs;
@@ -265,8 +234,12 @@ public class FoodOrdering {
 			rs = statement.executeQuery(sql); //execute sql statement
 			while(rs.next())
 			{
-				selectedRestaurant.setRestaurantID(rs.getInt("RestaurantID"));
-				String s = rs.getString("RestaurantName")+ ": "+rs.getString("City")+", "+rs.getString("Street")+", "+rs.getString("State")+", "+rs.getString("ZipCode")+", "+rs.getString("RestaurantType")+", "+rs.getString("RestaurantRating"); //Display the Restaurant for now, will eventually be the menu -Jack
+				selectedRestaurant.setRestaurantID(rs.getInt("restaurantID"));
+				selectedRestaurant.setRating(rs.getFloat("restaurantAverageRating"));
+				selectedRestaurant.setRestaurantName(rs.getString("restaurantName"));
+				selectedRestaurant.setMenuID(rs.getInt("MenuID"));
+				selectedRestaurant.setRestaurantType(rs.getString("restaurantType"));
+				String s = rs.getString("RestaurantName")+ ": "+rs.getString("RestaurantType")+", "+rs.getFloat("restaurantAverageRating"); //Display the Restaurant for now, will eventually be the menu -Jack
 				System.out.println(s);
 			}
 		} catch (SQLException e) {
@@ -286,6 +259,24 @@ public class FoodOrdering {
 			while(rs.next())
 			{
 				String s = "["+rs.getInt("foodItemID")+ "] "+rs.getString("foodName")+", "+rs.getString("description")+", "+rs.getFloat("foodPrice")+", "+rs.getString("categoryName"); //This is the display, it will show the foodItem ID which for now will be used for selecting and all the mneu items separated by commas -Jack
+				System.out.println(s);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} 
+    }
+    public static void getCurrentCustomer(Connection connection, String cEmail)
+    {
+    	String sql="SELECT * FROM [dbo].[Customer] WHERE email="+cEmail+";"; //code to get the restaurant based on the ID the customer selected, will need to have the menu added -Jack
+		Statement statement;
+		try {
+			ResultSet rs;
+			statement = connection.createStatement();
+			rs = statement.executeQuery(sql); //execute sql statement
+			while(rs.next())
+			{
+				currentCustomer.setCustomerID(rs.getInt("customerID"));
+				String s = rs.getString("firstName")+ ": "+rs.getString("lastName")+", "+rs.getString("email")+", "+rs.getString("phone"); //Display the Customer for now, will eventually be the menu -Jack
 				System.out.println(s);
 			}
 		} catch (SQLException e) {

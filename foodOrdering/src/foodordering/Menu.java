@@ -23,4 +23,5 @@ public class Menu {
 	public void setFoodItemID(int foodItemID) {
 		this.foodItemID = foodItemID;
 	}
+	//getters and setters for the various Menu attributes -Jack
 }

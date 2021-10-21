@@ -91,6 +91,7 @@ public class Restaurant {
 
 	public String getRestaurantType() {
 		return restaurantType;
+		//Note for this method some more logic will need to be applied when getting information -Jack
 	}
 
 	public void setRestaurantType(String restaurantType) {

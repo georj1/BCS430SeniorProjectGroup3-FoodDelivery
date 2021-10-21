@@ -18,7 +18,7 @@ public class FoodItem {
     public FoodItem()
     {
         
-        //basic constructor for food item, not updated with all the attributes yet -Jack
+        //basic constructor for food item -Jack
     }
     public FoodItem(int foodItemID, String foodName, float foodPrice, int calories, String description, String type, String prepTime, String categoryName)
     {
@@ -69,6 +69,7 @@ public class FoodItem {
 	}
 	public String getCategoryName() {
 		return categoryName;
+		//Note for this one some momre logic will be needed to go right to the category table -Jack
 	}
 	public void setCategoryName(String categoryName) {
 		this.categoryName = categoryName;
@@ -81,7 +82,7 @@ public class FoodItem {
 	}
     
     
-    //Getters and Setters, again not updated with all attributes -Jack
+    //Getters and Setters -Jack
     
     
 }
