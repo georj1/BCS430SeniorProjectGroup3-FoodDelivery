@@ -26,8 +26,9 @@ public class FoodOrdering {
     	String url = "jdbc:sqlserver://DESKTOP-NJ7L5JK\\sqlexpress;integratedSecurity=true;databaseName=master;"; //this is the server URL on my local machine -Jack
     	String user ="NT Service\\MSSQL$SQLEXPRESS"; //not needed right now but might be needed for remote access -Jack
     	String password="bcs430group3"; // same as above comment -Jack
-    	Scanner scin = new Scanner(System.in); //Scanner is used to get data from the user -Jack
-    	int userIn=0;
+    	Scanner scin = new Scanner(System.in);
+    	Scanner scSin = new Scanner(System.in); //Scanner is used to get data from the user -Jack
+    	int userIn=-1;
     	 //right now this is an empty string but it will contain the actual SQL statements and then be passed to the execute update method -Jack
     	
     	
@@ -38,14 +39,14 @@ public class FoodOrdering {
     		System.out.println("Connected"); //Display a message to show it successfully connected -Jack
     		while(userIn !=0) //Once again is temporary, for now this is so it can be tested and accessed multiple times, will eventually have a nicer UI -Jack
     		{
-    			System.out.println("Please let us know what you'd like to do by entering the number:  "
-    					+ "/n[1] Enter a Restaurant"
-    					+"/n[2] View Restaurants"
-    					+ "/n[3] Enter a Customer"
-    					+ "/n[4] View Customers"
-    					+ "/n[5] Select a Restaurant"
-    					+ "/n[6] Search Restaurnts by Zip Code"
-    					+ "/n[0] Exit"); //For now this well be used to see if a Restaurant or Customer is being added and other functionality -Jack
+    			System.out.println("\nPlease let us know what you'd like to do by entering the number:  "
+    					+ "\n[1] Enter a Restaurant"
+    					+"\n[2] View Restaurants"
+    					+ "\n[3] Enter a Customer"
+    					+ "\n[4] View Customers"
+    					+ "\n[5] Select a Restaurant"
+    					+ "\n[6] Search Restaurnts by Zip Code"
+    					+ "\n[0] Exit"); //For now this well be used to see if a Restaurant or Customer is being added and other functionality -Jack
     			userIn = scin.nextInt(); //code to put the user input into a String -Jack
     			switch(userIn)
     			{
@@ -70,11 +71,6 @@ public class FoodOrdering {
     				break;
     			case 2:
     				showRestaurants(connection); //Call the method that shows the data -Ahsan
-    				System.out.println("Enter the nummber of the restaurant you want to order from: ");
-    				Scanner selectR = new Scanner(System.in); //Scanner is used to get data from the user -Jack
-    		    	int rSelectIn=0;
-    		    	rSelectIn=selectR.nextInt();
-    		    	selectRestaurant(connection, rSelectIn);
     		    	break;
     			case 3:
     				Customer c1 = new Customer(); //create a new Customer object that the user will enter information into, will eventually be sent to database -Jack
@@ -102,10 +98,17 @@ public class FoodOrdering {
     				customerData(connection);
     				break;
     			case 5:
-    				System.out.println("\nEnter a zipcode to search for restaurants in that zip code: "); 
-    				String searchZip = scin.nextLine();
-    				rZipSearch(searchZip, connection);
+    				showRestaurants(connection); //Call the method that shows the data -Ahsan
+    				System.out.println("Enter the nummber of the restaurant you want to order from: ");
+    				Scanner selectR = new Scanner(System.in); //Scanner is used to get data from the user -Jack
+    		    	int rSelectIn=0;
+    		    	rSelectIn=selectR.nextInt();
+    		    	selectRestaurant(connection, rSelectIn);
     				break;
+    			case 6:
+    				System.out.println("\nEnter a zipcode to search for restaurants in that zip code: "); 
+    				String searchZip = scSin.nextLine();
+    				rZipSearch(searchZip, connection);
     			default:
     				break;
     			
