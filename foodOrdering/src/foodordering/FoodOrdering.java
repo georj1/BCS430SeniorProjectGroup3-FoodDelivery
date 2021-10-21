@@ -21,7 +21,7 @@ public class FoodOrdering {
     /**
      * @param args the command line arguments
      */
-	private Restaurant selectedRestaurant = new Restaurant(); //This is a restaurant dataType that will store the seleceted restaurant so that it can be used to get the menu -Jack
+	private static Restaurant selectedRestaurant = new Restaurant(); //This is a restaurant dataType that will store the seleceted restaurant so that it can be used to get the menu -Jack
     public static void main(String[] args) 
     {
     	
@@ -106,7 +106,7 @@ public class FoodOrdering {
     				Scanner selectR = new Scanner(System.in); //Scanner is used to get data from the user -Jack
     		    	int rSelectIn=0;
     		    	rSelectIn=selectR.nextInt();
-    		    	selectRestaurant(connection, rSelectIn); //method to sekect a restaurant based on the number they clicked which is just the restaurant id -Jack
+    		    	selectRestaurant(connection, rSelectIn); //method to select a restaurant based on the number they clicked which is just the restaurant id -Jack
     				break;
     			case 6:
     				System.out.println("\nEnter a zipcode to search for restaurants in that zip code: "); 
@@ -255,7 +255,7 @@ public class FoodOrdering {
 		} //this isn't used yet but is how SQL statements will be inputed -Jack
 		
     }
-    public void selectRestaurant(Connection connection, int rSelect)
+    public static void selectRestaurant(Connection connection, int rSelect)
     {
     	String sql="SELECT * FROM [dbo].[Restaurant] WHERE RestaurantID="+rSelect+";"; //code to get the restaurant based on the ID the customer selected, will need to have the menu added -Jack
 		Statement statement;
