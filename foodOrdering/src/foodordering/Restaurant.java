@@ -93,7 +93,7 @@ public class Restaurant {
 		return restaurantType;
 	}
 
-	public void setRestaurantTypeID(String restaurantType) {
+	public void setRestaurantType(String restaurantType) {
 		this.restaurantType = restaurantType;
 	}
 
