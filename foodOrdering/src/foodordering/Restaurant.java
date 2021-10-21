@@ -12,16 +12,16 @@ import java.util.ArrayList;
  */
 public class Restaurant {
     
-    private int restaurantID; 
+    private int restaurantID, menuID; 
 	private String restaurantName, restaurantCity, restaurantState, restaurantStreet, restaurantZip, restaurantType;
 	private double rating;
-	private ArrayList<FoodItem> menu = new ArrayList<>(); //menu for now, may change this later -Jack
+	//private ArrayList<FoodItem> menu = new ArrayList<>(); //menu for now, may change this later -Jack
 	    
 	public Restaurant()
     {
 		
     }
-	public Restaurant(int restaurantID, String restaurantName, String restaurantCity, String restaurantState, String restaurantStreet, String restaurantZip, String restaurantType, double rating)
+	public Restaurant(int restaurantID, String restaurantName, String restaurantCity, String restaurantState, String restaurantStreet, String restaurantZip, String restaurantType, double rating, int menuID)
 	{
 		this.restaurantID=restaurantID;
 		this.rating=rating;
@@ -31,10 +31,17 @@ public class Restaurant {
         this.restaurantStreet=restaurantStreet;
         this.restaurantZip=restaurantZip;
         this.restaurantType=restaurantType;
+        this.menuID=menuID;
         //Standard constructor that sets all the values except menu -Jack
     }
 	   
-    public int getRestaurantID() {
+    public int getMenuID() {
+		return menuID;
+	}
+	public void setMenuID(int menuID) {
+		this.menuID = menuID;
+	}
+	public int getRestaurantID() {
 		return restaurantID;
 	}
 
@@ -86,7 +93,7 @@ public class Restaurant {
 		return restaurantType;
 	}
 
-	public void setRestaurantType(String restaurantType) {
+	public void setRestaurantTypeID(String restaurantType) {
 		this.restaurantType = restaurantType;
 	}
 
@@ -99,20 +106,5 @@ public class Restaurant {
 	}
 	
 	//Getters and Setters for all the values -Jack
-
-	public ArrayList<FoodItem> getMenu() {
-        return menu;
-    }
-
-    public void setMenu(ArrayList<FoodItem> menu) {
-        this.menu = menu;
-    }
-    //Getter and Setter for the menu -Jack
-	    
-    public void addFoodItem(String name, double price, int calories)
-    {
-        menu.add(new FoodItem(name, price, calories));
-    }
-    //a method to add a food item to the menu by calling the ArrayList add function -Jack
     
 }
