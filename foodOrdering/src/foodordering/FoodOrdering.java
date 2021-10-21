@@ -21,8 +21,10 @@ public class FoodOrdering {
     /**
      * @param args the command line arguments
      */
+	private Restaurant selectedRestaurant = new Restaurant(); //This is a restaurant dataType that will store the seleceted restaurant so that it can be used to get the menu -Jack
     public static void main(String[] args) 
     {
+    	
     	String url = "jdbc:sqlserver://DESKTOP-NJ7L5JK\\sqlexpress;integratedSecurity=true;databaseName=master;"; //this is the server URL on my local machine -Jack
     	String user ="NT Service\\MSSQL$SQLEXPRESS"; //not needed right now but might be needed for remote access -Jack
     	String password="bcs430group3"; // same as above comment -Jack
@@ -98,6 +100,7 @@ public class FoodOrdering {
     				customerData(connection);
     				break;
     			case 5:
+    				
     				showRestaurants(connection); //Call the method that shows the data -Ahsan
     				System.out.println("Enter the nummber of the restaurant you want to order from: ");
     				Scanner selectR = new Scanner(System.in); //Scanner is used to get data from the user -Jack
@@ -252,7 +255,7 @@ public class FoodOrdering {
 		} //this isn't used yet but is how SQL statements will be inputed -Jack
 		
     }
-    public static void selectRestaurant(Connection connection, int rSelect)
+    public void selectRestaurant(Connection connection, int rSelect)
     {
     	String sql="SELECT * FROM [dbo].[Restaurant] WHERE RestaurantID="+rSelect+";"; //code to get the restaurant based on the ID the customer selected, will need to have the menu added -Jack
 		Statement statement;
@@ -262,7 +265,27 @@ public class FoodOrdering {
 			rs = statement.executeQuery(sql); //execute sql statement
 			while(rs.next())
 			{
+				selectedRestaurant.setRestaurantID(rs.getInt("RestaurantID"));
 				String s = rs.getString("RestaurantName")+ ": "+rs.getString("City")+", "+rs.getString("Street")+", "+rs.getString("State")+", "+rs.getString("ZipCode")+", "+rs.getString("RestaurantType")+", "+rs.getString("RestaurantRating"); //Display the Restaurant for now, will eventually be the menu -Jack
+				System.out.println(s);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} 
+    }
+    public void displayMenu(Connection connection)
+    {
+    	String sql="SELECT FoodItem.foodItemID, foodName, FoodItem.[description], foodPrice, categoryName"
+    			+"\nFROM Restaurant JOIN Menu ON Restaurant.menuID=Menu.menuID JOIN FoodItem ON Menu.foodItemID=FoodItem.foodItemID JOIN Category ON FoodItem.categoryID=Category.categoryID"
+    			+"WHERE RestaurantID="+selectedRestaurant.getRestaurantID()+";"; //Very lengthy SQL statement here, it is selecting the menu based on the selected Restaurant and then uses joins to get all the important menu information -Jack
+    	Statement statement;
+		try {
+			ResultSet rs;
+			statement = connection.createStatement();
+			rs = statement.executeQuery(sql); //execute sql statement
+			while(rs.next())
+			{
+				String s = "["+rs.getInt("foodItemID")+ "] "+rs.getString("foodName")+", "+rs.getString("description")+", "+rs.getFloat("foodPrice")+", "+rs.getString("categoryName"); //This is the display, it will show the foodItem ID which for now will be used for selecting and all the mneu items separated by commas -Jack
 				System.out.println(s);
 			}
 		} catch (SQLException e) {
