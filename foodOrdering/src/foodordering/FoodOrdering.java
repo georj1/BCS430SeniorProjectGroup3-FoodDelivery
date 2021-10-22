@@ -23,13 +23,13 @@ public class FoodOrdering {
      * @param args the command line arguments
      */
 	private static Restaurant selectedRestaurant = new Restaurant(); //This is a restaurant dataType that will store the selected restaurant so that it can be used to get the menu -Jack
-	private static Customer currentCustomer = new Customer();
+	private static Customer currentCustomer = new Customer(); //This is the current customer for use with the order, it will be replaced with Chris's login system when that is done -Jack
     public static void main(String[] args) 
     {
     	
     	String url = "jdbc:sqlserver://DESKTOP-NJ7L5JK\\sqlexpress;integratedSecurity=true;databaseName=master;"; //this is the server URL on my local machine -Jack
-    	String user ="NT Service\\MSSQL$SQLEXPRESS"; //not needed right now but might be needed for remote access -Jack
-    	String password="bcs430group3"; // same as above comment -Jack
+    	//String user ="NT Service\\MSSQL$SQLEXPRESS"; //not needed right now but might be needed for remote access -Jack
+    	//String password="bcs430group3"; // same as above comment -Jack
     	Scanner scin = new Scanner(System.in);
     	Scanner scSin = new Scanner(System.in); //Scanner is used to get data from the user -Jack
     	int userIn=-1;
@@ -53,7 +53,7 @@ public class FoodOrdering {
     					+ "\n[7] After Selecting a Restaurant, create an order"
     					+ "\n[0] Exit"); //For now this well be used to see if a Restaurant or Customer is being added and other functionality -Jack
     			userIn = scin.nextInt(); //code to put the user input into a String -Jack
-    			switch(userIn) //Temporary make naviagtion easier while waiting for Java FX -Jack
+    			switch(userIn) //Temporary make navigation easier while waiting for Java FX -Jack
     			{
     			case 0: 
     				break;
@@ -84,8 +84,8 @@ public class FoodOrdering {
     				System.out.println("\nEnter Last Name: ");
     				c1.setCustomerLName(scin.nextLine());
     				System.out.println("\nEnter Email: ");
-    				//c1.setCustomerEmail(scin.nextLine());
-    				//System.out.println("\nEnter Phone Number: ");
+    				c1.setCustomerEmail(scin.nextLine());
+    				System.out.println("\nEnter Phone Number: ");
     				c1.setCustomerPhone(scin.nextLine());
     				System.out.println("\nEnter City: ");
     				c1.setCustomerCity(scin.nextLine());
@@ -116,43 +116,44 @@ public class FoodOrdering {
     				String searchZip = scSin.nextLine();
     				rZipSearch(searchZip, connection);
     				
-    			//TODO: Implement a method that allows the customer to add and remove food from an order
     			case 7:
-    				ArrayList newFList = new ArrayList<Integer>();
-    				String cEmail;
-    				int nFoodNum=-2;
+    				ArrayList<Integer> newFList = new ArrayList<Integer>(); //List to store foodItemID's to be put into order later -Jack
+    				String cEmail; //Will use email to get the customer for now -Jack
+    				int nFoodNum=-3; //variable that will do 2 things, add foodItemIDs, control the loops -Jack
     				System.out.println("Please enter your email linked to your account: ");
-    				Scanner cIn = new Scanner(System.in);
-    				Scanner nFood = new Scanner(System.in);
+    				Scanner cIn = new Scanner(System.in); //this will get the email -Jack
+    				Scanner nFood = new Scanner(System.in); //this will get the foodItemID -Jack
     				cEmail=cIn.nextLine();
     				
     				//All of the above is to get an email for the account, right now this is instead of login and will have error checking later -Jack
-    				getCurrentCustomer(connection, cEmail);
+    				getCurrentCustomer(connection, cEmail); //calls the method that sets the current customer -Jack
     				
-    				displayMenu(connection);
+    				
     				while(nFoodNum!=-1)
     				{
+    					displayMenu(connection); //will show the menu -Jack
     				    System.out.println("Enter the numebr of food you want to order:"
     				    		+ "\n[-2] Complete Order "
     						    + "\n[-1] Exit"
-    						    + "\n[0] View Items in Order");
+    						    + "\n[0] View Items in Order"); //little statement here to give user menu options -Jack
     				    nFoodNum=nFood.nextInt();
     				    if(nFoodNum==0)
     				    {
-    				    	viewFoodList(connection, newFList);
+    				    	viewFoodList(connection, newFList); //this will show what is currently in the order, will soon add functionality to remove items -Jack
+    				    	//TODO: Add a method to remove items from the list
     				    }
     				    else if(nFoodNum==-1)
-    					    break;
+    					    break; //exits the loop -Jack
     				    else if(nFoodNum==-2)
     				    {
-    				    	addFood(connection, newFList);
+    				    	addFood(connection, newFList); //This is the complete order method and will add all the food items to the order through the database -Jack
     				    }
     				    else
     				    {
-    				    	newFList.add(nFoodNum);
-    					    
+    				    	newFList.add(nFoodNum); //Adds a foodItem to the list which is essentially a cart for right now -Jack
     				    }
     				}
+    				break;
     			//TODO: Implement a method that allows the restaurant to enter and remove menu items
     				
     			//TODO: Implement a method to search for restaurants based on the Type of Restaurant, pulling from the Type table to give them options
@@ -174,12 +175,12 @@ public class FoodOrdering {
     public static void customerData(Connection connection) 
     {
     	System.out.print("Displaying customer data: \n");
-    	String sql = "SELECT * FROM Customer"; // will get all data regarding customer - ahsan
+    	String sql = "SELECT * FROM Customer"; // will get all data regarding customer - Ahsan
     	Statement statement;
 		try {
 			ResultSet rs;
 			statement = connection.createStatement();
-			rs = statement.executeQuery(sql); //execute sql statement
+			rs = statement.executeQuery(sql); //execute SQL statement
 			while(rs.next())
 			{
 				String s = rs.getString("FirstName")+ ", "+rs.getString("LastName")+ ", "+rs.getString("City")+", "+rs.getString("Street")+", "+rs.getString("State")+", "+rs.getString("ZipCode")+", "+rs.getString("Email");
@@ -197,12 +198,12 @@ public class FoodOrdering {
     public static void showRestaurants(Connection connection)
     {
     	System.out.print("Displaying restaurant data: \n");
-    	String sql = "SELECT * FROM Restaurant"; // will get all data from restaurant - ahsan
+    	String sql = "SELECT * FROM Restaurant"; // will get all data from restaurant - Ahsan
     	Statement statement;
 		try {
 			ResultSet rs;
 			statement = connection.createStatement();
-			rs = statement.executeQuery(sql); //execute sql statement
+			rs = statement.executeQuery(sql); //execute SQL statement
 			while(rs.next())
 			{
 				String s = "[" + rs.getString("RestaurantID")+ "] " + rs.getString("RestaurantName")+ ": "+rs.getString("City")+", "+rs.getString("Street")+", "+rs.getString("State")+", "+rs.getString("ZipCode")+", "+rs.getString("RestaurantType")+", "+rs.getString("RestaurantRating");
@@ -224,7 +225,7 @@ public class FoodOrdering {
     	Statement statement;
 		try {
 			statement = connection.createStatement();
-			statement.executeUpdate(rInsert); //execute sql statement
+			statement.executeUpdate(rInsert); //execute SQL statement
 			System.out.print("Restaurant data succesfully inserted: \n");
 			//The above inserts new data into the DB and then alerts the user that it was successful -Jack
 		} catch (SQLException e) {
@@ -288,6 +289,7 @@ public class FoodOrdering {
 				selectedRestaurant.setRestaurantName(rs.getString("restaurantName"));
 				selectedRestaurant.setMenuID(rs.getInt("MenuID"));
 				selectedRestaurant.setRestaurantType(rs.getString("restaurantType"));
+				//adds the information to our selected restaurant for more global use -Jack
 				String s = rs.getString("RestaurantName")+ ": "+rs.getString("RestaurantType")+", "+rs.getFloat("restaurantAverageRating"); //Display the Restaurant for now, will eventually be the menu -Jack
 				System.out.println(s);
 			}
@@ -307,11 +309,11 @@ public class FoodOrdering {
 		try {
 			ResultSet rs;
 			statement = connection.createStatement();
-			rs = statement.executeQuery(sql); //execute sql statement
+			rs = statement.executeQuery(sql); //execute SQL statement
 			while(rs.next())
 			{
-				String s = "["+rs.getInt("foodItemID")+ "] "+rs.getString("foodName")+", "+rs.getString("description")+", "+rs.getString("categoryName")+", "+rs.getFloat("foodPrice"); //This is the display, it will show the foodItem ID which for now will be used for selecting and all the mneu items separated by commas -Jack
-				System.out.println(s);
+				String s = "["+rs.getInt("foodItemID")+ "] "+rs.getString("foodName")+", "+rs.getString("description")+", "+rs.getString("categoryName")+", "+rs.getFloat("foodPrice"); //This is the display, it will show the foodItem ID which for now will be used for selecting and all the menu items separated by commas -Jack
+				System.out.println(s); //displays the above information to the console -Jack
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -322,12 +324,12 @@ public class FoodOrdering {
     
     public static void getCurrentCustomer(Connection connection, String cEmail)
     {
-    	String sql="SELECT * FROM [dbo].[Customer] WHERE email="+cEmail+";"; //code to get the restaurant based on the ID the customer selected, will need to have the menu added -Jack
+    	String sql="SELECT * FROM [dbo].[Customer] WHERE email="+cEmail+";"; //code to get the customer based on their email, will tie into login later -Jack
 		Statement statement;
 		try {
 			ResultSet rs;
 			statement = connection.createStatement();
-			rs = statement.executeQuery(sql); //execute sql statement
+			rs = statement.executeQuery(sql); //execute SQL statement
 			while(rs.next())
 			{
 				currentCustomer.setCustomerID(rs.getInt("customerID"));
@@ -335,6 +337,7 @@ public class FoodOrdering {
 				currentCustomer.setCustomerLName(rs.getString("lastName"));
 				currentCustomer.setCustomerEmail(rs.getString("email"));
 				currentCustomer.setCustomerPhone(rs.getString("phone"));
+				//adds the information to our current customer for more global use -Jack
 				String s = rs.getString("firstName")+ ": "+rs.getString("lastName")+", "+rs.getString("email")+", "+rs.getString("phone"); //Display the Customer for now, will eventually be the menu -Jack
 				System.out.println(s);
 			}
@@ -347,20 +350,19 @@ public class FoodOrdering {
     
     public static void addFood(Connection connection, ArrayList<Integer> foodList)
     {
-    	String sqlCOrder="INSERT [Order](customerID, driverID, orderStatus, totalPrice) VALUES("+ currentCustomer.getCustomerID()+", NULL, 'Preparing', NULL)";
+    	String sqlCOrder="INSERT [Order](customerID, driverID, orderStatus, totalPrice) VALUES("+ currentCustomer.getCustomerID()+", NULL, 'Preparing', NULL)"; //this statement creates an order when called -Jack
     	Statement statement;
     	try {
 			statement=connection.createStatement();
 			statement.executeQuery(sqlCOrder);
 			System.out.println("Order Created");
 		} catch (SQLException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
     	
     	
     	int oID=-1;
-    	String sqlGetOrderID="SELECT orderID FROM [Order] ORDER BY orderID DESC LIMIT 1;";
+    	String sqlGetOrderID="SELECT orderID FROM [Order] ORDER BY orderID DESC LIMIT 1;"; //gets the most recent orderID, will eventually add from the current customer, this will get the just placed order -Jack
     	Statement statement1;
     	try {
 			statement1=connection.createStatement();
@@ -372,23 +374,21 @@ public class FoodOrdering {
 				oID=rs.getInt("orderID");
 			}
 		} catch (SQLException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-    	String sqlFInsert=""; //code to get the restaurant based on the ID the customer selected, will need to have the menu added -Jack
+    	String sqlFInsert=""; //this will fill with insert statements to add LineItems to the order -Jack
 		for (int i:foodList)
 		{
 			int counter=1;
-			sqlFInsert+="INSERT LineItem(lineItemNumber, foodItemID, orderID) VALUES("+counter+", "+i+", "+oID+");\n";
+			sqlFInsert+="INSERT LineItem(lineItemNumber, foodItemID, orderID) VALUES("+counter+", "+i+", "+oID+");\n"; //the SQL code and Java to add Line Items -Jack
 			counter++;
 		}
     	Statement statement2;
 			try {
 				statement2 = connection.createStatement();
-				statement2.executeQuery(sqlFInsert); //execute sql statement
+				statement2.executeQuery(sqlFInsert); //execute SQL statement
 				System.out.println("Added all items to the order");
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			
@@ -407,14 +407,13 @@ public class FoodOrdering {
 			try {
 				ResultSet rs;
 				statement = connection.createStatement();
-				rs = statement.executeQuery(sql); //execute sql statement
+				rs = statement.executeQuery(sql); //execute SQL statement
 				while(rs.next())
 				{
 					String s = rs.getString("foodName")+", "+rs.getString("description")+", "+rs.getInt("calories")+", "+ rs.getString("categoryName")+", "+rs.getFloat("foodPrice");
 					System.out.println(s);
 				}
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
     }
