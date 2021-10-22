@@ -10,6 +10,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 /**
@@ -117,11 +118,41 @@ public class FoodOrdering {
     				
     			//TODO: Implement a method that allows the customer to add and remove food from an order
     			case 7:
+    				ArrayList newFList = new ArrayList<Integer>();
     				String cEmail;
+    				int nFoodNum=-2;
     				System.out.println("Please enter your email linked to your account: ");
     				Scanner cIn = new Scanner(System.in);
+    				Scanner nFood = new Scanner(System.in);
     				cEmail=cIn.nextLine();
+    				
+    				//All of the above is to get an email for the account, right now this is instead of login and will have error checking later -Jack
     				getCurrentCustomer(connection, cEmail);
+    				
+    				displayMenu(connection);
+    				while(nFoodNum!=-1)
+    				{
+    				    System.out.println("Enter the numebr of food you want to order:"
+    				    		+ "\n[-2] Complete Order "
+    						    + "\n[-1] Exit"
+    						    + "\n[0] View Items in Order");
+    				    nFoodNum=nFood.nextInt();
+    				    if(nFoodNum==0)
+    				    {
+    				    	viewFoodList(connection, newFList);
+    				    }
+    				    else if(nFoodNum==-1)
+    					    break;
+    				    else if(nFoodNum==-2)
+    				    {
+    				    	addFood(connection, newFList);
+    				    }
+    				    else
+    				    {
+    				    	newFList.add(nFoodNum);
+    					    
+    				    }
+    				}
     			//TODO: Implement a method that allows the restaurant to enter and remove menu items
     				
     			//TODO: Implement a method to search for restaurants based on the Type of Restaurant, pulling from the Type table to give them options
@@ -137,6 +168,9 @@ public class FoodOrdering {
     		e.printStackTrace(); //display what the error was -Jack
     	}
     }
+    
+    
+    
     public static void customerData(Connection connection) 
     {
     	System.out.print("Displaying customer data: \n");
@@ -157,6 +191,9 @@ public class FoodOrdering {
 		}
     	
     }
+    
+    
+    
     public static void showRestaurants(Connection connection)
     {
     	System.out.print("Displaying restaurant data: \n");
@@ -177,6 +214,9 @@ public class FoodOrdering {
 		}
 		
     } 
+    
+    
+    
     public static void insertRestaurant(Restaurant r1, Connection connection)
     {
     	
@@ -192,6 +232,9 @@ public class FoodOrdering {
 		}	
     	
     }
+    
+    
+    
     public static void insertCustomer(Customer c1, Connection connection)
     {
     	
@@ -206,6 +249,9 @@ public class FoodOrdering {
 			e.printStackTrace();
 		}	
     }
+    
+    
+    
     public static void rZipSearch(String searchZip, Connection connection)
     {
     	String sql="SELECT * FROM [dbo].[Restaurant] WHERE ZipCode="+searchZip+";"; //code to get all data from the restaurant -Jack
@@ -224,6 +270,9 @@ public class FoodOrdering {
 		} //this isn't used yet but is how SQL statements will be inputed -Jack
 		
     }
+    
+    
+    
     public static void selectRestaurant(Connection connection, int rSelect)
     {
     	String sql="SELECT restaurantID, restaurantName, menuID, Restaurant.restaurantTypeID, restaurantType, AVG(ratingScore) AS restaurantAverageRating FROM [dbo].[Restaurant] JOIN RestaurantType ON Restaurant.restaurantTypeID=RestaurantType.restaurantTypeID JOIN Rating ON Restaurant.ratingID=Rating.RatingID WHERE RestaurantID="+rSelect+";"; //code to get the restaurant based on the ID the customer selected, will need to have the menu added -Jack
@@ -246,7 +295,10 @@ public class FoodOrdering {
 			e.printStackTrace();
 		} 
     }
-    public void displayMenu(Connection connection)
+    
+    
+    
+    public static void displayMenu(Connection connection)
     {
     	String sql="SELECT FoodItem.foodItemID, foodName, FoodItem.[description], foodPrice, categoryName"
     			+"\nFROM Restaurant JOIN Menu ON Restaurant.menuID=Menu.menuID JOIN FoodItem ON Menu.foodItemID=FoodItem.foodItemID JOIN Category ON FoodItem.categoryID=Category.categoryID"
@@ -258,13 +310,16 @@ public class FoodOrdering {
 			rs = statement.executeQuery(sql); //execute sql statement
 			while(rs.next())
 			{
-				String s = "["+rs.getInt("foodItemID")+ "] "+rs.getString("foodName")+", "+rs.getString("description")+", "+rs.getFloat("foodPrice")+", "+rs.getString("categoryName"); //This is the display, it will show the foodItem ID which for now will be used for selecting and all the mneu items separated by commas -Jack
+				String s = "["+rs.getInt("foodItemID")+ "] "+rs.getString("foodName")+", "+rs.getString("description")+", "+rs.getString("categoryName")+", "+rs.getFloat("foodPrice"); //This is the display, it will show the foodItem ID which for now will be used for selecting and all the mneu items separated by commas -Jack
 				System.out.println(s);
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} 
     }
+    
+    
+    
     public static void getCurrentCustomer(Connection connection, String cEmail)
     {
     	String sql="SELECT * FROM [dbo].[Customer] WHERE email="+cEmail+";"; //code to get the restaurant based on the ID the customer selected, will need to have the menu added -Jack
@@ -286,5 +341,81 @@ public class FoodOrdering {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} 
+    }
+    
+    
+    
+    public static void addFood(Connection connection, ArrayList<Integer> foodList)
+    {
+    	String sqlCOrder="INSERT [Order](customerID, driverID, orderStatus, totalPrice) VALUES("+ currentCustomer.getCustomerID()+", NULL, 'Preparing', NULL)";
+    	Statement statement;
+    	try {
+			statement=connection.createStatement();
+			statement.executeQuery(sqlCOrder);
+			System.out.println("Order Created");
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+    	
+    	
+    	int oID=-1;
+    	String sqlGetOrderID="SELECT orderID FROM [Order] ORDER BY orderID DESC LIMIT 1;";
+    	Statement statement1;
+    	try {
+			statement1=connection.createStatement();
+			
+			ResultSet rs;
+			rs=statement1.executeQuery(sqlGetOrderID);
+			while(rs.next())
+			{
+				oID=rs.getInt("orderID");
+			}
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+    	String sqlFInsert=""; //code to get the restaurant based on the ID the customer selected, will need to have the menu added -Jack
+		for (int i:foodList)
+		{
+			int counter=1;
+			sqlFInsert+="INSERT LineItem(lineItemNumber, foodItemID, orderID) VALUES("+counter+", "+i+", "+oID+");\n";
+			counter++;
+		}
+    	Statement statement2;
+			try {
+				statement2 = connection.createStatement();
+				statement2.executeQuery(sqlFInsert); //execute sql statement
+				System.out.println("Added all items to the order");
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+    }
+    
+    
+    
+    public static void viewFoodList(Connection connection, ArrayList<Integer> foodList)
+    {
+    	String sql="SELECT * FROM FoodItem WHERE"; //code to get the restaurant based on the ID the customer selected, will need to have the menu added -Jack
+    	for(int i : foodList)
+    	{
+    		sql+=(" foodItemID= "+i);
+    	}
+		Statement statement;
+			try {
+				ResultSet rs;
+				statement = connection.createStatement();
+				rs = statement.executeQuery(sql); //execute sql statement
+				while(rs.next())
+				{
+					String s = rs.getString("foodName")+", "+rs.getString("description")+", "+rs.getInt("calories")+", "+ rs.getString("categoryName")+", "+rs.getFloat("foodPrice");
+					System.out.println(s);
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
     }
 }
