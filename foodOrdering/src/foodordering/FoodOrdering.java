@@ -145,7 +145,7 @@ public class FoodOrdering {
     				    	{
     				    		System.out.println("Enter ID of item you want to remove: "
         				    			+ "[0] Go back");
-    				    		viewFoodList(connection, newFList); //this will show what is currently in the order, will soon add functionality to remove items -Jack
+    				    		viewFoodList(connection, newFList); //this will show what is currently in the order -Jack
     				    		rBack=remOrBack.nextInt();    
     				    		if(rBack==0)
     				    			break;
@@ -161,7 +161,11 @@ public class FoodOrdering {
     				    			newFList.remove(foodRemove);
     				    		}
     				    			
-    				    	} 	
+    				    	} 
+    				    	/*Okay so the way this crazy thing works is it asks the user to enter the id of the item they want to remove, stores that then because of how ArrayList works
+    				    	 * I need to get the object based on the id so it loops through the arrayList until the foodItemID matches the customer selected id to remove, from here it
+    				    	 * stores the FoodItem in a temporary FoodItem object where after the loop it will then remove the FoodItem from the ArrayList -Jack
+    				    	 */
     				    	
     				    }
     				    else if(nFoodNum==-1)
@@ -420,7 +424,7 @@ public class FoodOrdering {
     {
     	
     	
-    	String sql="SELECT * FROM FoodItem JOIN Category ON FoodItem.categoryID=Category.categoryID WHERE foodItemID="+idToAdd +";"; //code to get the restaurant based on the ID the customer selected, will need to have the menu added -Jack
+    	String sql="SELECT * FROM FoodItem JOIN Category ON FoodItem.categoryID=Category.categoryID WHERE foodItemID="+idToAdd +";"; //code to get the restaurant based on the ID the customer selected -Jack
 		Statement statement;
 			try {
 				ResultSet rs;
@@ -439,10 +443,16 @@ public class FoodOrdering {
     
     public static void viewFoodList(Connection connection, ArrayList<FoodItem> foodList)
     {
-    	String sql="SELECT * FROM FoodItem WHERE"; //code to get the restaurant based on the ID the customer selected, will need to have the menu added -Jack
+    	String sql="SELECT * FROM FoodItem WHERE"; //code to get the restaurant based on the ID the customer selected -Jack
     	for(FoodItem i : foodList)
     	{
-    		sql+=(" foodItemID= "+i.getFoodItemID());
+    		
+    		if(foodList.indexOf(i)==foodList.size()-1)
+    		{
+    			sql+=(" foodItemID= "+i.getFoodItemID()+";"); //This is here to make sure the end is done correctly -Jack
+    		}
+    		else
+    			sql+=(" foodItemID= "+i.getFoodItemID()+","); //This here will put into the SQL statement to get only the FoodItems from the list -Jack
     	}
 		Statement statement;
 			try {
@@ -453,6 +463,7 @@ public class FoodOrdering {
 				{
 					String s = "["+rs.getInt("foodItemID")+"] "+rs.getString("foodName")+", "+rs.getString("description")+", "+rs.getInt("calories")+", "+ rs.getString("categoryName")+", "+rs.getFloat("foodPrice");
 					System.out.println(s);
+					//Prints the foodItems in the order so far -Jack
 				}
 			} catch (SQLException e) {
 				e.printStackTrace();
