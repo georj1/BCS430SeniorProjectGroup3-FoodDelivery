@@ -25,9 +25,11 @@ CREATE TABLE RestaurantType (
 
 CREATE TABLE Rating (
 	ratingID int not null identity(1,1),
+	restaurantID int,
 	ratingScore int,
 	ratingReview varChar(1000)
 	PRIMARY KEY(ratingID),
+	FOREIGN KEY(restaurantID) REFERENCES Restaurant(restaurantID)
 );
 
 CREATE TABLE Category(
@@ -72,16 +74,14 @@ CREATE TABLE Restaurant (
     restaurantID int NOT NULL IDENTITY(1,1),
     restaurantName varchar(25),
 	menuID int,
-	restaurantTypeID int,
-	ratingID int--,
+	restaurantTypeID int
 	--city varchar(55),
 	--street varchar(155),
 	--[state] varchar(25),
 	--zipCode varChar(5)
 	PRIMARY KEY(restaurantID),
 	FOREIGN KEY (menuID) REFERENCES Menu(menuID),
-	FOREIGN KEY(restaurantTypeID) REFERENCES RestaurantType(restaurantTypeID),
-	FOREIGN KEY(ratingID) REFERENCES Rating(ratingID)
+	FOREIGN KEY(restaurantTypeID) REFERENCES RestaurantType(restaurantTypeID)
 );
 
 
