@@ -198,7 +198,7 @@ public class FoodOrdering {
     		}
     	}
     	catch (SQLException e) 
-    	{ //catch an error -Jack
+    	{ //catch an error or two -Jack
     		System.out.println("ERROR"); //display that there was an error -Jack
     		e.printStackTrace(); //display what the error was -Jack
     	}
