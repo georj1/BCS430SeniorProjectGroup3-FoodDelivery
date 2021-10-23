@@ -55,6 +55,19 @@ public class FoodOrdering {
     			userIn = scin.nextInt(); //code to put the user input into a String -Jack
     			switch(userIn) //Temporary make navigation easier while waiting for Java FX -Jack
     			{
+    			case -2:
+    				String sql = "";
+    		    	Statement statement;
+    				try {
+    					ResultSet rs;
+    					statement = connection.createStatement();
+    					rs = statement.executeQuery(sql); //execute SQL statement
+    					System.out.println("Statement success");
+    				} catch (SQLException e) {
+    					e.printStackTrace();
+    				}
+    				break;
+    				//The above exists for us to enter in SQL statements and for testing. -Jack
     			case 0: 
     				break;
     			case 1: 
