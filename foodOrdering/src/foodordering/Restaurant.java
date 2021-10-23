@@ -12,7 +12,7 @@ import java.util.ArrayList;
  */
 public class Restaurant {
     
-    private int restaurantID, menuID; 
+    private int restaurantID, menuID, restaurantTypeID; 
 	private String restaurantName, restaurantCity, restaurantState, restaurantStreet, restaurantZip, restaurantType;
 	private double rating;
 	//private ArrayList<FoodItem> menu = new ArrayList<>(); //menu for now, may change this later -Jack
@@ -21,7 +21,7 @@ public class Restaurant {
     {
 		
     }
-	public Restaurant(int restaurantID, String restaurantName, String restaurantCity, String restaurantState, String restaurantStreet, String restaurantZip, String restaurantType, double rating, int menuID)
+	public Restaurant(int restaurantID, String restaurantName, String restaurantCity, String restaurantState, String restaurantStreet, String restaurantZip, int restaurantTypeID, String restaurantType, double rating, int menuID)
 	{
 		this.restaurantID=restaurantID;
 		this.rating=rating;
@@ -30,12 +30,19 @@ public class Restaurant {
         this.restaurantState=restaurantState;
         this.restaurantStreet=restaurantStreet;
         this.restaurantZip=restaurantZip;
+        this.restaurantTypeID=restaurantTypeID;
         this.restaurantType=restaurantType;
         this.menuID=menuID;
         //Standard constructor that sets all the values except menu -Jack
     }
 	   
-    public int getMenuID() {
+    public int getRestaurantTypeID() {
+		return restaurantTypeID;
+	}
+	public void setRestaurantTypeID(int restaurantTypeID) {
+		this.restaurantTypeID = restaurantTypeID;
+	}
+	public int getMenuID() {
 		return menuID;
 	}
 	public void setMenuID(int menuID) {

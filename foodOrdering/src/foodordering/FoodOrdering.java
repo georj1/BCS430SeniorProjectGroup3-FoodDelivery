@@ -74,18 +74,13 @@ public class FoodOrdering {
     				Restaurant r1 = new Restaurant(); //create a new Restaurant object that the user will enter information into, will eventually be sent to database -Jack
 				    System.out.println("\nEnter Restaurant Name: "); //very repetitive, will be done better later, all of these will just get the information to fill out Restaurant -Jack
 				    r1.setRestaurantName(scin.nextLine()); //set the RestaurantName of our temporary Restaurant to what they enter, could be error checked later -Jack
-				    System.out.println("\nEnter Restaurant City: "); 
-				    r1.setRestaurantCity(scin.nextLine()); 
-				    System.out.println("\nEnter Restaurant State: "); 
-				    r1.setRestaurantState(scin.nextLine());
-				    System.out.println("\nEnter Restaurant Street: "); 
-				    r1.setRestaurantStreet(scin.nextLine());
-				    System.out.println("\nEnter Restaurant Zip: "); 
-				    r1.setRestaurantZip(scin.nextLine());
-				    System.out.println("\nEnter Restaurant Type: "); 
-				    r1.setRestaurantType(scin.nextLine());
-				
-				    insertRestaurant(r1, connection); 
+				    System.out.println("\nEnter Restaurant Type ID from the following: ");
+				    getRestaurantType(connection);
+				    Scanner tIn = new Scanner(System.in);
+				    int typeID = 0;
+				    typeID = tIn.nextInt();
+				    r1.setRestaurantTypeID(typeID);
+				    inputRestaurantType(connection, r1, typeID);
     				break;
     			case 2:
     				showRestaurants(connection); //Call the method that shows the data -Ahsan
@@ -100,14 +95,14 @@ public class FoodOrdering {
     				c1.setCustomerEmail(scin.nextLine());
     				System.out.println("\nEnter Phone Number: ");
     				c1.setCustomerPhone(scin.nextLine());
-    				System.out.println("\nEnter City: ");
-    				c1.setCustomerCity(scin.nextLine());
-    				System.out.println("\nEnter State: ");
-    				c1.setCustomerState(scin.nextLine());
-    				System.out.println("\nEnter Street: ");
-    				c1.setCustomerStreet(scin.nextLine());
-    				System.out.println("\nEnter Zip: ");
-    				c1.setCustomerZip(scin.nextLine());
+    				//System.out.println("\nEnter City: ");
+    				//c1.setCustomerCity(scin.nextLine());
+    				//System.out.println("\nEnter State: ");
+    				//c1.setCustomerState(scin.nextLine());
+    				//System.out.println("\nEnter Street: ");
+    				//c1.setCustomerStreet(scin.nextLine());
+    				//System.out.println("\nEnter Zip: ");
+    				//c1.setCustomerZip(scin.nextLine());
     				//Same as Restaurant code -Jack
     		
     				insertCustomer(c1, connection); //Call the method that inserts the data -Jack
@@ -222,7 +217,7 @@ public class FoodOrdering {
 			rs = statement.executeQuery(sql); //execute SQL statement
 			while(rs.next())
 			{
-				String s = rs.getString("FirstName")+ ", "+rs.getString("LastName")+ ", "+rs.getString("City")+", "+rs.getString("Street")+", "+rs.getString("State")+", "+rs.getString("ZipCode")+", "+rs.getString("Email");
+				String s = rs.getString("firstName")+ ", "+rs.getString("lastName")+ ", "+rs.getString("email")+", "+rs.getString("phone");
 				System.out.println(s);
 				//The above displays the information and breaks the rows into a ResultSet which we then pull the data from to display - Ahsan
 			}
@@ -237,7 +232,7 @@ public class FoodOrdering {
     public static void showRestaurants(Connection connection)
     {
     	System.out.print("Displaying restaurant data: \n");
-    	String sql = "SELECT * FROM Restaurant"; // will get all data from restaurant - Ahsan
+    	String sql = "SELECT *, restaurantType FROM Restaurant JOIN RestaurantType ON Restaurant.restaurantTypeID=RestaurantType.restaurantTypeID"; // will get all data from restaurant - Ahsan
     	Statement statement;
 		try {
 			ResultSet rs;
@@ -245,7 +240,7 @@ public class FoodOrdering {
 			rs = statement.executeQuery(sql); //execute SQL statement
 			while(rs.next())
 			{
-				String s = "[" + rs.getString("RestaurantID")+ "] " + rs.getString("RestaurantName")+ ": "+rs.getString("City")+", "+rs.getString("Street")+", "+rs.getString("State")+", "+rs.getString("ZipCode")+", "+rs.getString("RestaurantType")+", "+rs.getString("RestaurantRating");
+				String s = "[" + rs.getString("restaurantID")+ "] " + rs.getString("restaurantName")+ ": "+rs.getString("restaurantType");
 				System.out.println(s);
 				//The above displays the information and breaks the rows into a ResultSet which we then pull the data from to display - Ahsan
 			}
@@ -257,10 +252,55 @@ public class FoodOrdering {
     
     
     
+    public static void getRestaurantType(Connection connection)
+    {
+    	String sql="SELECT restaurantTypeID, restaurantType"
+    			+ "FROM RestaurantType";
+    	Statement statement;
+    	try {
+			ResultSet rs;
+			statement = connection.createStatement();
+			rs = statement.executeQuery(sql); //execute SQL statement
+			while(rs.next())
+			{
+				String s = "[" + rs.getString("RestaurantTypeID")+ "] " + rs.getString("RestaurantType");
+				System.out.println(s);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+    }
+    
+    
+    
+    public static void inputRestaurantType(Connection connection, Restaurant r, int idToInsert)
+    {
+    	String sql="SELECT restaurantType"
+    			+ "FROM RestaurantType"
+    			+ "WHERE restaurantTypeID="+idToInsert+";";
+    	Statement statement;
+    	try {
+			ResultSet rs;
+			statement = connection.createStatement();
+			rs = statement.executeQuery(sql); //execute SQL statement
+			while(rs.next())
+			{
+				String s = rs.getString("RestaurantType");
+				r.setRestaurantType(s);
+				insertRestaurant(r, connection); 
+				
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+    }
+    
+    
+    
     public static void insertRestaurant(Restaurant r1, Connection connection)
     {
     	
-    	String rInsert = "USE master INSERT [dbo].[Restaurant] ([RestaurantName], [City], [Street], [State], [ZipCode], [RestaurantType], [RestaurantRating]) VALUES ('"+ r1.getRestaurantName()+"', '" + r1.getRestaurantCity()+"', '"+r1.getRestaurantStreet()+"', '"+r1.getRestaurantState()+"', "+r1.getRestaurantZip()+", '"+r1.getRestaurantType()+"', NULL);";
+    	String rInsert = "USE master INSERT [dbo].[Restaurant] ([restaurantName], [restaurantTypeID]) VALUES ('"+ r1.getRestaurantName()+"', '"+r1.getRestaurantTypeID()+"');";
     	Statement statement;
 		try {
 			statement = connection.createStatement();
@@ -278,7 +318,7 @@ public class FoodOrdering {
     public static void insertCustomer(Customer c1, Connection connection)
     {
     	
-    	String cInsert = "USE master INSERT [dbo].[Customer] ([LastName], [FirstName], [City], [Street], [State], [ZipCode], [Email]) VALUES ('"+ c1.getCustomerLName()+"', '" + c1.getCustomerFName()+"', '"+c1.getCustomerCity()+"', '"+c1.getCustomerStreet()+"', '"+c1.getCustomerState()+"', "+c1.getCustomerZip()+", '"+c1.getCustomerEmail()+"');";
+    	String cInsert = "USE master INSERT [dbo].[Customer] ([lastName], [firstName], [email], [phone]) VALUES ('"+ c1.getCustomerLName()+"', '" + c1.getCustomerFName()+"', '"+", '"+c1.getCustomerEmail()+"', '"+c1.getCustomerPhone()+"');";
     	Statement statement;
 		try {
 			statement = connection.createStatement();
