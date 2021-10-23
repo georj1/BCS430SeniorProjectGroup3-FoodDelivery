@@ -117,7 +117,7 @@ public class FoodOrdering {
     				rZipSearch(searchZip, connection);
     				
     			case 7:
-    				ArrayList<Integer> newFList = new ArrayList<Integer>(); //List to store foodItemID's to be put into order later -Jack
+    				ArrayList<FoodItem> newFList = new ArrayList<FoodItem>(); //List to store foodItemID's to be put into order later -Jack
     				String cEmail; //Will use email to get the customer for now -Jack
     				int nFoodNum=-3; //variable that will do 2 things, add foodItemIDs, control the loops -Jack
     				System.out.println("Please enter your email linked to your account: ");
@@ -135,12 +135,34 @@ public class FoodOrdering {
     				    System.out.println("Enter the numebr of food you want to order:"
     				    		+ "\n[-2] Complete Order "
     						    + "\n[-1] Exit"
-    						    + "\n[0] View Items in Order"); //little statement here to give user menu options -Jack
+    						    + "\n[0] View Items in Order or remove items"); //little statement here to give user menu options -Jack
     				    nFoodNum=nFood.nextInt();
     				    if(nFoodNum==0)
     				    {
-    				    	viewFoodList(connection, newFList); //this will show what is currently in the order, will soon add functionality to remove items -Jack
-    				    	//TODO: Add a method to remove items from the list
+    				    	Scanner remOrBack = new Scanner(System.in);
+    				    	int rBack = -1;
+    				    	while(rBack!=0)
+    				    	{
+    				    		System.out.println("Enter ID of item you want to remove: "
+        				    			+ "[0] Go back");
+    				    		viewFoodList(connection, newFList); //this will show what is currently in the order, will soon add functionality to remove items -Jack
+    				    		rBack=remOrBack.nextInt();    
+    				    		if(rBack==0)
+    				    			break;
+    				    		else
+    				    		{
+    				    			FoodItem foodRemove = null;
+    				    			for(FoodItem i:newFList)
+    				    			{
+    				    				if(i.getFoodItemID()==rBack)
+    				    					foodRemove=i;
+    				    					
+    				    			}
+    				    			newFList.remove(foodRemove);
+    				    		}
+    				    			
+    				    	} 	
+    				    	
     				    }
     				    else if(nFoodNum==-1)
     					    break; //exits the loop -Jack
@@ -150,7 +172,7 @@ public class FoodOrdering {
     				    }
     				    else
     				    {
-    				    	newFList.add(nFoodNum); //Adds a foodItem to the list which is essentially a cart for right now -Jack
+    				    	addItemToFList(connection, nFoodNum, newFList);
     				    }
     				}
     				break;
@@ -348,7 +370,7 @@ public class FoodOrdering {
     
     
     
-    public static void addFood(Connection connection, ArrayList<Integer> foodList)
+    public static void addFood(Connection connection, ArrayList<FoodItem> foodList)
     {
     	String sqlCOrder="INSERT [Order](customerID, driverID, orderStatus, totalPrice) VALUES("+ currentCustomer.getCustomerID()+", NULL, 'Preparing', NULL)"; //this statement creates an order when called -Jack
     	Statement statement;
@@ -377,10 +399,10 @@ public class FoodOrdering {
 			e1.printStackTrace();
 		}
     	String sqlFInsert=""; //this will fill with insert statements to add LineItems to the order -Jack
-		for (int i:foodList)
+		for (FoodItem i:foodList)
 		{
 			int counter=1;
-			sqlFInsert+="INSERT LineItem(lineItemNumber, foodItemID, orderID) VALUES("+counter+", "+i+", "+oID+");\n"; //the SQL code and Java to add Line Items -Jack
+			sqlFInsert+="INSERT LineItem(lineItemNumber, foodItemID, orderID) VALUES("+counter+", "+i.getFoodItemID()+", "+oID+");\n"; //the SQL code and Java to add Line Items -Jack
 			counter++;
 		}
     	Statement statement2;
@@ -394,14 +416,33 @@ public class FoodOrdering {
 			
     }
     
+    public static void addItemToFList(Connection connection, int idToAdd, ArrayList<FoodItem> foodList)
+    {
+    	
+    	
+    	String sql="SELECT * FROM FoodItem JOIN Category ON FoodItem.categoryID=Category.categoryID WHERE foodItemID="+idToAdd +";"; //code to get the restaurant based on the ID the customer selected, will need to have the menu added -Jack
+		Statement statement;
+			try {
+				ResultSet rs;
+				statement = connection.createStatement();
+				rs = statement.executeQuery(sql); //execute SQL statement
+				while(rs.next())
+				{
+					foodList.add(new FoodItem(rs.getInt("foodItemID"), rs.getString("foodName"), rs.getFloat("foodPrice"), rs.getInt("calories"), rs.getString("description"), rs.getString("type"), rs.getString("prepTime"), rs.getString("categoryName"))); //Adds a foodItem to the list which is essentially a cart for right now -Jack
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+    }
     
     
-    public static void viewFoodList(Connection connection, ArrayList<Integer> foodList)
+    
+    public static void viewFoodList(Connection connection, ArrayList<FoodItem> foodList)
     {
     	String sql="SELECT * FROM FoodItem WHERE"; //code to get the restaurant based on the ID the customer selected, will need to have the menu added -Jack
-    	for(int i : foodList)
+    	for(FoodItem i : foodList)
     	{
-    		sql+=(" foodItemID= "+i);
+    		sql+=(" foodItemID= "+i.getFoodItemID());
     	}
 		Statement statement;
 			try {
@@ -410,7 +451,7 @@ public class FoodOrdering {
 				rs = statement.executeQuery(sql); //execute SQL statement
 				while(rs.next())
 				{
-					String s = rs.getString("foodName")+", "+rs.getString("description")+", "+rs.getInt("calories")+", "+ rs.getString("categoryName")+", "+rs.getFloat("foodPrice");
+					String s = "["+rs.getInt("foodItemID")+"] "+rs.getString("foodName")+", "+rs.getString("description")+", "+rs.getInt("calories")+", "+ rs.getString("categoryName")+", "+rs.getFloat("foodPrice");
 					System.out.println(s);
 				}
 			} catch (SQLException e) {
