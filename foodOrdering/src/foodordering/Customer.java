@@ -20,7 +20,7 @@ public class Customer {
  		this.customerState = customerState;
  		this.customerStreet = customerStreet;
  		this.customerZip = customerZip;
- 		//Constructor with all the variables -Jack
+ 		//Constructor with all  variables -Jack
  	}
      //all getters and setters -Jack
      public int getCustomerID() {

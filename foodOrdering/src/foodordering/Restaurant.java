@@ -33,7 +33,7 @@ public class Restaurant {
         this.restaurantTypeID=restaurantTypeID;
         this.restaurantType=restaurantType;
         this.menuID=menuID;
-        //Standard constructor that sets all the values except menu -Jack
+        //Standard constructor that sets all the values -Jack
     }
 	   
     public int getRestaurantTypeID() {
