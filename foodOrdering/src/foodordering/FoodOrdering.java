@@ -56,7 +56,7 @@ public class FoodOrdering {
     			switch(userIn) //Temporary make navigation easier while waiting for Java FX -Jack
     			{
     			case -2:
-    				String sql = "SELECT * FROM LineItem"
+    				String sql = "SELECT * FROM Restaurant JOIN FoodItem ON Restaurant.restaurantID=FoodItem.restaurantID WHERE Restaurant.restaurantID=1"
     						+ ";"; //SQL statement for us to enter stuff in easily -Jack
     				//System.out.println(sql);
     		    	Statement statement;
@@ -67,7 +67,7 @@ public class FoodOrdering {
     					rs=statement.executeQuery(sql); //execute SQL statement
     					while(rs.next())
     					{
-    						String s=""+rs.getInt("lineItemID");
+    						String s=""+rs.getInt("restaurantID")+", "+rs.getInt("foodItemID")+", "+rs.getString("foodName");
     						System.out.println(s);
     					}
     					System.out.println("Statement success");
@@ -149,11 +149,12 @@ public class FoodOrdering {
     				
     				while(nFoodNum!=-1)
     				{
-    					displayMenu(connection); //will show the menu -Jack
+    					
     				    System.out.println("Enter the number of the food you want to order:"
     				    		+ "\n[-2] Complete Order "
     						    + "\n[-1] Exit"
     						    + "\n[0] View Items in Order or remove items"); //little statement here to give user menu options -Jack
+    				    displayMenu(connection); //will show the menu -Jack
     				    nFoodNum=nFood.nextInt();
     				    if(nFoodNum==0)
     				    {
@@ -392,7 +393,7 @@ public class FoodOrdering {
     {
     	//TODO: Fix this code so it actually displays the whole menu
     	String sql="SELECT FoodItem.foodItemID, foodName, FoodItem.[description], foodPrice, categoryName"
-    			+"\nFROM Restaurant JOIN FoodItem ON Restaurant.restaurantID=FoodItem.restaurantID JOIN Category ON FoodItem.categoryID=Category.categoryID"
+    			+"\nFROM Restaurant JOIN FoodItem ON Restaurant.restaurantID=FoodItem.restaurantID LEFT JOIN Category ON FoodItem.categoryID=Category.categoryID"
     			+"\nWHERE Restaurant.restaurantID="+selectedRestaurant.getRestaurantID()+";"; //Very lengthy SQL statement here, it is selecting the menu based on the selected Restaurant and then uses joins to get all the important menu information -Jack
     	//System.out.println(sql);
     	Statement statement;
@@ -453,7 +454,7 @@ public class FoodOrdering {
     	
     	
     	int oID=-1;
-    	String sqlGetOrderID="SELECT orderID FROM [Order] ORDER BY orderID DESC LIMIT 1;"; //gets the most recent orderID, will eventually add from the current customer, this will get the just placed order -Jack
+    	String sqlGetOrderID="SELECT TOP 1 orderID FROM [Order] ORDER BY orderID DESC;"; //gets the most recent orderID, will eventually add from the current customer, this will get the just placed order -Jack
     	Statement statement1;
     	try {
 			statement1=connection.createStatement();
@@ -488,7 +489,7 @@ public class FoodOrdering {
     	
     	
     	String sql="SELECT *, categoryName"
-    			+ "\nFROM FoodItem JOIN Category ON FoodItem.categoryID=Category.categoryID"
+    			+ "\nFROM FoodItem LEFT JOIN Category ON FoodItem.categoryID=Category.categoryID"
     			+ "\nWHERE foodItemID="+idToAdd +";"; //code to get the restaurant based on the ID the customer selected -Jack
 		Statement statement;
 			try {
