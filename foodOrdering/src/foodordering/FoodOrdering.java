@@ -49,7 +49,7 @@ public class FoodOrdering {
     					+ "\n[3] Enter a Customer"
     					+ "\n[4] View Customers"
     					+ "\n[5] Select a Restaurant"
-    					+ "\n[6] Search Restaurnts by Zip Code"
+    					//+ "\n[6] Search Restaurnts by Zip Code"
     					+ "\n[7] After Selecting a Restaurant, create an order"
     					+ "\n[0] Exit"); //For now this well be used to see if a Restaurant or Customer is being added and other functionality -Jack
     			userIn = scin.nextInt(); //code to put the user input into a String -Jack
@@ -59,9 +59,9 @@ public class FoodOrdering {
     				String sql = "";
     		    	Statement statement;
     				try {
-    					ResultSet rs;
+    					//ResultSet rs;
     					statement = connection.createStatement();
-    					rs = statement.executeQuery(sql); //execute SQL statement
+    					statement.executeQuery(sql); //execute SQL statement
     					System.out.println("Statement success");
     				} catch (SQLException e) {
     					e.printStackTrace();
@@ -120,9 +120,10 @@ public class FoodOrdering {
     		    	selectRestaurant(connection, rSelectIn); //method to select a restaurant based on the number they clicked which is just the restaurant id -Jack
     				break;
     			case 6:
-    				System.out.println("\nEnter a zipcode to search for restaurants in that zip code: "); 
-    				String searchZip = scSin.nextLine();
-    				rZipSearch(searchZip, connection);
+    				//System.out.println("\nEnter a zipcode to search for restaurants in that zip code: "); 
+    				//String searchZip = scSin.nextLine();
+    				//rZipSearch(searchZip, connection);
+    				break;
     				
     			case 7:
     				ArrayList<FoodItem> newFList = new ArrayList<FoodItem>(); //List to store foodItemID's to be put into order later -Jack
@@ -140,7 +141,7 @@ public class FoodOrdering {
     				while(nFoodNum!=-1)
     				{
     					displayMenu(connection); //will show the menu -Jack
-    				    System.out.println("Enter the numebr of food you want to order:"
+    				    System.out.println("Enter the number of the food you want to order:"
     				    		+ "\n[-2] Complete Order "
     						    + "\n[-1] Exit"
     						    + "\n[0] View Items in Order or remove items"); //little statement here to give user menu options -Jack
@@ -151,7 +152,7 @@ public class FoodOrdering {
     				    	int rBack = -1;
     				    	while(rBack!=0)
     				    	{
-    				    		System.out.println("Enter ID of item you want to remove: "
+    				    		System.out.println("Enter ID of the item you want to remove: "
         				    			+ "[0] Go back");
     				    		viewFoodList(connection, newFList); //this will show what is currently in the order -Jack
     				    		rBack=remOrBack.nextInt();    
@@ -355,7 +356,7 @@ public class FoodOrdering {
     
     public static void selectRestaurant(Connection connection, int rSelect)
     {
-    	String sql="SELECT restaurantID, restaurantName, menuID, Restaurant.restaurantTypeID, restaurantType, AVG(ratingScore) AS restaurantAverageRating FROM [dbo].[Restaurant] JOIN RestaurantType ON Restaurant.restaurantTypeID=RestaurantType.restaurantTypeID JOIN Rating ON Restaurant.ratingID=Rating.RatingID WHERE RestaurantID="+rSelect+";"; //code to get the restaurant based on the ID the customer selected, will need to have the menu added -Jack
+    	String sql="SELECT restaurantID, restaurantName, Restaurant.restaurantTypeID, restaurantType, AVG(ratingScore) AS restaurantAverageRating FROM [dbo].[Restaurant] JOIN RestaurantType ON Restaurant.restaurantTypeID=RestaurantType.restaurantTypeID JOIN Rating ON Restaurant.ratingID=Rating.RatingID WHERE RestaurantID="+rSelect+";"; //code to get the restaurant based on the ID the customer selected, will need to have the menu added -Jack
 		Statement statement;
 		try {
 			ResultSet rs;
@@ -366,7 +367,6 @@ public class FoodOrdering {
 				selectedRestaurant.setRestaurantID(rs.getInt("restaurantID"));
 				selectedRestaurant.setRating(rs.getFloat("restaurantAverageRating"));
 				selectedRestaurant.setRestaurantName(rs.getString("restaurantName"));
-				selectedRestaurant.setMenuID(rs.getInt("MenuID"));
 				selectedRestaurant.setRestaurantType(rs.getString("restaurantType"));
 				//adds the information to our selected restaurant for more global use -Jack
 				String s = rs.getString("RestaurantName")+ ": "+rs.getString("RestaurantType")+", "+rs.getFloat("restaurantAverageRating"); //Display the Restaurant for now, will eventually be the menu -Jack
@@ -382,7 +382,7 @@ public class FoodOrdering {
     public static void displayMenu(Connection connection)
     {
     	String sql="SELECT FoodItem.foodItemID, foodName, FoodItem.[description], foodPrice, categoryName"
-    			+"\nFROM Restaurant JOIN Menu ON Restaurant.menuID=Menu.menuID JOIN FoodItem ON Menu.foodItemID=FoodItem.foodItemID JOIN Category ON FoodItem.categoryID=Category.categoryID"
+    			+"\nFROM Restaurant JOIN FoodItem ON Restaurant.restaurantID=FoodItem.restaurantID JOIN Category ON FoodItem.categoryID=Category.categoryID"
     			+"WHERE RestaurantID="+selectedRestaurant.getRestaurantID()+";"; //Very lengthy SQL statement here, it is selecting the menu based on the selected Restaurant and then uses joins to get all the important menu information -Jack
     	Statement statement;
 		try {
