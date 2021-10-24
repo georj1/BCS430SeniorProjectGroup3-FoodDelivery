@@ -23,14 +23,7 @@ CREATE TABLE RestaurantType (
 --INSERT RestaurantType(restaurantType) VALUES('Mexican');
 --INSERT RestaurantType(restaurantType) VALUES('Halal');
 
-CREATE TABLE Rating (
-	ratingID int not null identity(1,1),
-	restaurantID int,
-	ratingScore int,
-	ratingReview varChar(1000)
-	PRIMARY KEY(ratingID),
-	FOREIGN KEY(restaurantID) REFERENCES Restaurant(restaurantID)
-);
+
 
 CREATE TABLE Category(
 	categoryID int not null identity(1,1),
@@ -48,6 +41,28 @@ CREATE TABLE Category(
 --INSERT Category(categoryName) VALUES('Pescatarian');
 --INSERT Category(categoryName) VALUES('Other');
 
+
+CREATE TABLE Restaurant (
+    restaurantID int NOT NULL IDENTITY(1,1),
+    restaurantName varchar(25),
+	restaurantTypeID int
+	--city varchar(55),
+	--street varchar(155),
+	--[state] varchar(25),
+	--zipCode varChar(5)
+	PRIMARY KEY(restaurantID),
+	FOREIGN KEY(restaurantTypeID) REFERENCES RestaurantType(restaurantTypeID)
+);
+INSERT Restaurant(restaurantName, restaurantTypeID) VALUES('Wendys', 3);
+CREATE TABLE Rating (
+	ratingID int not null identity(1,1),
+	restaurantID int,
+	ratingScore int,
+	ratingReview varChar(1000)
+	PRIMARY KEY(ratingID),
+	FOREIGN KEY(restaurantID) REFERENCES Restaurant(restaurantID)
+);
+
 CREATE TABLE FoodItem (
 	foodItemID int NOT NULL IDENTITY(1,1),
 	foodName	varChar(55),
@@ -57,32 +72,17 @@ CREATE TABLE FoodItem (
 	[type]		varChar(55),
 	prepTime	varChar(50),
 	categoryID int,
+	restaurantID int
 	PRIMARY KEY(foodItemID),
-	FOREIGN KEY(categoryID) REFERENCES Category(categoryID)
+	FOREIGN KEY(categoryID) REFERENCES Category(categoryID),
+	FOREIGN KEY(restaurantID) REFERENCES Restaurant(restaurantID)
 );
 
+INSERT FoodItem(foodName, foodPrice, calories, [description], [type], prepTime, categoryID, restaurantID) VALUES('Hamburger', 4.99, 600, 'A hamburger with lettuce, tomato, onions and ketchup', NULL, '5 minutes', 1);
+INSERT FoodItem(foodName, foodPrice, calories, [description], [type], prepTime, categoryID, restaurantID) VALUES('Chicken Nuggets', 3.99, 500, '6 Chicken Nuggets', NULL, '4 minutes', 1);
+INSERT FoodItem(foodName, foodPrice, calories, [description], [type], prepTime, categoryID, restaurantID) VALUES('Salad', 4.99, 400, 'Garden Salad', 1, '5 minutes', 1);
 
 
-CREATE TABLE Menu (
-	menuID int Not NULL IDENTITY(1,1),
-	foodItemID int not Null
-	PRIMARY KEY(menuID),
-	FOREIGN KEY (foodItemID) REFERENCES FoodItem(FoodItemID)
-);
-
-CREATE TABLE Restaurant (
-    restaurantID int NOT NULL IDENTITY(1,1),
-    restaurantName varchar(25),
-	menuID int,
-	restaurantTypeID int
-	--city varchar(55),
-	--street varchar(155),
-	--[state] varchar(25),
-	--zipCode varChar(5)
-	PRIMARY KEY(restaurantID),
-	FOREIGN KEY (menuID) REFERENCES Menu(menuID),
-	FOREIGN KEY(restaurantTypeID) REFERENCES RestaurantType(restaurantTypeID)
-);
 
 
 
@@ -144,3 +144,4 @@ CREATE TABLE CreditCard (
 	FOREIGN KEY(customerID) REFERENCES Customer(customerID),
 	FOREIGN KEY(orderID) REFERENCES [Order](orderID)
 );
+
