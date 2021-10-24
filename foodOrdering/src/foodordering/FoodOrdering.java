@@ -56,8 +56,8 @@ public class FoodOrdering {
     			switch(userIn) //Temporary make navigation easier while waiting for Java FX -Jack
     			{
     			case -2:
-    				String sql = "SELECT * FROM Restaurant JOIN FoodItem ON Restaurant.restaurantID=FoodItem.restaurantID WHERE Restaurant.restaurantID=1"
-    						+ ";"; //SQL statement for us to enter stuff in easily -Jack
+    				String sql = "SELECT * "
+    						+ "\nFROM [Order] JOIN LineItem ON [Order].orderID=LineItem.orderID JOIN FoodItem ON LineItem.foodItemID=FoodItem.foodItemID"; //SQL statement for us to enter stuff in easily -Jack
     				//System.out.println(sql);
     		    	Statement statement;
     				try {
@@ -65,9 +65,11 @@ public class FoodOrdering {
     					statement = connection.createStatement();
     					
     					rs=statement.executeQuery(sql); //execute SQL statement
+    					//statement.executeUpdate(sql);
+    					
     					while(rs.next())
     					{
-    						String s=""+rs.getInt("restaurantID")+", "+rs.getInt("foodItemID")+", "+rs.getString("foodName");
+    						String s=""+rs.getInt("orderID")+", "+rs.getInt("customerID")+", "+rs.getInt("driverID")+", "+rs.getString("orderStatus")+", "+rs.getFloat("totalPrice")+", "+rs.getInt("foodItemID")+", "+rs.getString("foodName");
     						System.out.println(s);
     					}
     					System.out.println("Statement success");
@@ -192,6 +194,7 @@ public class FoodOrdering {
     				    else if(nFoodNum==-2)
     				    {
     				    	addFood(connection, newFList); //This is the complete order method and will add all the food items to the order through the database -Jack
+    				    	nFoodNum=-1;
     				    }
     				    else
     				    {
@@ -476,7 +479,7 @@ public class FoodOrdering {
     	Statement statement2;
 			try {
 				statement2 = connection.createStatement();
-				statement2.executeQuery(sqlFInsert); //execute SQL statement
+				statement2.executeUpdate(sqlFInsert); //execute SQL statement
 				System.out.println("Added all items to the order");
 			} catch (SQLException e) {
 				e.printStackTrace();
