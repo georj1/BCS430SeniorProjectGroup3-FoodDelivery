@@ -56,19 +56,20 @@ public class FoodOrdering {
     			switch(userIn) //Temporary make navigation easier while waiting for Java FX -Jack
     			{
     			case -2:
-    				String sql = "CREATE TABLE Rating (\r\n"
-    						+ "	ratingID int not null identity(1,1),\r\n"
-    						+ "	restaurantID int,\r\n"
-    						+ "	ratingScore int,\r\n"
-    						+ "	ratingReview varChar(1000)\r\n"
-    						+ "	PRIMARY KEY(ratingID),\r\n"
-    						+ "	FOREIGN KEY(restaurantID) REFERENCES Restaurant(restaurantID)\r\n"
-    						+ ");"; //SQL statement for us to enter stuff in easily -Jack
+    				String sql = "SELECT * FROM LineItem"
+    						+ ";"; //SQL statement for us to enter stuff in easily -Jack
+    				//System.out.println(sql);
     		    	Statement statement;
     				try {
-    					//ResultSet rs;
+    					ResultSet rs;
     					statement = connection.createStatement();
-    					statement.executeQuery(sql); //execute SQL statement
+    					
+    					rs=statement.executeQuery(sql); //execute SQL statement
+    					while(rs.next())
+    					{
+    						String s=""+rs.getInt("lineItemID");
+    						System.out.println(s);
+    					}
     					System.out.println("Statement success");
     				} catch (SQLException e) {
     					e.printStackTrace();
@@ -161,7 +162,7 @@ public class FoodOrdering {
     				    	while(rBack!=0)
     				    	{
     				    		System.out.println("Enter ID of the item you want to remove: "
-        				    			+ "[0] Go back");
+        				    			+ "\n[0] Go back");
     				    		viewFoodList(connection, newFList); //this will show what is currently in the order -Jack
     				    		rBack=remOrBack.nextInt();    
     				    		if(rBack==0)
@@ -389,10 +390,11 @@ public class FoodOrdering {
     
     public static void displayMenu(Connection connection)
     {
+    	//TODO: Fix this code so it actually displays the whole menu
     	String sql="SELECT FoodItem.foodItemID, foodName, FoodItem.[description], foodPrice, categoryName"
     			+"\nFROM Restaurant JOIN FoodItem ON Restaurant.restaurantID=FoodItem.restaurantID JOIN Category ON FoodItem.categoryID=Category.categoryID"
     			+"\nWHERE Restaurant.restaurantID="+selectedRestaurant.getRestaurantID()+";"; //Very lengthy SQL statement here, it is selecting the menu based on the selected Restaurant and then uses joins to get all the important menu information -Jack
-    	System.out.println(sql);
+    	//System.out.println(sql);
     	Statement statement;
 		try {
 			ResultSet rs;
@@ -438,11 +440,12 @@ public class FoodOrdering {
     
     public static void addFood(Connection connection, ArrayList<FoodItem> foodList)
     {
+    	//TODO: Fix this code, need to also add the LineItem Table
     	String sqlCOrder="INSERT [Order](customerID, driverID, orderStatus, totalPrice) VALUES("+ currentCustomer.getCustomerID()+", NULL, 'Preparing', NULL)"; //this statement creates an order when called -Jack
     	Statement statement;
     	try {
 			statement=connection.createStatement();
-			statement.executeQuery(sqlCOrder);
+			statement.executeUpdate(sqlCOrder);
 			System.out.println("Order Created");
 		} catch (SQLException e1) {
 			e1.printStackTrace();
@@ -458,9 +461,7 @@ public class FoodOrdering {
 			ResultSet rs;
 			rs=statement1.executeQuery(sqlGetOrderID);
 			while(rs.next())
-			{
 				oID=rs.getInt("orderID");
-			}
 		} catch (SQLException e1) {
 			e1.printStackTrace();
 		}
@@ -486,7 +487,9 @@ public class FoodOrdering {
     {
     	
     	
-    	String sql="SELECT * FROM FoodItem JOIN Category ON FoodItem.categoryID=Category.categoryID WHERE foodItemID="+idToAdd +";"; //code to get the restaurant based on the ID the customer selected -Jack
+    	String sql="SELECT *, categoryName"
+    			+ "\nFROM FoodItem JOIN Category ON FoodItem.categoryID=Category.categoryID"
+    			+ "\nWHERE foodItemID="+idToAdd +";"; //code to get the restaurant based on the ID the customer selected -Jack
 		Statement statement;
 			try {
 				ResultSet rs;
@@ -505,6 +508,11 @@ public class FoodOrdering {
     
     public static void viewFoodList(Connection connection, ArrayList<FoodItem> foodList)
     {
+    	for(FoodItem f:foodList)
+    	{
+    		System.out.println(f.getFoodName());
+    	}
+    	/*
     	String sql="SELECT * FROM FoodItem WHERE"; //code to get the restaurant based on the ID the customer selected -Jack
     	for(FoodItem i : foodList)
     	{
@@ -530,5 +538,6 @@ public class FoodOrdering {
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
+			*/
     }
 }
