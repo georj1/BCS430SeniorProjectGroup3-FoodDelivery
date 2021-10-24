@@ -56,7 +56,7 @@ public class FoodOrdering {
     			switch(userIn) //Temporary make navigation easier while waiting for Java FX -Jack
     			{
     			case -2:
-    				String sql = "";
+    				String sql = ""; //SQL statement for us to enter stuff in easily -Jack
     		    	Statement statement;
     				try {
     					//ResultSet rs;
