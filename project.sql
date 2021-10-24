@@ -123,7 +123,7 @@ CREATE TABLE [Order](
 	FOREIGN KEY(driverID) REFERENCES Driver(driverID)
 );
 
-CREATE TABLE lineItem(
+CREATE TABLE LineItem(
 	lineItemID int not null identity(1,1),
 	lineItemNumber int,
 	foodItemID int,
