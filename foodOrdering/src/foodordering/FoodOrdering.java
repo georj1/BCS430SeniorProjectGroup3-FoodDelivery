@@ -56,7 +56,14 @@ public class FoodOrdering {
     			switch(userIn) //Temporary make navigation easier while waiting for Java FX -Jack
     			{
     			case -2:
-    				String sql = ""; //SQL statement for us to enter stuff in easily -Jack
+    				String sql = "CREATE TABLE Rating (\r\n"
+    						+ "	ratingID int not null identity(1,1),\r\n"
+    						+ "	restaurantID int,\r\n"
+    						+ "	ratingScore int,\r\n"
+    						+ "	ratingReview varChar(1000)\r\n"
+    						+ "	PRIMARY KEY(ratingID),\r\n"
+    						+ "	FOREIGN KEY(restaurantID) REFERENCES Restaurant(restaurantID)\r\n"
+    						+ ");"; //SQL statement for us to enter stuff in easily -Jack
     		    	Statement statement;
     				try {
     					//ResultSet rs;
@@ -86,15 +93,16 @@ public class FoodOrdering {
     				showRestaurants(connection); //Call the method that shows the data -Ahsan
     		    	break;
     			case 3:
+    				Scanner custIn = new Scanner(System.in);
     				Customer c1 = new Customer(); //create a new Customer object that the user will enter information into, will eventually be sent to database -Jack
     				System.out.println("\nEnter First Name: ");
-    				c1.setCustomerFName(scin.nextLine());
+    				c1.setCustomerFName(custIn.nextLine());
     				System.out.println("\nEnter Last Name: ");
-    				c1.setCustomerLName(scin.nextLine());
+    				c1.setCustomerLName(custIn.nextLine());
     				System.out.println("\nEnter Email: ");
-    				c1.setCustomerEmail(scin.nextLine());
+    				c1.setCustomerEmail(custIn.nextLine());
     				System.out.println("\nEnter Phone Number: ");
-    				c1.setCustomerPhone(scin.nextLine());
+    				c1.setCustomerPhone(custIn.nextLine());
     				//System.out.println("\nEnter City: ");
     				//c1.setCustomerCity(scin.nextLine());
     				//System.out.println("\nEnter State: ");
@@ -319,7 +327,7 @@ public class FoodOrdering {
     public static void insertCustomer(Customer c1, Connection connection)
     {
     	
-    	String cInsert = "USE master INSERT [dbo].[Customer] ([lastName], [firstName], [email], [phone]) VALUES ('"+ c1.getCustomerLName()+"', '" + c1.getCustomerFName()+"', '"+", '"+c1.getCustomerEmail()+"', '"+c1.getCustomerPhone()+"');";
+    	String cInsert = "USE master INSERT [dbo].[Customer] ([lastName], [firstName], [email], [phone]) VALUES ('"+ c1.getCustomerLName()+"', '" + c1.getCustomerFName()+"', '"+c1.getCustomerEmail()+"', '"+c1.getCustomerPhone()+"');";
     	Statement statement;
 		try {
 			statement = connection.createStatement();
@@ -356,7 +364,7 @@ public class FoodOrdering {
     
     public static void selectRestaurant(Connection connection, int rSelect)
     {
-    	String sql="SELECT restaurantID, restaurantName, Restaurant.restaurantTypeID, restaurantType, AVG(ratingScore) AS restaurantAverageRating FROM [dbo].[Restaurant] JOIN RestaurantType ON Restaurant.restaurantTypeID=RestaurantType.restaurantTypeID JOIN Rating ON Restaurant.ratingID=Rating.RatingID WHERE RestaurantID="+rSelect+";"; //code to get the restaurant based on the ID the customer selected, will need to have the menu added -Jack
+    	String sql="SELECT restaurantID, restaurantName, Restaurant.restaurantTypeID, restaurantType FROM [dbo].[Restaurant] JOIN RestaurantType ON Restaurant.restaurantTypeID=RestaurantType.restaurantTypeID  WHERE RestaurantID="+rSelect+";"; //code to get the restaurant based on the ID the customer selected, will need to have the menu added -Jack
 		Statement statement;
 		try {
 			ResultSet rs;
@@ -365,11 +373,11 @@ public class FoodOrdering {
 			while(rs.next())
 			{
 				selectedRestaurant.setRestaurantID(rs.getInt("restaurantID"));
-				selectedRestaurant.setRating(rs.getFloat("restaurantAverageRating"));
+				//selectedRestaurant.setRating(rs.getFloat("restaurantAverageRating"));
 				selectedRestaurant.setRestaurantName(rs.getString("restaurantName"));
 				selectedRestaurant.setRestaurantType(rs.getString("restaurantType"));
 				//adds the information to our selected restaurant for more global use -Jack
-				String s = rs.getString("RestaurantName")+ ": "+rs.getString("RestaurantType")+", "+rs.getFloat("restaurantAverageRating"); //Display the Restaurant for now, will eventually be the menu -Jack
+				String s = rs.getString("RestaurantName")+ ": "+rs.getString("RestaurantType"); //Display the Restaurant for now, will eventually be the menu -Jack
 				System.out.println(s);
 			}
 		} catch (SQLException e) {
@@ -383,7 +391,7 @@ public class FoodOrdering {
     {
     	String sql="SELECT FoodItem.foodItemID, foodName, FoodItem.[description], foodPrice, categoryName"
     			+"\nFROM Restaurant JOIN FoodItem ON Restaurant.restaurantID=FoodItem.restaurantID JOIN Category ON FoodItem.categoryID=Category.categoryID"
-    			+"WHERE RestaurantID="+selectedRestaurant.getRestaurantID()+";"; //Very lengthy SQL statement here, it is selecting the menu based on the selected Restaurant and then uses joins to get all the important menu information -Jack
+    			+"WHERE Restaurant.restaurantID="+selectedRestaurant.getRestaurantID()+";"; //Very lengthy SQL statement here, it is selecting the menu based on the selected Restaurant and then uses joins to get all the important menu information -Jack
     	Statement statement;
 		try {
 			ResultSet rs;
@@ -403,7 +411,7 @@ public class FoodOrdering {
     
     public static void getCurrentCustomer(Connection connection, String cEmail)
     {
-    	String sql="SELECT * FROM [dbo].[Customer] WHERE email="+cEmail+";"; //code to get the customer based on their email, will tie into login later -Jack
+    	String sql="SELECT * FROM [dbo].[Customer] WHERE email='"+cEmail+"';"; //code to get the customer based on their email, will tie into login later -Jack
 		Statement statement;
 		try {
 			ResultSet rs;

@@ -11,7 +11,7 @@ package foodordering;
  */
 public class FoodItem {
 
-    private int foodItemID, calories;
+    private int foodItemID, calories, restaurantID;
     private String foodName, description, type, prepTime, categoryName;
     private float foodPrice;
     
