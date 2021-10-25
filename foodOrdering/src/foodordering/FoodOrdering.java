@@ -81,9 +81,10 @@ public class FoodOrdering {
     			case 0: 
     				break;
     			case 1: 
+    				Scanner rIn = new Scanner(System.in);
     				Restaurant r1 = new Restaurant(); //create a new Restaurant object that the user will enter information into, will eventually be sent to database -Jack
 				    System.out.println("\nEnter Restaurant Name: "); //very repetitive, will be done better later, all of these will just get the information to fill out Restaurant -Jack
-				    r1.setRestaurantName(scin.nextLine()); //set the RestaurantName of our temporary Restaurant to what they enter, could be error checked later -Jack
+				    r1.setRestaurantName(rIn.nextLine()); //set the RestaurantName of our temporary Restaurant to what they enter, could be error checked later -Jack
 				    System.out.println("\nEnter Restaurant Type ID from the following: ");
 				    getRestaurantType(connection);
 				    Scanner tIn = new Scanner(System.in);
@@ -269,7 +270,7 @@ public class FoodOrdering {
     public static void getRestaurantType(Connection connection)
     {
     	String sql="SELECT restaurantTypeID, restaurantType"
-    			+ "FROM RestaurantType";
+    			+ "\nFROM RestaurantType";
     	Statement statement;
     	try {
 			ResultSet rs;
@@ -277,7 +278,7 @@ public class FoodOrdering {
 			rs = statement.executeQuery(sql); //execute SQL statement
 			while(rs.next())
 			{
-				String s = "[" + rs.getString("RestaurantTypeID")+ "] " + rs.getString("RestaurantType");
+				String s = "[" + rs.getString("restaurantTypeID")+ "] " + rs.getString("restaurantType");
 				System.out.println(s);
 			}
 		} catch (SQLException e) {
@@ -290,8 +291,8 @@ public class FoodOrdering {
     public static void inputRestaurantType(Connection connection, Restaurant r, int idToInsert)
     {
     	String sql="SELECT restaurantType"
-    			+ "FROM RestaurantType"
-    			+ "WHERE restaurantTypeID="+idToInsert+";";
+    			+ "\nFROM RestaurantType"
+    			+ "\nWHERE restaurantTypeID="+idToInsert+";";
     	Statement statement;
     	try {
 			ResultSet rs;
