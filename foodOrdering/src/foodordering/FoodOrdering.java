@@ -207,19 +207,16 @@ public class FoodOrdering {
     				}
     				break;
     			case 8:
-    				//getCategory;
     		        showRestaurants(connection); //Call the method that shows the data
-    		        System.out.println("Enter the nummber of the restaurant you want to order from: ");
+    		        System.out.println("Enter the number of the restaurant you want to add food to: ");
     		        Scanner selectF = new Scanner(System.in); //Scanner is used to get data from the user
     		        int fSelectIn=0;
     		        fSelectIn=selectF.nextInt();
     		        selectRestaurant(connection, fSelectIn); //method to select a restaurant based on the number they clicked which is just the restaurant id
+    		        //The above will get the user to pick their restaurant to enter food into
     		        Scanner foodDataIn = new Scanner(System.in);
-    		        Scanner foodDatasIn = new Scanner(System.in);
-    		        Scanner foodDataxIn = new Scanner(System.in);
     		        FoodItem f1 = new FoodItem();
-    		        System.out.println("\nEnter Food Name: ");
-    		                     
+    		        System.out.println("\nEnter Food Name: ");              
     		        f1.setFoodName(foodDataIn.nextLine());
     		        System.out.println("\nEnter Food Price: ");
     		        f1.setFoodPrice(foodDataIn.nextFloat());
@@ -232,13 +229,14 @@ public class FoodOrdering {
     		        f1.setType(foodDataIn.nextLine());
     		        System.out.println("\nEneter preptime");
     		        f1.setPrepTime(foodDataIn.nextLine());
+    		        //The above gets and stores user input about the foodItems 
     		        System.out.println("\nEnter category ID from the following:");
-    		        getCategory(connection);
+    		        getCategory(connection); //Calls the method to allow the user to select categories
     		        Scanner catIn = new Scanner(System.in);
     		        int categoryID = 0;
     		        categoryID = catIn.nextInt();
     		        f1.setCategoryID(categoryID);
-    		        inputCategoryType(connection, f1, categoryID);
+    		        inputCategoryType(connection, f1, categoryID); //Calls the method to insert the category based on user input
     				break;
     			case 9:
     				System.out.println("\nEnter the type of restaurant you are looking for:  ");
@@ -589,7 +587,7 @@ public class FoodOrdering {
     public static void getCategory(Connection connection)
     {
     	String sql="SELECT categoryID, categoryName"
-    			+ "\nFROM Category";
+    			+ "\nFROM Category"; //SQL to get all the category ID's and names
     	Statement statement;
     	try {
     		ResultSet rs;
@@ -597,7 +595,7 @@ public class FoodOrdering {
     		rs = statement.executeQuery(sql); //execute SQL statement
     		while(rs.next())
     		{
-    			String s = "[" + rs.getString("categoryID")+ "] " + rs.getString("categoryName");
+    			String s = "[" + rs.getString("categoryID")+ "] " + rs.getString("categoryName"); //Displaying Category information
     			System.out.println(s);
     		}
     	} catch (SQLException e) {
@@ -609,7 +607,7 @@ public class FoodOrdering {
     {
     		String sql="SELECT categoryName"
     				+ "\nFROM Category"
-    				+ "\nWHERE categoryID="+idToInsert+";";
+    				+ "\nWHERE categoryID="+idToInsert+";"; //This will get us the full data from the specific category
     		Statement statement;
     		try {
     			ResultSet rs;
@@ -618,8 +616,8 @@ public class FoodOrdering {
     			while(rs.next())
     			{
     				String s = rs.getString("categoryName");
-    				f.setCategoryName(s);
-    				insertFoodItem(f, connection);
+    				f.setCategoryName(s); //sets the category name in the temporary variable for insertion in the next method
+    				insertFoodItem(f, connection); //Calls the method that actually inserts the data
         
 
     			}
@@ -631,6 +629,7 @@ public class FoodOrdering {
     {
    
     	String fInsert = "INSERT FoodItem ([foodName], [foodPrice], [calories], [description], [type], [prepTime], [categoryID], [restaurantID]) VALUES ('"+f1.getFoodName()+"', '"+f1.getFoodPrice()+"', '"+f1.getCalories()+"', '"+f1.getDescription()+"', '"+f1.getType()+"', '"+f1.getPrepTime()+"', '"+f1.getCategoryID()+"', '"+selectedRestaurant.getRestaurantID()+"');";
+    	//The above is the full insert SQL statement to add Food to the menu
     	Statement statement;
     	try {
     			statement = connection.createStatement();
@@ -649,7 +648,7 @@ public class FoodOrdering {
     {
     	String sql="SELECT *"
     			+ "\nFROM Restaurant JOIN RestaurantType ON Restaurant.restaurantTypeID=RestaurantType.restaurantTypeID"
-    			+ "\nWHERE restaurantType='"+searchType+"';"; //code to get all data from the restaurant -Jack
+    			+ "\nWHERE restaurantType='"+searchType+"';"; //code to get all data from the restaurants with a specific type -Jack
     	Statement statement;
     	try {
     		ResultSet rs;
@@ -658,7 +657,7 @@ public class FoodOrdering {
     		while(rs.next())
     		{
     			String s = "[" + rs.getString("restaurantID") + "] "+ rs.getString("restaurantName")+ ", "+rs.getString("restaurantType");
-    			System.out.println(s);
+    			System.out.println(s); //Displays all the restaurants with a specific type
     		}
     	} catch (SQLException e) {
     		e.printStackTrace();
