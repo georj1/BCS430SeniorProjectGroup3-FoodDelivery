@@ -51,11 +51,13 @@ public class FoodOrdering {
     					+ "\n[5] Select a Restaurant"
     					//+ "\n[6] Search Restaurnts by Zip Code"
     					+ "\n[7] After Selecting a Restaurant, create an order"
+    					+ "\n[8] Enter food for a Restaurant"
     					+ "\n[0] Exit"); //For now this well be used to see if a Restaurant or Customer is being added and other functionality -Jack
     			userIn = scin.nextInt(); //code to put the user input into a String -Jack
     			switch(userIn) //Temporary make navigation easier while waiting for Java FX -Jack
     			{
     			case -2:
+    				String ssql="DELETE FROM FoodItem WHERE foodItemID>3;";
     				String sql = "SELECT * "
     						+ "\nFROM [Order] JOIN LineItem ON [Order].orderID=LineItem.orderID JOIN FoodItem ON LineItem.foodItemID=FoodItem.foodItemID"; //SQL statement for us to enter stuff in easily -Jack
     				//System.out.println(sql);
@@ -65,7 +67,7 @@ public class FoodOrdering {
     					statement = connection.createStatement();
     					
     					rs=statement.executeQuery(sql); //execute SQL statement
-    					//statement.executeUpdate(sql);
+    					statement.executeUpdate(ssql);
     					
     					while(rs.next())
     					{
@@ -204,7 +206,40 @@ public class FoodOrdering {
     				}
     				break;
     			//TODO: Implement a method that allows the restaurant to enter and remove menu items
-    				
+    			case 8:
+    				//getCategory;
+    		        showRestaurants(connection); //Call the method that shows the data
+    		        System.out.println("Enter the nummber of the restaurant you want to order from: ");
+    		        Scanner selectF = new Scanner(System.in); //Scanner is used to get data from the user
+    		        int fSelectIn=0;
+    		        fSelectIn=selectF.nextInt();
+    		        selectRestaurant(connection, fSelectIn); //method to select a restaurant based on the number they clicked which is just the restaurant id
+    		        Scanner foodDataIn = new Scanner(System.in);
+    		        Scanner foodDatasIn = new Scanner(System.in);
+    		        Scanner foodDataxIn = new Scanner(System.in);
+    		        FoodItem f1 = new FoodItem();
+    		        System.out.println("\nEnter Food Name: ");
+    		                     
+    		        f1.setFoodName(foodDataIn.nextLine());
+    		        System.out.println("\nEnter Food Price: ");
+    		        f1.setFoodPrice(foodDataIn.nextFloat());
+    		        System.out.println("\nEnter calories: ");
+    		        f1.setCalories(foodDataIn.nextInt());
+    		        foodDataIn.nextLine();
+    		        System.out.println("\nEnter description: ");
+    		        f1.setDescription(foodDataIn.nextLine());
+    		        System.out.println("\nEnter type: " );
+    		        f1.setType(foodDataIn.nextLine());
+    		        System.out.println("\nEneter preptime");
+    		        f1.setPrepTime(foodDataIn.nextLine());
+    		        System.out.println("\nEnter category ID from the following:");
+    		        getCategory(connection);
+    		        Scanner catIn = new Scanner(System.in);
+    		        int categoryID = 0;
+    		        categoryID = catIn.nextInt();
+    		        f1.setCategoryID(categoryID);
+    		        inputCategoryType(connection, f1, categoryID);
+    				break;
     			//TODO: Implement a method to search for restaurants based on the Type of Restaurant, pulling from the Type table to give them options
     			default:
     				break;
@@ -544,5 +579,61 @@ public class FoodOrdering {
 				e.printStackTrace();
 			}
 			*/
+    }
+    public static void getCategory(Connection connection)
+    {
+    	String sql="SELECT categoryID, categoryName"
+    			+ "\nFROM Category";
+    	Statement statement;
+    	try {
+    		ResultSet rs;
+    		statement = connection.createStatement();
+    		rs = statement.executeQuery(sql); //execute SQL statement
+    		while(rs.next())
+    		{
+    			String s = "[" + rs.getString("categoryID")+ "] " + rs.getString("categoryName");
+    			System.out.println(s);
+    		}
+    	} catch (SQLException e) {
+    		e.printStackTrace();
+    	}
+    }
+    
+    public static void inputCategoryType(Connection connection, FoodItem f, int idToInsert)
+    {
+    		String sql="SELECT categoryName"
+    				+ "\nFROM Category"
+    				+ "\nWHERE categoryID="+idToInsert+";";
+    		Statement statement;
+    		try {
+    			ResultSet rs;
+    			statement = connection.createStatement();
+    			rs = statement.executeQuery(sql); //execute SQL statement
+    			while(rs.next())
+    			{
+    				String s = rs.getString("categoryName");
+    				f.setCategoryName(s);
+    				insertFoodItem(f, connection);
+        
+
+    			}
+    		} catch (SQLException e) {
+    			e.printStackTrace();
+    		}
+    }
+    public static void insertFoodItem(FoodItem f1, Connection connection)
+    {
+   
+    	String fInsert = "INSERT FoodItem ([foodName], [foodPrice], [calories], [description], [type], [prepTime], [categoryID], [restaurantID]) VALUES ('"+f1.getFoodName()+"', '"+f1.getFoodPrice()+"', '"+f1.getCalories()+"', '"+f1.getDescription()+"', '"+f1.getType()+"', '"+f1.getPrepTime()+"', '"+f1.getCategoryID()+"', '"+selectedRestaurant.getRestaurantID()+"');";
+    	Statement statement;
+    	try {
+    			statement = connection.createStatement();
+    			statement.executeUpdate(fInsert); //execute SQL statement
+    			System.out.print("Menu data succesfully inserted: \n");
+    			//The above inserts new data into the DB and then alerts the user that it was successful -Jack
+    		} catch (SQLException e) {
+    				e.printStackTrace();
+    		}
+   
     }
 }

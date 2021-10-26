@@ -11,7 +11,7 @@ package foodordering;
  */
 public class FoodItem {
 
-    private int foodItemID, calories, restaurantID;
+    private int foodItemID, calories, restaurantID, categoryID;
     private String foodName, description, type, prepTime, categoryName;
     private float foodPrice;
     
@@ -30,7 +30,14 @@ public class FoodItem {
     	this.type=type;
     	this.prepTime=prepTime;
     	this.categoryName=categoryName;
+    	//this.categoryID=categoryID;
     }
+	public int getCategoryID() {
+		return categoryID;
+	}
+	public void setCategoryID(int categoryID) {
+		this.categoryID = categoryID;
+	}
 	public int getFoodItemID() {
 		return foodItemID;
 	}
