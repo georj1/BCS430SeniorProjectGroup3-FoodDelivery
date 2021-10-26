@@ -52,6 +52,7 @@ public class FoodOrdering {
     					//+ "\n[6] Search Restaurnts by Zip Code"
     					+ "\n[7] After Selecting a Restaurant, create an order"
     					+ "\n[8] Enter food for a Restaurant"
+    					+ "\n[9] Search for a Restaurant based on Type"
     					+ "\n[0] Exit"); //For now this well be used to see if a Restaurant or Customer is being added and other functionality -Jack
     			userIn = scin.nextInt(); //code to put the user input into a String -Jack
     			switch(userIn) //Temporary make navigation easier while waiting for Java FX -Jack
@@ -205,7 +206,6 @@ public class FoodOrdering {
     				    }
     				}
     				break;
-    			//TODO: Implement a method that allows the restaurant to enter and remove menu items
     			case 8:
     				//getCategory;
     		        showRestaurants(connection); //Call the method that shows the data
@@ -240,6 +240,12 @@ public class FoodOrdering {
     		        f1.setCategoryID(categoryID);
     		        inputCategoryType(connection, f1, categoryID);
     				break;
+    			case 9:
+    				System.out.println("\nEnter the type of restaurant you are looking for:  ");
+    				Scanner selectRT = new Scanner(System.in); //Scanner is used to get data from the user
+    				String typeSelectIn;
+    			    typeSelectIn=selectRT.nextLine();
+    			    rTypeSearch(typeSelectIn, connection);
     			//TODO: Implement a method to search for restaurants based on the Type of Restaurant, pulling from the Type table to give them options
     			default:
     				break;
@@ -635,5 +641,28 @@ public class FoodOrdering {
     				e.printStackTrace();
     		}
    
+    }
+    
+    
+    
+    public static void rTypeSearch(String searchType, Connection connection)
+    {
+    	String sql="SELECT *"
+    			+ "\nFROM Restaurant JOIN RestaurantType ON Restaurant.restaurantTypeID=RestaurantType.restaurantTypeID"
+    			+ "\nWHERE restaurantType='"+searchType+"';"; //code to get all data from the restaurant -Jack
+    	Statement statement;
+    	try {
+    		ResultSet rs;
+    		statement = connection.createStatement();
+    		rs = statement.executeQuery(sql); //execute SQL statement
+    		while(rs.next())
+    		{
+    			String s = "[" + rs.getString("restaurantID") + "] "+ rs.getString("restaurantName")+ ", "+rs.getString("restaurantType");
+    			System.out.println(s);
+    		}
+    	} catch (SQLException e) {
+    		e.printStackTrace();
+    	} //this isn't used yet but is how SQL statements will be inputed
+
     }
 }
