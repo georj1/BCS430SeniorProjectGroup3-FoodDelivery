@@ -81,7 +81,7 @@ public class FoodOrdering {
     					e.printStackTrace();
     				}
     				break;
-    				//The above exists for us to enter in SQL statements and for testing. -Jack
+    				//The above exists for us to enter in SQL statements and for testing purposes. -Jack
     			case 0: 
     				break;
     			case 1: 
