@@ -7,6 +7,7 @@ package foodordering;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -433,14 +434,21 @@ public class FoodOrdering {
     
     public static void displayMenu(Connection connection)
     {
+    	/*
     	String sql="SELECT FoodItem.foodItemID, foodName, FoodItem.[description], foodPrice, categoryName"
     			+"\nFROM Restaurant JOIN FoodItem ON Restaurant.restaurantID=FoodItem.restaurantID LEFT JOIN Category ON FoodItem.categoryID=Category.categoryID"
     			+"\nWHERE Restaurant.restaurantID="+selectedRestaurant.getRestaurantID()+";"; //Very lengthy SQL statement here, it is selecting the menu based on the selected Restaurant and then uses joins to get all the important menu information -Jack
-    	Statement statement;
+    	*/
+    	String sql="SELECT FoodItem.foodItemID, foodName, FoodItem.[description], foodPrice, categoryName"
+    			+"\nFROM Restaurant JOIN FoodItem ON Restaurant.restaurantID=FoodItem.restaurantID LEFT JOIN Category ON FoodItem.categoryID=Category.categoryID"
+    			+"\nWHERE Restaurant.restaurantID= ? "; //New way of writing the SQL statements to prevent SQL injection -Jack
+    	//Statement statement;
 		try {
 			ResultSet rs;
-			statement = connection.createStatement();
-			rs = statement.executeQuery(sql); //execute SQL statement
+			//statement = connection.createStatement();
+			PreparedStatement p = connection.prepareStatement(sql); //Uses a prepared statement to make sure that nothing else can be added -Jack
+			p.setInt(1, selectedRestaurant.getRestaurantID()); //Setting the value in the String -Jack
+			rs = p.executeQuery(sql); //execute SQL statement
 			while(rs.next())
 			{
 				String s = "["+rs.getInt("foodItemID")+ "] "+rs.getString("foodName")+", "+rs.getString("description")+", "+rs.getString("categoryName")+", "+rs.getFloat("foodPrice"); //This is the display, it will show the foodItem ID which for now will be used for selecting and all the menu items separated by commas -Jack
