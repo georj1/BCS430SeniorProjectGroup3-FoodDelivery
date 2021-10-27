@@ -11,42 +11,85 @@ package foodordering;
  */
 public class FoodItem {
 
-    private String name;
-    private double price;
-    private int calories;
+    private int foodItemID, calories, restaurantID, categoryID;
+    private String foodName, description, type, prepTime, categoryName;
+    private float foodPrice;
     
-    public FoodItem(String name, double price, int calories)
+    public FoodItem()
     {
-        this.name=name;
-        this.price=price;
-        this.calories=calories;
-        //basic constructor for food item, not updated with all the attributes yet -Jack
+        
+        //basic constructor for food item -Jack
     }
+    public FoodItem(int foodItemID, String foodName, float foodPrice, int calories, String description, String type, String prepTime, String categoryName)
+    {
+    	this.foodItemID=foodItemID;
+    	this.foodName=foodName;
+    	this.foodPrice=foodPrice;
+    	this.calories=calories;
+    	this.description=description;
+    	this.type=type;
+    	this.prepTime=prepTime;
+    	this.categoryName=categoryName;
+    	//this.categoryID=categoryID;
+    }
+	public int getCategoryID() {
+		return categoryID;
+	}
+	public void setCategoryID(int categoryID) {
+		this.categoryID = categoryID;
+	}
+	public int getFoodItemID() {
+		return foodItemID;
+	}
+	public void setFoodItemID(int foodItemID) {
+		this.foodItemID = foodItemID;
+	}
+	public int getCalories() {
+		return calories;
+	}
+	public void setCalories(int calories) {
+		this.calories = calories;
+	}
+	public String getFoodName() {
+		return foodName;
+	}
+	public void setFoodName(String foodName) {
+		this.foodName = foodName;
+	}
+	public String getDescription() {
+		return description;
+	}
+	public void setDescription(String description) {
+		this.description = description;
+	}
+	public String getType() {
+		return type;
+	}
+	public void setType(String type) {
+		this.type = type;
+	}
+	public String getPrepTime() {
+		return prepTime;
+	}
+	public void setPrepTime(String prepTime) {
+		this.prepTime = prepTime;
+	}
+	public String getCategoryName() {
+		return categoryName;
+		//Note for this one some momre logic will be needed to go right to the category table -Jack
+	}
+	public void setCategoryName(String categoryName) {
+		this.categoryName = categoryName;
+	}
+	public float getFoodPrice() {
+		return foodPrice;
+	}
+	public void setFoodPrice(float foodPrice) {
+		this.foodPrice = foodPrice;
+	}
     
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public double getPrice() {
-        return price;
-    }
-
-    public void setPrice(double price) {
-        this.price = price;
-    }
-
-    public int getCalories() {
-        return calories;
-    }
-
-    public void setCalories(int calories) {
-        this.calories = calories;
-    }
-    //Getters and Setters, again not updated with all attributes -Jack
+    
+    //Getters and Setters -Jack
     
     
 }

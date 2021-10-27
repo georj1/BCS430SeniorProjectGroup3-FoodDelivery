@@ -3,7 +3,6 @@ package foodordering;
 public class Customer {
 	private int customerID;
 	
-	
 	private String customerFName, customerLName, customerEmail, customerPhone, customerCity, customerState, customerStreet, customerZip;
      public Customer() 
      {
@@ -21,7 +20,7 @@ public class Customer {
  		this.customerState = customerState;
  		this.customerStreet = customerStreet;
  		this.customerZip = customerZip;
- 		//Constructor with all the variables -Jack
+ 		//Constructor with all  variables -Jack
  	}
      //all getters and setters -Jack
      public int getCustomerID() {

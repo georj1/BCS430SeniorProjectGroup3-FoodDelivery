@@ -12,16 +12,16 @@ import java.util.ArrayList;
  */
 public class Restaurant {
     
-    private int restaurantID; 
+    private int restaurantID, restaurantTypeID; 
 	private String restaurantName, restaurantCity, restaurantState, restaurantStreet, restaurantZip, restaurantType;
 	private double rating;
-	private ArrayList<FoodItem> menu = new ArrayList<>(); //menu for now, may change this later -Jack
+	//private ArrayList<FoodItem> menu = new ArrayList<>(); //menu for now, may change this later -Jack
 	    
 	public Restaurant()
     {
 		
     }
-	public Restaurant(int restaurantID, String restaurantName, String restaurantCity, String restaurantState, String restaurantStreet, String restaurantZip, String restaurantType, double rating)
+	public Restaurant(int restaurantID, String restaurantName, String restaurantCity, String restaurantState, String restaurantStreet, String restaurantZip, int restaurantTypeID, String restaurantType, double rating)
 	{
 		this.restaurantID=restaurantID;
 		this.rating=rating;
@@ -30,11 +30,18 @@ public class Restaurant {
         this.restaurantState=restaurantState;
         this.restaurantStreet=restaurantStreet;
         this.restaurantZip=restaurantZip;
+        this.restaurantTypeID=restaurantTypeID;
         this.restaurantType=restaurantType;
-        //Standard constructor that sets all the values except menu -Jack
+        //Standard constructor that sets all the values -Jack
     }
 	   
-    public int getRestaurantID() {
+    public int getRestaurantTypeID() {
+		return restaurantTypeID;
+	}
+	public void setRestaurantTypeID(int restaurantTypeID) {
+		this.restaurantTypeID = restaurantTypeID;
+	}
+	public int getRestaurantID() {
 		return restaurantID;
 	}
 
@@ -84,6 +91,7 @@ public class Restaurant {
 
 	public String getRestaurantType() {
 		return restaurantType;
+		//Note for this method some more logic will need to be applied when getting information -Jack
 	}
 
 	public void setRestaurantType(String restaurantType) {
@@ -99,20 +107,5 @@ public class Restaurant {
 	}
 	
 	//Getters and Setters for all the values -Jack
-
-	public ArrayList<FoodItem> getMenu() {
-        return menu;
-    }
-
-    public void setMenu(ArrayList<FoodItem> menu) {
-        this.menu = menu;
-    }
-    //Getter and Setter for the menu -Jack
-	    
-    public void addFoodItem(String name, double price, int calories)
-    {
-        menu.add(new FoodItem(name, price, calories));
-    }
-    //a method to add a food item to the menu by calling the ArrayList add function -Jack
     
 }
