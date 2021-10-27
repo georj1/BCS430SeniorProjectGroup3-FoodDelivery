@@ -448,7 +448,7 @@ public class FoodOrdering {
 			//statement = connection.createStatement();
 			PreparedStatement p = connection.prepareStatement(sql); //Uses a prepared statement to make sure that nothing else can be added -Jack
 			p.setInt(1, selectedRestaurant.getRestaurantID()); //Setting the value in the String -Jack
-			rs = p.executeQuery(sql); //execute SQL statement
+			rs = p.executeQuery(); //execute SQL statement
 			while(rs.next())
 			{
 				String s = "["+rs.getInt("foodItemID")+ "] "+rs.getString("foodName")+", "+rs.getString("description")+", "+rs.getString("categoryName")+", "+rs.getFloat("foodPrice"); //This is the display, it will show the foodItem ID which for now will be used for selecting and all the menu items separated by commas -Jack
@@ -651,14 +651,22 @@ public class FoodOrdering {
     
     public static void rTypeSearch(String searchType, Connection connection)
     {
+    	/*
     	String sql="SELECT *"
     			+ "\nFROM Restaurant JOIN RestaurantType ON Restaurant.restaurantTypeID=RestaurantType.restaurantTypeID"
     			+ "\nWHERE restaurantType='"+searchType+"';"; //code to get all data from the restaurants with a specific type -Ahsan
+    	*/
+    	String sql="SELECT *"
+    			+ "\nFROM Restaurant JOIN RestaurantType ON Restaurant.restaurantTypeID=RestaurantType.restaurantTypeID"
+    			+ "\nWHERE restaurantType= ? ";
     	Statement statement;
     	try {
     		ResultSet rs;
-    		statement = connection.createStatement();
-    		rs = statement.executeQuery(sql); //execute SQL statement
+    		PreparedStatement p = connection.prepareStatement(sql); //Uses a prepared statement to make sure that nothing else can be added -Jack
+			p.setString(1, searchType); //Setting the value in the String -Jack
+			rs = p.executeQuery();
+    		//statement = connection.createStatement();
+    		//rs = statement.executeQuery(sql); //execute SQL statement
     		while(rs.next())
     		{
     			String s = "[" + rs.getString("restaurantID") + "] "+ rs.getString("restaurantName")+ ", "+rs.getString("restaurantType");
