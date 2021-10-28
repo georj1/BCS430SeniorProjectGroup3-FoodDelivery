@@ -59,7 +59,6 @@ public class FoodOrdering {
     			switch(userIn) //Temporary make navigation easier while waiting for Java FX -Jack
     			{
     			case -2:
-    				String ssql="DELETE FROM FoodItem WHERE foodItemID>3;";
     				String sql = "SELECT * "
     						+ "\nFROM [Order] JOIN LineItem ON [Order].orderID=LineItem.orderID JOIN FoodItem ON LineItem.foodItemID=FoodItem.foodItemID"; //SQL statement for us to enter stuff in easily -Jack
     				//System.out.println(sql);
@@ -69,7 +68,6 @@ public class FoodOrdering {
     					statement = connection.createStatement();
     					
     					rs=statement.executeQuery(sql); //execute SQL statement
-    					statement.executeUpdate(ssql);
     					
     					while(rs.next())
     					{
@@ -329,14 +327,24 @@ public class FoodOrdering {
     
     public static void inputRestaurantType(Connection connection, Restaurant r, int idToInsert)
     {
+    	/*
     	String sql="SELECT restaurantType"
     			+ "\nFROM RestaurantType"
     			+ "\nWHERE restaurantTypeID="+idToInsert+";";
-    	Statement statement;
+    			*/
+    	
+    	String sql="SELECT restaurantType"
+    			+ "\nFROM RestaurantType"
+    			+ "\nWHERE restaurantTypeID= ?";
+    	//Statement statement;
+    	
+    	
     	try {
 			ResultSet rs;
-			statement = connection.createStatement();
-			rs = statement.executeQuery(sql); //execute SQL statement
+			PreparedStatement p = connection.prepareStatement(sql);
+			p.setInt(1, idToInsert);
+			//statement = connection.createStatement();
+			rs = p.executeQuery(); //execute SQL statement
 			while(rs.next())
 			{
 				String s = rs.getString("RestaurantType");
@@ -354,11 +362,15 @@ public class FoodOrdering {
     public static void insertRestaurant(Restaurant r1, Connection connection)
     {
     	
-    	String rInsert = "USE master INSERT [dbo].[Restaurant] ([restaurantName], [restaurantTypeID]) VALUES ('"+ r1.getRestaurantName()+"', '"+r1.getRestaurantTypeID()+"');";
-    	Statement statement;
+    	//String rInsert = "INSERT Restaurant ([restaurantName], [restaurantTypeID]) VALUES ('"+ r1.getRestaurantName()+"', '"+r1.getRestaurantTypeID()+"');";
+    	String rInsert = "INSERT Restaurant ([restaurantName], [restaurantTypeID]) VALUES (?, ?);";
+    	//Statement statement;
 		try {
-			statement = connection.createStatement();
-			statement.executeUpdate(rInsert); //execute SQL statement
+			PreparedStatement p = connection.prepareStatement(rInsert);
+			p.setString(1, r1.getRestaurantName());
+			p.setInt(2, r1.getRestaurantTypeID());
+			//statement = connection.createStatement();
+			p.executeUpdate(); //execute SQL statement
 			System.out.print("Restaurant data succesfully inserted: \n");
 			//The above inserts new data into the DB and then alerts the user that it was successful -Jack
 		} catch (SQLException e) {
@@ -372,11 +384,18 @@ public class FoodOrdering {
     public static void insertCustomer(Customer c1, Connection connection)
     {
     	
-    	String cInsert = "USE master INSERT [dbo].[Customer] ([lastName], [firstName], [email], [phone]) VALUES ('"+ c1.getCustomerLName()+"', '" + c1.getCustomerFName()+"', '"+c1.getCustomerEmail()+"', '"+c1.getCustomerPhone()+"');";
-    	Statement statement;
+    	//String cInsert = "USE master INSERT Customer ([lastName], [firstName], [email], [phone]) VALUES ('"+ c1.getCustomerLName()+"', '" + c1.getCustomerFName()+"', '"+c1.getCustomerEmail()+"', '"+c1.getCustomerPhone()+"');";
+    	String cInsert = "USE master INSERT Customer ([lastName], [firstName], [email], [phone]) VALUES (?, ?, ?, ?);";
+    	//Statement statement;
 		try {
-			statement = connection.createStatement();
-			statement.executeUpdate(cInsert); //execute sql statement
+			PreparedStatement p = connection.prepareStatement(cInsert);
+			p.setString(1, c1.getCustomerLName());
+			p.setString(2, c1.getCustomerFName());
+			p.setString(3, c1.getCustomerEmail());
+			p.setString(4, c1.getCustomerPhone());
+			//statement = connection.createStatement();
+			//statement.executeUpdate(cInsert); //execute sql statement
+			p.executeUpdate();
 			System.out.print("Customer data succesfully inserted: \n");
 			//The above inserts new data into the DB and then alerts the user that it was successful -Jack
 		} catch (SQLException e) {
@@ -388,12 +407,16 @@ public class FoodOrdering {
     
     public static void rZipSearch(String searchZip, Connection connection)
     {
-    	String sql="SELECT * FROM [dbo].[Restaurant] WHERE ZipCode="+searchZip+";"; //code to get all data from the restaurant -Jack
-		Statement statement;
+    	//String sql="SELECT * FROM [dbo].[Restaurant] WHERE ZipCode="+searchZip+";"; //code to get all data from the restaurant -Jack
+    	String sql="SELECT * FROM [dbo].[Restaurant] WHERE ZipCode= ?"; //code to get all data from the restaurant -Jack
+		//Statement statement;
 		try {
 			ResultSet rs;
-			statement = connection.createStatement();
-			rs = statement.executeQuery(sql); //execute SQL statement
+			PreparedStatement p = connection.prepareStatement(sql);
+			p.setString(1, searchZip);
+			//statement = connection.createStatement();
+			//rs = statement.executeQuery(sql); //execute SQL statement
+			rs = p.executeQuery();
 			while(rs.next())
 			{
 				String s = "[" + rs.getString("RestaurantID") + "] "+ rs.getString("RestaurantName")+ ": "+rs.getString("City")+", "+rs.getString("Street")+", "+rs.getString("State")+", "+rs.getString("ZipCode")+", "+rs.getString("RestaurantType")+", "+rs.getString("RestaurantRating");
@@ -409,12 +432,16 @@ public class FoodOrdering {
     
     public static void selectRestaurant(Connection connection, int rSelect)
     {
-    	String sql="SELECT restaurantID, restaurantName, Restaurant.restaurantTypeID, restaurantType FROM [dbo].[Restaurant] JOIN RestaurantType ON Restaurant.restaurantTypeID=RestaurantType.restaurantTypeID  WHERE RestaurantID="+rSelect+";"; //code to get the restaurant based on the ID the customer selected, will need to have the menu added -Jack
-		Statement statement;
+    	//String sql="SELECT restaurantID, restaurantName, Restaurant.restaurantTypeID, restaurantType FROM [dbo].[Restaurant] JOIN RestaurantType ON Restaurant.restaurantTypeID=RestaurantType.restaurantTypeID  WHERE RestaurantID="+rSelect+";"; //code to get the restaurant based on the ID the customer selected, will need to have the menu added -Jack
+    	String sql="SELECT restaurantID, restaurantName, Restaurant.restaurantTypeID, restaurantType FROM [dbo].[Restaurant] JOIN RestaurantType ON Restaurant.restaurantTypeID=RestaurantType.restaurantTypeID  WHERE RestaurantID= ?"; //code to get the restaurant based on the ID the customer selected, will need to have the menu added -Jack
+    	//Statement statement;
 		try {
 			ResultSet rs;
-			statement = connection.createStatement();
-			rs = statement.executeQuery(sql); //execute SQL statement
+			PreparedStatement p = connection.prepareStatement(sql);
+			p.setInt(1, rSelect);
+			//statement = connection.createStatement();
+			//rs = statement.executeQuery(sql); //execute SQL statement
+			rs=p.executeQuery();
 			while(rs.next())
 			{
 				selectedRestaurant.setRestaurantID(rs.getInt("restaurantID"));
@@ -463,12 +490,16 @@ public class FoodOrdering {
     
     public static void getCurrentCustomer(Connection connection, String cEmail)
     {
-    	String sql="SELECT * FROM [dbo].[Customer] WHERE email='"+cEmail+"';"; //code to get the customer based on their email, will tie into login later -Jack
-		Statement statement;
+    	//String sql="SELECT * FROM [dbo].[Customer] WHERE email='"+cEmail+"';"; //code to get the customer based on their email, will tie into login later -Jack
+    	String sql="SELECT * FROM [dbo].[Customer] WHERE email= ?"; //code to get the customer based on their email, will tie into login later -Jack
+		//Statement statement;
 		try {
 			ResultSet rs;
-			statement = connection.createStatement();
-			rs = statement.executeQuery(sql); //execute SQL statement
+			PreparedStatement p = connection.prepareStatement(sql);
+			p.setString(1, cEmail);
+			//statement = connection.createStatement();
+			//rs = statement.executeQuery(sql); //execute SQL statement
+			rs=p.executeQuery();
 			while(rs.next())
 			{
 				currentCustomer.setCustomerID(rs.getInt("customerID"));
@@ -490,11 +521,15 @@ public class FoodOrdering {
     public static void addFood(Connection connection, ArrayList<FoodItem> foodList)
     {
     	//TODO: Fix this code, need to also add the LineItem Table
-    	String sqlCOrder="INSERT [Order](customerID, driverID, orderStatus, totalPrice) VALUES("+ currentCustomer.getCustomerID()+", NULL, 'Preparing', NULL)"; //this statement creates an order when called -Jack
-    	Statement statement;
+    	//String sqlCOrder="INSERT [Order](customerID, driverID, orderStatus, totalPrice) VALUES("+ currentCustomer.getCustomerID()+", NULL, 'Preparing', NULL)"; //this statement creates an order when called -Jack
+    	String sqlCOrder="INSERT [Order](customerID, driverID, orderStatus, totalPrice) VALUES(?, NULL, 'Preparing', NULL)"; //this statement creates an order when called -Jack
+    	//Statement statement;
     	try {
-			statement=connection.createStatement();
-			statement.executeUpdate(sqlCOrder);
+    		PreparedStatement p = connection.prepareStatement(sqlCOrder);
+    		p.setInt(1, currentCustomer.getCustomerID());
+			//statement=connection.createStatement();
+			//statement.executeUpdate(sqlCOrder);
+    		p.executeUpdate();
 			System.out.println("Order Created");
 		} catch (SQLException e1) {
 			e1.printStackTrace();
@@ -517,18 +552,25 @@ public class FoodOrdering {
     	String sqlFInsert=""; //this will fill with insert statements to add LineItems to the order -Jack
 		for (FoodItem i:foodList)
 		{
-			int counter=1;
-			sqlFInsert+="INSERT LineItem(lineItemNumber, foodItemID, orderID) VALUES("+counter+", "+i.getFoodItemID()+", "+oID+");\n"; //the SQL code and Java to add Line Items -Jack
-			counter++;
-		}
-    	Statement statement2;
 			try {
-				statement2 = connection.createStatement();
-				statement2.executeUpdate(sqlFInsert); //execute SQL statement
-				System.out.println("Added all items to the order");
+				int counter=1;
+				//sqlFInsert+="INSERT LineItem(lineItemNumber, foodItemID, orderID) VALUES("+counter+", "+i.getFoodItemID()+", "+oID+");\n"; //the SQL code and Java to add Line Items -Jack
+				sqlFInsert="INSERT LineItem(lineItemNumber, foodItemID, orderID) VALUES("+counter+", ?, ?);\n"; //the SQL code and Java to add Line Items -Jack
+				counter++;
+				PreparedStatement p2 = connection.prepareStatement(sqlFInsert);
+				p2.setInt(1, i.getFoodItemID());
+				p2.setInt(2, oID);
+				p2.executeUpdate();
+				//statement2 = connection.createStatement();
+				//statement2.executeUpdate(sqlFInsert); //execute SQL statement
+				System.out.println("Added item to the order");
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
+			
+		}
+    	//Statement statement2;
+			
 			
     }
     
@@ -536,14 +578,20 @@ public class FoodOrdering {
     {
     	
     	
+    	/*String sql="SELECT *, categoryName"
+    			+ "\nFROM FoodItem LEFT JOIN Category ON FoodItem.categoryID=Category.categoryID"
+    			+ "\nWHERE foodItemID="+idToAdd +";"; //code to get the restaurant based on the ID the customer selected -Jack */
     	String sql="SELECT *, categoryName"
     			+ "\nFROM FoodItem LEFT JOIN Category ON FoodItem.categoryID=Category.categoryID"
-    			+ "\nWHERE foodItemID="+idToAdd +";"; //code to get the restaurant based on the ID the customer selected -Jack
-		Statement statement;
+    			+ "\nWHERE foodItemID= ?"; //code to get the restaurant based on the ID the customer selected -Jack
+		//Statement statement;
 			try {
 				ResultSet rs;
-				statement = connection.createStatement();
-				rs = statement.executeQuery(sql); //execute SQL statement
+				PreparedStatement p = connection.prepareStatement(sql);
+				p.setInt(1, idToAdd);
+				//statement = connection.createStatement();
+				//rs = statement.executeQuery(sql); //execute SQL statement
+				rs=p.executeQuery();
 				while(rs.next())
 				{
 					foodList.add(new FoodItem(rs.getInt("foodItemID"), rs.getString("foodName"), rs.getFloat("foodPrice"), rs.getInt("calories"), rs.getString("description"), rs.getString("type"), rs.getString("prepTime"), rs.getString("categoryName"))); //Adds a foodItem to the list which is essentially a cart for right now -Jack
@@ -610,14 +658,22 @@ public class FoodOrdering {
     
     public static void inputCategoryType(Connection connection, FoodItem f, int idToInsert)
     {
-    		String sql="SELECT categoryName"
+    	/*	
+    	String sql="SELECT categoryName"
     				+ "\nFROM Category"
     				+ "\nWHERE categoryID="+idToInsert+";"; //This will get us the full data from the specific category -Aayushma
-    		Statement statement;
+    				*/
+    	String sql="SELECT categoryName"
+				+ "\nFROM Category"
+				+ "\nWHERE categoryID= ?"; //This will get us the full data from the specific category -Aayushma
+    		//Statement statement;
     		try {
     			ResultSet rs;
-    			statement = connection.createStatement();
-    			rs = statement.executeQuery(sql); //execute SQL statement
+    			PreparedStatement p = connection.prepareStatement(sql);
+    			p.setInt(1, idToInsert);
+    			//statement = connection.createStatement();
+    			//rs = statement.executeQuery(sql); //execute SQL statement
+    			rs=p.executeQuery();
     			while(rs.next())
     			{
     				String s = rs.getString("categoryName");
@@ -633,12 +689,23 @@ public class FoodOrdering {
     public static void insertFoodItem(FoodItem f1, Connection connection)
     {
    
-    	String fInsert = "INSERT FoodItem ([foodName], [foodPrice], [calories], [description], [type], [prepTime], [categoryID], [restaurantID]) VALUES ('"+f1.getFoodName()+"', '"+f1.getFoodPrice()+"', '"+f1.getCalories()+"', '"+f1.getDescription()+"', '"+f1.getType()+"', '"+f1.getPrepTime()+"', '"+f1.getCategoryID()+"', '"+selectedRestaurant.getRestaurantID()+"');";
+    	//String fInsert = "INSERT FoodItem ([foodName], [foodPrice], [calories], [description], [type], [prepTime], [categoryID], [restaurantID]) VALUES ('"+f1.getFoodName()+"', '"+f1.getFoodPrice()+"', '"+f1.getCalories()+"', '"+f1.getDescription()+"', '"+f1.getType()+"', '"+f1.getPrepTime()+"', '"+f1.getCategoryID()+"', '"+selectedRestaurant.getRestaurantID()+"');";
     	//The above is the full insert SQL statement to add Food to the menu -Aayushma
-    	Statement statement;
+    	String fInsert = "INSERT FoodItem ([foodName], [foodPrice], [calories], [description], [type], [prepTime], [categoryID], [restaurantID]) VALUES (?, ?. ?, ?, ?, ?, ?, ?);";
+    	//Statement statement;
     	try {
-    			statement = connection.createStatement();
-    			statement.executeUpdate(fInsert); //execute SQL statement
+    		PreparedStatement p = connection.prepareStatement(fInsert);
+    		p.setString(1, f1.getFoodName());
+    		p.setFloat(2, f1.getFoodPrice());
+    		p.setInt(3, f1.getCalories());
+    		p.setString(4, f1.getDescription());
+    		p.setString(5, f1.getType());
+    		p.setString(6, f1.getPrepTime());
+    		p.setInt(7, f1.getCategoryID());
+    		p.setInt(8, selectedRestaurant.getRestaurantID());
+    			//statement = connection.createStatement();
+    			//statement.executeUpdate(fInsert); //execute SQL statement
+    		p.executeUpdate();
     			System.out.print("Menu data succesfully inserted: \n");
     			//The above inserts new data into the DB and then alerts the user that it was successful -Aayushma
     		} catch (SQLException e) {
