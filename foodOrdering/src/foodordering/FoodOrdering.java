@@ -605,10 +605,13 @@ public class FoodOrdering {
     
     public static void viewFoodList(Connection connection, ArrayList<FoodItem> foodList)
     {
+    	float totalPrice=0;
     	for(FoodItem f:foodList)
     	{
-    		System.out.println(f.getFoodName());
+    		System.out.println(f.getFoodName()+", "+f.getFoodPrice());
+    		totalPrice+=f.getFoodPrice();
     	}
+    	System.out.println("Total Price: "+totalPrice);
     	/*
     	String sql="SELECT * FROM FoodItem WHERE"; //code to get the restaurant based on the ID the customer selected -Jack
     	for(FoodItem i : foodList)
@@ -726,7 +729,7 @@ public class FoodOrdering {
     	String sql="SELECT *"
     			+ "\nFROM Restaurant JOIN RestaurantType ON Restaurant.restaurantTypeID=RestaurantType.restaurantTypeID"
     			+ "\nWHERE restaurantType= ? ";
-    	Statement statement;
+    	//Statement statement;
     	try {
     		ResultSet rs;
     		PreparedStatement p = connection.prepareStatement(sql); //Uses a prepared statement to make sure that nothing else can be added -Jack
