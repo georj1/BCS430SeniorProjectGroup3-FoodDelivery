@@ -691,7 +691,7 @@ public class FoodOrdering {
    
     	//String fInsert = "INSERT FoodItem ([foodName], [foodPrice], [calories], [description], [type], [prepTime], [categoryID], [restaurantID]) VALUES ('"+f1.getFoodName()+"', '"+f1.getFoodPrice()+"', '"+f1.getCalories()+"', '"+f1.getDescription()+"', '"+f1.getType()+"', '"+f1.getPrepTime()+"', '"+f1.getCategoryID()+"', '"+selectedRestaurant.getRestaurantID()+"');";
     	//The above is the full insert SQL statement to add Food to the menu -Aayushma
-    	String fInsert = "INSERT FoodItem ([foodName], [foodPrice], [calories], [description], [type], [prepTime], [categoryID], [restaurantID]) VALUES (?, ?. ?, ?, ?, ?, ?, ?);";
+    	String fInsert = "INSERT FoodItem ([foodName], [foodPrice], [calories], [description], [type], [prepTime], [categoryID], [restaurantID]) VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
     	//Statement statement;
     	try {
     		PreparedStatement p = connection.prepareStatement(fInsert);
