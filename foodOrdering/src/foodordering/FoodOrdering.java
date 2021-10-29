@@ -71,7 +71,7 @@ public class FoodOrdering {
     					
     					while(rs.next())
     					{
-    						String s=""+rs.getInt("orderID")+", "+rs.getInt("customerID")+", "+rs.getInt("driverID")+", "+rs.getString("orderStatus")+", "+rs.getFloat("totalPrice")+", "+rs.getInt("foodItemID")+", "+rs.getString("foodName");
+    						String s=""+rs.getInt("orderID")+", "+rs.getInt("customerID")+", "+rs.getInt("driverID")+", "+rs.getString("orderStatus")+", "+rs.getFloat("totalPrice")+", "+rs.getInt("foodItemID")+", "+rs.getString("foodName")+", "+rs.getInt("lineItemNumber");
     						System.out.println(s);
     					}
     					System.out.println("Statement success");
@@ -239,9 +239,10 @@ public class FoodOrdering {
     				break;
     			case 9:
     				System.out.println("\nEnter the type of restaurant you are looking for:  ");
+    				printType(connection);
     				Scanner selectRT = new Scanner(System.in); //Scanner is used to get data from the user -Ahsan
-    				String typeSelectIn;
-    			    typeSelectIn=selectRT.nextLine();
+    				int typeSelectIn;
+    			    typeSelectIn=selectRT.nextInt();
     			    rTypeSearch(typeSelectIn, connection);
     			default:
     				break;
@@ -550,10 +551,11 @@ public class FoodOrdering {
 			e1.printStackTrace();
 		}
     	String sqlFInsert=""; //this will fill with insert statements to add LineItems to the order -Jack
+    	int counter=1;
 		for (FoodItem i:foodList)
 		{
 			try {
-				int counter=1;
+				
 				//sqlFInsert+="INSERT LineItem(lineItemNumber, foodItemID, orderID) VALUES("+counter+", "+i.getFoodItemID()+", "+oID+");\n"; //the SQL code and Java to add Line Items -Jack
 				sqlFInsert="INSERT LineItem(lineItemNumber, foodItemID, orderID) VALUES("+counter+", ?, ?);\n"; //the SQL code and Java to add Line Items -Jack
 				counter++;
@@ -608,7 +610,7 @@ public class FoodOrdering {
     	float totalPrice=0;
     	for(FoodItem f:foodList)
     	{
-    		System.out.println(f.getFoodName()+", "+f.getFoodPrice());
+    		System.out.println("[" + f.getFoodItemID() +"] "+ f.getFoodName()+", "+f.getFoodPrice());
     		totalPrice+=f.getFoodPrice();
     	}
     	System.out.println("Total Price: "+totalPrice);
@@ -717,9 +719,26 @@ public class FoodOrdering {
    
     }
     
+    public static void printType(Connection connection)
+    {
+    	String sql="SELECT *"
+    			+ "\nFROM RestaurantType;";
+    	Statement statement;
+    	try {
+    		ResultSet rs;
+    		statement = connection.createStatement();
+    		rs = statement.executeQuery(sql); //execute SQL statement
+    		while(rs.next())
+    		{
+    			String s = "[" + rs.getString("restaurantTypeID") + "] "+ rs.getString("restaurantType");
+    			System.out.println(s); //Displays all the restaurants to allow one to be selected -Jack
+    		}
+    	} catch (SQLException e) {
+    		e.printStackTrace();
+    	} 
+    }
     
-    
-    public static void rTypeSearch(String searchType, Connection connection)
+    public static void rTypeSearch(int searchID, Connection connection)
     {
     	/*
     	String sql="SELECT *"
@@ -728,12 +747,12 @@ public class FoodOrdering {
     	*/
     	String sql="SELECT *"
     			+ "\nFROM Restaurant JOIN RestaurantType ON Restaurant.restaurantTypeID=RestaurantType.restaurantTypeID"
-    			+ "\nWHERE restaurantType= ? ";
+    			+ "\nWHERE Restaurant.restaurantTypeID= ? ";
     	//Statement statement;
     	try {
     		ResultSet rs;
     		PreparedStatement p = connection.prepareStatement(sql); //Uses a prepared statement to make sure that nothing else can be added -Jack
-			p.setString(1, searchType); //Setting the value in the String -Jack
+			p.setInt(1, searchID); //Setting the value in the String -Jack
 			rs = p.executeQuery();
     		//statement = connection.createStatement();
     		//rs = statement.executeQuery(sql); //execute SQL statement
