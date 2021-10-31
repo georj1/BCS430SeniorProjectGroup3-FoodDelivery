@@ -552,6 +552,7 @@ public class FoodOrdering {
 		}
     	String sqlFInsert=""; //this will fill with insert statements to add LineItems to the order -Jack
     	int counter=1;
+    	int totalPrepTime=0;
 		for (FoodItem i:foodList)
 		{
 			try {
@@ -563,16 +564,25 @@ public class FoodOrdering {
 				p2.setInt(1, i.getFoodItemID());
 				p2.setInt(2, oID);
 				p2.executeUpdate();
-				//statement2 = connection.createStatement();
-				//statement2.executeUpdate(sqlFInsert); //execute SQL statement
+			    //totalPrepTime+=i.getPrepTime(); //Commented out for now, will eventually calculate totalPrepTime -Jack
 				System.out.println("Added item to the order");
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
 			
 		}
-    	//Statement statement2;
-			
+		/*
+		try {
+			String sqlOrderIn="UPDATE [Order]"
+					+ "/nSET totalTime= ?"
+					+ "/nWHERE orderID= ?";
+			PreparedStatement p3 = connection.prepareStatement(sqlOrderIn);
+			p3.setInt(1, totalPrepTime);
+			p3.setInt(2, oID);
+			p3.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}		*/	
 			
     }
     
