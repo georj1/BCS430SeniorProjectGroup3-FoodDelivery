@@ -25,7 +25,8 @@ public class FoodOrdering {
      */
 	private static Restaurant selectedRestaurant = new Restaurant(); //This is a restaurant dataType that will store the selected restaurant so that it can be used to get the menu -Jack
 	private static Customer currentCustomer = new Customer(); //This is the current customer for use with the order, it will be replaced with Chris's login system when that is done -Jack
-    public static void main(String[] args) 
+    //private static Driver currentDriver = new Driver(); //This is the current Driver, will be replaced by login eventually hopefully -Jack 
+	public static void main(String[] args) 
     {
     	
     	String url = "jdbc:sqlserver://DESKTOP-NJ7L5JK\\sqlexpress;integratedSecurity=true;databaseName=master;"; //this is the server URL on my local machine -Jack
@@ -127,7 +128,7 @@ public class FoodOrdering {
     			case 5:
     				
     				showRestaurants(connection); //Call the method that shows the data -Ahsan
-    				System.out.println("Enter the nummber of the restaurant you want to order from: ");
+    				System.out.println("Enter the number of the restaurant you want to order from: ");
     				Scanner selectR = new Scanner(System.in); //Scanner is used to get data from the user -Jack
     		    	int rSelectIn=0;
     		    	rSelectIn=selectR.nextInt();
@@ -244,6 +245,21 @@ public class FoodOrdering {
     				int typeSelectIn;
     			    typeSelectIn=selectRT.nextInt();
     			    rTypeSearch(typeSelectIn, connection);
+    			    break;
+    			case 10:
+    				//This method will only be shown to drivers, for now will call a driver login method -Jack
+    				scin.nextLine();
+    				String dFirstName, dLastName;
+    				System.out.println("Enter the first name of the driver: ");
+    				dFirstName=scin.nextLine();
+    				System.out.println("Enter the last name of the driver: ");
+    				dLastName=scin.nextLine();
+    				getCurrentDriver(connection, dFirstName, dLastName); //calls the method that will set the current driver. 
+    				//viewOrder(connection); //Calls method to view the currently open orders -Jack
+    				System.out.println("Enter the ID of the order you want to select: ");
+    				int oSelect =scin.nextInt();
+    				//selectOrder(connection, oSelect); //calls the method that will update the orderTable to say it's selected and to create a delivery -Jack
+    				break;
     			default:
     				break;
     			
@@ -775,5 +791,38 @@ public class FoodOrdering {
     		e.printStackTrace();
     	} 
 
+    }
+    
+    public static void getCurrentDriver(Connection connection, String dFName, String dLName)
+    {
+    	String sql="SELECT * FROM Driver WHERE firstName = ? AND lastName = ?"; //code to get the customer based on their email, will tie into login later -Jack
+		try {
+			ResultSet rs;
+			PreparedStatement p = connection.prepareStatement(sql);
+			p.setString(1, dFName);
+			p.setString(2,  dLName);
+			rs=p.executeQuery();
+			while(rs.next())
+			{
+				/*
+				currentDriver.setDriverID(rs.getInt("driverID"));
+				currentDriver.setDriverFName(rs.getString("firstName"));
+				currentDriver.setDriverLName(rs.getString("lastName"));
+				currentDriver.setDriverPhone(rs.getString("phone"));
+				*/
+				//adds the information to our current driver for more global use -Jack
+				String s = rs.getString("firstName")+ ": "+rs.getString("lastName")+", "+rs.getString("phone"); //Display the Customer for now, will eventually be the menu -Jack
+				System.out.println(s);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} 
+    }
+    
+    public static void orderSelect(Connection connection, int orderID)
+    {
+    	String sqlO ="SELECT * "
+    			+ "\nFROM [Order] "
+    			+ "\nWHERE orderID= ?";
     }
 }
