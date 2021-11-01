@@ -11,6 +11,9 @@ CREATE TABLE Customer (
 	PRIMARY KEY(CustomerID),
 );
 
+ALTER TABLE Customer
+ADD [location] varChar(10);
+
 CREATE TABLE RestaurantType (
 	restaurantTypeID int not null identity(1,1),
 	restaurantType varChar(255)
@@ -53,6 +56,10 @@ CREATE TABLE Restaurant (
 	PRIMARY KEY(restaurantID),
 	FOREIGN KEY(restaurantTypeID) REFERENCES RestaurantType(restaurantTypeID)
 );
+
+ALTER TABLE Restaurant
+ADD [location] varChar(10);
+
 INSERT Restaurant(restaurantName, restaurantTypeID) VALUES('Wendys', 3);
 CREATE TABLE Rating (
 	ratingID int not null identity(1,1),
@@ -77,6 +84,9 @@ CREATE TABLE FoodItem (
 	FOREIGN KEY(categoryID) REFERENCES Category(categoryID),
 	FOREIGN KEY(restaurantID) REFERENCES Restaurant(restaurantID)
 );
+
+ALTER TABLE FoodItem
+ALTER COLUMN prepTime int;
 
 INSERT FoodItem(foodName, foodPrice, calories, [description], [type], prepTime, categoryID, restaurantID) VALUES('Hamburger', 4.99, 600, 'A hamburger with lettuce, tomato, onions and ketchup', NULL, '5 minutes', 1);
 INSERT FoodItem(foodName, foodPrice, calories, [description], [type], prepTime, categoryID, restaurantID) VALUES('Chicken Nuggets', 3.99, 500, '6 Chicken Nuggets', NULL, '4 minutes', 1);
@@ -122,6 +132,9 @@ CREATE TABLE [Order](
 	FOREIGN KEY(customerID) REFERENCES Customer(customerID),
 	FOREIGN KEY(driverID) REFERENCES Driver(driverID)
 );
+
+ALTER TABLE [Order]
+ADD totalPrepTime int;
 
 CREATE TABLE LineItem(
 	lineItemID int not null identity(1,1),
