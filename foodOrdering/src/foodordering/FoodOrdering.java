@@ -11,6 +11,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -821,8 +822,19 @@ public class FoodOrdering {
     
     public static void orderSelect(Connection connection, int orderID)
     {
-    	String sqlO ="SELECT * "
-    			+ "\nFROM [Order] "
-    			+ "\nWHERE orderID= ?";
+    	String sqlIn = "INSERT Delivery(departTime, estimatedArrivalTime, startLocation, restaurantLocation, customerLocation, totalPrice, driverID) VALUES(?, ?, ?, ?, ?, ?, ?)";
+    	try {
+    		PreparedStatement p = connection.prepareStatement(sqlIn);
+    		p.setString(1, java.time.LocalDateTime.now().toString());
+    		//p.setString(2, );
+    		//p.setString(3, curLoc);
+    		//p.setString(4, restLoc);
+    		//p.setString(5, custLoc);
+    		//p.setFloat(6, totalPrice);
+    		p.setInt(7, orderID);
+    		p.executeUpdate();
+    	} catch(SQLException e) {
+			e.printStackTrace();
+		} 
     }
 }
