@@ -820,7 +820,7 @@ public class FoodOrdering {
 		} 
     }
     
-    public static void orderSelect(Connection connection, int orderID)
+    public static void selectOrder(Connection connection, int orderID)
     {
     	String sqlIn = "INSERT Delivery(departTime, estimatedArrivalTime, startLocation, restaurantLocation, customerLocation, totalPrice, driverID) VALUES(?, ?, ?, ?, ?, ?, ?)";
     	try {
