@@ -56,6 +56,7 @@ public class FoodOrdering {
     					+ "\n[7] After Selecting a Restaurant, create an order"
     					+ "\n[8] Enter food for a Restaurant"
     					+ "\n[9] Search for a Restaurant based on Type"
+    					+ "\n[11] Display Orders that are open"
     					+ "\n[0] Exit"); //For now this well be used to see if a Restaurant or Customer is being added and other functionality -Jack
     			userIn = scin.nextInt(); //code to put the user input into a String -Jack
     			switch(userIn) //Temporary make navigation easier while waiting for Java FX -Jack
@@ -256,10 +257,13 @@ public class FoodOrdering {
     				System.out.println("Enter the last name of the driver: ");
     				dLastName=scin.nextLine();
     				getCurrentDriver(connection, dFirstName, dLastName); //calls the method that will set the current driver. 
-    				//viewOrder(connection); //Calls method to view the currently open orders -Jack
+    				displayOrders(connection); //Calls method to view the currently open orders -Jack
     				System.out.println("Enter the ID of the order you want to select: ");
     				int oSelect =scin.nextInt();
     				//selectOrder(connection, oSelect); //calls the method that will update the orderTable to say it's selected and to create a delivery -Jack
+    				break;
+    			case 11:
+    				displayOrders(connection);
     				break;
     			default:
     				break;
@@ -794,6 +798,29 @@ public class FoodOrdering {
 
     }
     
+    
+    
+    public static void displayOrders(Connection connection)
+    {
+    	String sql="SELECT * FROM [Order] WHERE orderStatus='preparing'"; // getting orders that are not taken by a driver and are open- Ahsan
+
+    	Statement statement;
+    	ResultSet rs;
+    	try {
+    		statement=connection.createStatement();
+    		rs=statement.executeQuery(sql);
+    		while(rs.next())
+    		{
+    			String s = "[" + rs.getInt("orderID") + "] " + rs.getFloat("totalPrice" ); //+ " " + rs.getInt("totalPrepTime") ; //will be changed in the future when we get a better idea of what to show the customer -Ahsan
+    			System.out.println(s);
+    		}
+    	} catch (SQLException e) {
+    		e.printStackTrace();
+    }
+
+
+
+    }
     public static void getCurrentDriver(Connection connection, String dFName, String dLName)
     {
     	String sql="SELECT * FROM Driver WHERE firstName = ? AND lastName = ?"; //code to get the customer based on their email, will tie into login later -Jack
