@@ -260,7 +260,10 @@ public class FoodOrdering {
     				displayOrders(connection); //Calls method to view the currently open orders -Jack
     				System.out.println("Enter the ID of the order you want to select: ");
     				int oSelect =scin.nextInt();
-    				//selectOrder(connection, oSelect); //calls the method that will update the orderTable to say it's selected and to create a delivery -Jack
+    				scin.nextLine();
+    				System.out.println("Enter the zip code you are currently in: ");
+    				String zip=scin.nextLine();
+    				//selectOrder(connection, oSelect, zip); //calls the method that will update the orderTable to say it's selected and to create a delivery -Jack
     				break;
     			case 11:
     				displayOrders(connection);
@@ -847,14 +850,14 @@ public class FoodOrdering {
 		} 
     }
     
-    public static void selectOrder(Connection connection, int orderID)
+    public static void selectOrder(Connection connection, int orderID, String curLoc)
     {
-    	String curLoc, custLoc, restLoc;
-    	String sqlGet = "SELECT *"
+    	String custLoc="", restLoc="";
+    	String sqlGetC = "SELECT customerLocation"
     			+ "\nFROM [Order] JOIN Customer ON [Order].customerID=Customer.customerID"
     			+ "\nWHERE orderID= ?";
     	try {
-    		PreparedStatement p = connection.prepareStatement(sqlGet);
+    		PreparedStatement p = connection.prepareStatement(sqlGetC);
     		p.setInt(1,  orderID);
     		ResultSet rs;
     		rs=p.executeQuery();
@@ -866,18 +869,33 @@ public class FoodOrdering {
 			e.printStackTrace();
 		} 
     	
+    	String sqlGetR = "SELECT restaurantLocation"
+    			+ "\nFROM [Order] JOIN LineItem ON [Order].orderID=LineItem.orderID JOIN FoodItem ON LineItem.foodItemID=FoodItem.foodItemID JOIN Restaurant ON FoodItem.restaurantID=Restaurant.restaurantID"
+    			+ "\nWHERE OrderID = ?";
+    	try {
+    		PreparedStatement p1 = connection.prepareStatement(sqlGetR);
+    		p1.setInt(1,  orderID);
+    		ResultSet rs;
+    		rs=p1.executeQuery();
+    		while(rs.next())
+    		{
+    			restLoc=rs.getString("customerLocation");
+    		}
+    	}catch(SQLException e) {
+			e.printStackTrace();
+		} 
     	
     	String sqlIn = "INSERT Delivery(departTime, estimatedArrivalTime, startLocation, restaurantLocation, customerLocation, totalPrice, driverID) VALUES(?, ?, ?, ?, ?, ?, ?)";
     	try {
-    		PreparedStatement p1 = connection.prepareStatement(sqlIn);
-    		p1.setString(1, java.time.LocalDateTime.now().toString());
-    		//p1.setString(2, );
-    		//p1.setString(3, curLoc);
-    		//p1.setString(4, restLoc);
-    		//p1.setString(5, custLoc);
-    		//p1.setFloat(6, totalPrice);
-    		p1.setInt(7, orderID);
-    		p1.executeUpdate();
+    		PreparedStatement p2 = connection.prepareStatement(sqlIn);
+    		p2.setString(1, java.time.LocalDateTime.now().toString());
+    		//p2.setString(2, );
+    		p2.setString(3, curLoc);
+    		p2.setString(4, restLoc);
+    		p2.setString(5, custLoc);
+    		//p2.setFloat(6, totalPrice);
+    		p2.setInt(7, orderID);
+    		p2.executeUpdate();
     	} catch(SQLException e) {
 			e.printStackTrace();
 		} 
