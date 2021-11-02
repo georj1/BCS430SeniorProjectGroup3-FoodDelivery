@@ -849,17 +849,35 @@ public class FoodOrdering {
     
     public static void selectOrder(Connection connection, int orderID)
     {
+    	String curLoc, custLoc, restLoc;
+    	String sqlGet = "SELECT *"
+    			+ "\nFROM [Order] JOIN Customer ON [Order].customerID=Customer.customerID"
+    			+ "\nWHERE orderID= ?";
+    	try {
+    		PreparedStatement p = connection.prepareStatement(sqlGet);
+    		p.setInt(1,  orderID);
+    		ResultSet rs;
+    		rs=p.executeQuery();
+    		while(rs.next())
+    		{
+    			custLoc=rs.getString("customerLocation");
+    		}
+    	}catch(SQLException e) {
+			e.printStackTrace();
+		} 
+    	
+    	
     	String sqlIn = "INSERT Delivery(departTime, estimatedArrivalTime, startLocation, restaurantLocation, customerLocation, totalPrice, driverID) VALUES(?, ?, ?, ?, ?, ?, ?)";
     	try {
-    		PreparedStatement p = connection.prepareStatement(sqlIn);
-    		p.setString(1, java.time.LocalDateTime.now().toString());
-    		//p.setString(2, );
-    		//p.setString(3, curLoc);
-    		//p.setString(4, restLoc);
-    		//p.setString(5, custLoc);
-    		//p.setFloat(6, totalPrice);
-    		p.setInt(7, orderID);
-    		p.executeUpdate();
+    		PreparedStatement p1 = connection.prepareStatement(sqlIn);
+    		p1.setString(1, java.time.LocalDateTime.now().toString());
+    		//p1.setString(2, );
+    		//p1.setString(3, curLoc);
+    		//p1.setString(4, restLoc);
+    		//p1.setString(5, custLoc);
+    		//p1.setFloat(6, totalPrice);
+    		p1.setInt(7, orderID);
+    		p1.executeUpdate();
     	} catch(SQLException e) {
 			e.printStackTrace();
 		} 
