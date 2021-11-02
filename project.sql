@@ -134,7 +134,7 @@ CREATE TABLE [Order](
 );
 
 ALTER TABLE [Order]
-ADD totalPrepTime int;
+ADD totalPrepTime int; --h
 
 CREATE TABLE LineItem(
 	lineItemID int not null identity(1,1),
