@@ -12,7 +12,7 @@ CREATE TABLE Customer (
 );
 
 ALTER TABLE Customer
-ADD [location] varChar(5);
+ADD customerLocation varChar(5);
 
 CREATE TABLE RestaurantType (
 	restaurantTypeID int not null identity(1,1),
@@ -58,7 +58,7 @@ CREATE TABLE Restaurant (
 );
 
 ALTER TABLE Restaurant
-ADD [location] varChar(5);
+ADD restaurantLocation varChar(5);
 
 INSERT Restaurant(restaurantName, restaurantTypeID) VALUES('Wendys', 3);
 CREATE TABLE Rating (
