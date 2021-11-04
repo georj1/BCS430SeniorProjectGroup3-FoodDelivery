@@ -610,6 +610,8 @@ public class FoodOrdering {
 			
     }
     
+    
+    
     public static void addItemToFList(Connection connection, int idToAdd, ArrayList<FoodItem> foodList)
     {
     	
@@ -676,6 +678,9 @@ public class FoodOrdering {
 			}
 			*/
     }
+    
+    
+    
     public static void getCategory(Connection connection)
     {
     	String sql="SELECT categoryID, categoryName"
@@ -694,6 +699,8 @@ public class FoodOrdering {
     		e.printStackTrace();
     	}
     }
+    
+    
     
     public static void inputCategoryType(Connection connection, FoodItem f, int idToInsert)
     {
@@ -725,6 +732,9 @@ public class FoodOrdering {
     			e.printStackTrace();
     		}
     }
+    
+    
+    
     public static void insertFoodItem(FoodItem f1, Connection connection)
     {
    
@@ -753,6 +763,8 @@ public class FoodOrdering {
    
     }
     
+    
+    
     public static void printType(Connection connection)
     {
     	String sql="SELECT *"
@@ -771,6 +783,8 @@ public class FoodOrdering {
     		e.printStackTrace();
     	} 
     }
+    
+    
     
     public static void rTypeSearch(int searchID, Connection connection)
     {
@@ -824,6 +838,9 @@ public class FoodOrdering {
 
 
     }
+    
+    
+    
     public static void getCurrentDriver(Connection connection, String dFName, String dLName)
     {
     	String sql="SELECT * FROM Driver WHERE firstName = ? AND lastName = ?"; //code to get the customer based on their email, will tie into login later -Jack
@@ -849,6 +866,53 @@ public class FoodOrdering {
 			e.printStackTrace();
 		} 
     }
+    
+    
+    
+    public static int calcTotalTime(Connection connection, int orderID)
+    {
+    	int totalTime=0;
+    	String sql="SELECT prepTime "
+    			+ "\nFROM [Order]JOIN LineItem ON [Order].orderID=LineItem.orderID JOIN FoodItem ON LineItem.foodItemID=FoodItem.fooditemID";
+    	try {
+    		Statement statement;
+    		statement=connection.createStatement();
+    		ResultSet rs;
+    		rs=statement.executeQuery(sql);
+    		while(rs.next())
+    		{
+    			totalTime+=rs.getInt("prepTime");
+    		}
+    	}catch(SQLException e) {
+    			e.printStackTrace();
+    		}
+    	return totalTime;
+    	
+    }
+    
+    
+    
+    public static int calcTotalPrice(Connection connection, int orderID)
+    {
+    	int totalPrice=0;
+    	String sql="SELECT foodPrice "
+    			+ "\nFROM [Order]JOIN LineItem ON [Order].orderID=LineItem.orderID JOIN FoodItem ON LineItem.foodItemID=FoodItem.fooditemID";
+    	try {
+    		Statement statement;
+    		statement=connection.createStatement();
+    		ResultSet rs;
+    		rs=statement.executeQuery(sql);
+    		while(rs.next())
+    		{
+    			totalPrice+=rs.getInt("foodPrice");
+    		}
+    	}catch(SQLException e) {
+    			e.printStackTrace();
+    		}
+    	return totalPrice;
+    }
+    
+    
     
     public static void selectOrder(Connection connection, int orderID, String curLoc)
     {
@@ -884,17 +948,17 @@ public class FoodOrdering {
     	}catch(SQLException e) {
 			e.printStackTrace();
 		} 
-    	
-    	String sqlIn = "INSERT Delivery(departTime, estimatedArrivalTime, startLocation, restaurantLocation, customerLocation, totalPrice, driverID) VALUES(?, ?, ?, ?, ?, ?, ?)";
+    	int totalTime=calcTotalTime(connection, orderID);
+    	float totalPrice=calcTotalPrice(connection, orderID);
+    	String sqlIn = "INSERT Delivery(estimatedTimeToArrival, startLocation, restaurantLocation, customerLocation, totalPrice, driverID) VALUES(?, ?, ?, ?, ?, ?)";
     	try {
     		PreparedStatement p2 = connection.prepareStatement(sqlIn);
-    		p2.setString(1, java.time.LocalDateTime.now().toString());
-    		//p2.setString(2, );
-    		p2.setString(3, curLoc);
-    		p2.setString(4, restLoc);
-    		p2.setString(5, custLoc);
-    		//p2.setFloat(6, totalPrice);
-    		p2.setInt(7, orderID);
+    		p2.setInt(1, totalTime);
+    		p2.setString(2, curLoc);
+    		p2.setString(3, restLoc);
+    		p2.setString(4, custLoc);
+    		p2.setFloat(5, totalPrice);
+    		p2.setInt(6, orderID);
     		p2.executeUpdate();
     	} catch(SQLException e) {
 			e.printStackTrace();
