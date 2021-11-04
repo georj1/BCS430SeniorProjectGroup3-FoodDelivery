@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="375.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <StackPane prefHeight="400.0" prefWidth="600.0" />
+      <ImageView fitHeight="400.0" fitWidth="600.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@SplashScreenFood.jpeg" />
+         </image>
+      </ImageView>
+      <Pane prefHeight="200.0" prefWidth="200.0">
+         <children>
+
+         </children>
+      </Pane>
+      <Text fill="#f0fff0" layoutX="280.0" layoutY="136.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Username " wrappingWidth="100.98307228088379">
+         <font>
+      
+         </font></Text>
+      <Text fill="#f6fff6" layoutX="280.0" layoutY="162.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Password " wrappingWidth="100.98307228088379">
+         <font>
+  
+         </font></Text>
+      <TextField fx:id="PWfield" layoutX="381.0" layoutY="142.0" prefHeight="28.0" prefWidth="182.0" />
+      <TextField fx:id="UNfield" layoutX="381.0" layoutY="115.0" prefHeight="26.0" prefWidth="182.0" />
+      <Text fill="WHITE" layoutX="280.0" layoutY="92.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Login" textAlignment="CENTER" wrappingWidth="206.9830722808838">
+         <font>
+  
+         </font></Text>
+      <Button fx:id="loginButton" layoutX="492.0" layoutY="203.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="87.0" text="login" />
+      <Button fx:id="registerButton" layoutX="393.0" layoutY="203.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="87.0" text="Register">
+
+      </Button>
+   </children>
+</AnchorPane>
