@@ -26,7 +26,7 @@ public class FoodOrdering {
      */
 	private static Restaurant selectedRestaurant = new Restaurant(); //This is a restaurant dataType that will store the selected restaurant so that it can be used to get the menu -Jack
 	private static Customer currentCustomer = new Customer(); //This is the current customer for use with the order, it will be replaced with Chris's login system when that is done -Jack
-    //private static Driver currentDriver = new Driver(); //This is the current Driver, will be replaced by login eventually hopefully -Jack 
+    private static Driver currentDriver = new Driver(); //This is the current Driver, will be replaced by login eventually hopefully -Jack 
 	public static void main(String[] args) 
     {
     	
@@ -62,8 +62,25 @@ public class FoodOrdering {
     			switch(userIn) //Temporary make navigation easier while waiting for Java FX -Jack
     			{
     			case -2:
-    				String sql = "DROP TABLE Restaurant"
-    						+ "\nDROP TABLE RestaurantType"
+    				
+    				String sql = ""
+    						+ "CREATE TABLE Delivery (\r\n"
+    						+ "	deliveryID int not null identity(1, 1),\r\n"
+    						+ "	estimatedTimeToArrival int,\r\n"
+    						+ "	startLocation varChar(5),\r\n"
+    						+ "	restaurantLocation varChar(5),\r\n"
+    						+ " restaurantID int,\r\n"
+    						+ "	customerLocation varChar(5),\r\n"
+    						+ " customerID int, \r\n"
+    						+ "	orderID int,\r\n"
+    						+ "	driverID int\r\n"
+    						+ "	PRIMARY KEY(deliveryID),\r\n"
+    						+ "	FOREIGN KEY(restaurantID) REFERENCES Restaurant(restaurantID),\r\n"
+    						+ "	FOREIGN KEY(customerID) REFERENCES Customer( customerID),\r\n"
+    						+ "	FOREIGN KEY(orderID) REFERENCES [Order](orderID),\r\n"
+    						+ "	FOREIGN KEY(driverID) REFERENCES Driver(driverID)\r\n"
+    						+ "	\r\n"
+    						+ ");";
     						
     						; //SQL statement for us to enter stuff in easily -Jack
     				//+ "\nTRUNCATE TABLE [Order]"
@@ -79,7 +96,7 @@ public class FoodOrdering {
     					
     					while(rs.next())
     					{
-    						String s=""+rs.getInt("orderID")+", "+rs.getInt("customerID")+", "+rs.getInt("driverID")+", "+rs.getString("orderStatus")+", "+rs.getFloat("totalPrice")+", "+rs.getInt("foodItemID")+", "+rs.getString("foodName")+", "+rs.getInt("lineItemNumber");
+    						String s=""+rs.getInt("driverID")+", "+rs.getString("firstName")+", "+rs.getString("lastName")+", "+rs.getString("phone")+", "+rs.getString("email");
     						System.out.println(s);
     					}
     					System.out.println("Statement success");
@@ -271,7 +288,7 @@ public class FoodOrdering {
     				scin.nextLine();
     				System.out.println("Enter the zip code you are currently in: ");
     				String zip=scin.nextLine();
-    				//selectOrder(connection, oSelect, zip); //calls the method that will update the orderTable to say it's selected and to create a delivery -Jack
+    				selectOrder(connection, oSelect, zip); //calls the method that will update the orderTable to say it's selected and to create a delivery -Jack
     				break;
     			case 11:
     				displayOrders(connection);
@@ -566,7 +583,7 @@ public class FoodOrdering {
 		
 		try {
 			String sqlOrderIn="UPDATE [Order]"
-					+ "\nSET totalTime= ?"
+					+ "\nSET totalPrepTime= ?"
 					+ "\nWHERE orderID= ? ;"
 					+ "\nUPDATE [Order]"
 					+ "\nSET totalPrice= ?"
@@ -866,10 +883,11 @@ public class FoodOrdering {
     
     public static void selectOrder(Connection connection, int orderID, String curLoc)
     {
+    	int cID=0, rID=0;
     	String custLoc="", restLoc="";
-    	String sqlGetC = "SELECT customerLocation"
+    	String sqlGetC = "SELECT customerLocation, Customer.customerID"
     			+ "\nFROM [Order] JOIN Customer ON [Order].customerID=Customer.customerID"
-    			+ "\nWHERE orderID= ?";
+    			+ "\nWHERE [Order].orderID= ?";
     	try {
     		PreparedStatement p = connection.prepareStatement(sqlGetC);
     		p.setInt(1,  orderID);
@@ -878,14 +896,15 @@ public class FoodOrdering {
     		while(rs.next())
     		{
     			custLoc=rs.getString("customerLocation");
+    			cID=rs.getInt("customerID");
     		}
     	}catch(SQLException e) {
 			e.printStackTrace();
 		} 
     	
-    	String sqlGetR = "SELECT restaurantLocation"
+    	String sqlGetR = "SELECT restaurantLocation, Restaurant.restaurantID"
     			+ "\nFROM [Order] JOIN LineItem ON [Order].orderID=LineItem.orderID JOIN FoodItem ON LineItem.foodItemID=FoodItem.foodItemID JOIN Restaurant ON FoodItem.restaurantID=Restaurant.restaurantID"
-    			+ "\nWHERE OrderID = ?";
+    			+ "\nWHERE [Order].OrderID = ?";
     	try {
     		PreparedStatement p1 = connection.prepareStatement(sqlGetR);
     		p1.setInt(1,  orderID);
@@ -893,23 +912,36 @@ public class FoodOrdering {
     		rs=p1.executeQuery();
     		while(rs.next())
     		{
-    			restLoc=rs.getString("customerLocation");
+    			restLoc=rs.getString("restaurantLocation");
+    			rID=rs.getInt("restaurantID");
     		}
     	}catch(SQLException e) {
 			e.printStackTrace();
 		} 
     	int totalTime=calcTotalTime(connection, orderID);
     	float totalPrice=calcTotalPrice(connection, orderID);
-    	String sqlIn = "INSERT Delivery(estimatedTimeToArrival, startLocation, restaurantLocation, customerLocation, totalPrice, driverID) VALUES(?, ?, ?, ?, ?, ?)";
+    	String sqlIn = "INSERT Delivery(estimatedTimeToArrival, startLocation, restaurantLocation, restaurantID, customerLocation, customerID, orderID, driverID) VALUES(?, ?, ?, ?, ?, ?, ?, ?)";
     	try {
     		PreparedStatement p2 = connection.prepareStatement(sqlIn);
     		p2.setInt(1, totalTime);
     		p2.setString(2, curLoc);
     		p2.setString(3, restLoc);
-    		p2.setString(4, custLoc);
-    		p2.setFloat(5, totalPrice);
-    		p2.setInt(6, orderID);
+    		p2.setInt(4,  rID);
+    		p2.setString(5, custLoc);
+    		p2.setInt(6, cID);
+    		p2.setInt(7, orderID);
+    		p2.setInt(8, currentDriver.getDriverID());
     		p2.executeUpdate();
+    	} catch(SQLException e) {
+			e.printStackTrace();
+		} 
+    	String sqlUpdateO ="UPDATE [Order]"
+    			+ "\nSET orderStatus = 'Driver on the way to the restaurant'"
+    			+ "\nWHERE orderID= ?";
+    	try {
+    		PreparedStatement p3 = connection.prepareStatement(sqlUpdateO);
+    		p3.setInt(1, orderID);
+    		p3.executeUpdate();
     	} catch(SQLException e) {
 			e.printStackTrace();
 		} 
