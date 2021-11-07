@@ -7,12 +7,11 @@ CREATE TABLE Customer (
 	--[state] varchar(25),
 	--zipCode varChar(15),
 	email varchar(55),
-	phone varChar(20)
+	phone varChar(20),
+	customerLocation varChar(5)
 	PRIMARY KEY(CustomerID),
 );
 
-ALTER TABLE Customer
-ADD customerLocation varChar(5);
 
 CREATE TABLE RestaurantType (
 	restaurantTypeID int not null identity(1,1),
@@ -48,7 +47,8 @@ CREATE TABLE Category(
 CREATE TABLE Restaurant (
     restaurantID int NOT NULL IDENTITY(1,1),
     restaurantName varchar(25),
-	restaurantTypeID int
+	restaurantTypeID int,
+	restaurantLocation varChar(5)
 	--city varchar(55),
 	--street varchar(155),
 	--[state] varchar(25),
@@ -57,8 +57,6 @@ CREATE TABLE Restaurant (
 	FOREIGN KEY(restaurantTypeID) REFERENCES RestaurantType(restaurantTypeID)
 );
 
-ALTER TABLE Restaurant
-ADD restaurantLocation varChar(5);
 
 INSERT Restaurant(restaurantName, restaurantTypeID) VALUES('Wendys', 3);
 CREATE TABLE Rating (
@@ -77,7 +75,7 @@ CREATE TABLE FoodItem (
 	calories	int,
 	[description]	varChar(255),
 	[type]		varChar(55),
-	prepTime	varChar(50),
+	prepTime	int,
 	categoryID int,
 	restaurantID int
 	PRIMARY KEY(foodItemID),
@@ -85,8 +83,7 @@ CREATE TABLE FoodItem (
 	FOREIGN KEY(restaurantID) REFERENCES Restaurant(restaurantID)
 );
 
-ALTER TABLE FoodItem
-ALTER COLUMN prepTime int;
+
 
 INSERT FoodItem(foodName, foodPrice, calories, [description], [type], prepTime, categoryID, restaurantID) VALUES('Hamburger', 4.99, 600, 'A hamburger with lettuce, tomato, onions and ketchup', NULL, '5 minutes', 1);
 INSERT FoodItem(foodName, foodPrice, calories, [description], [type], prepTime, categoryID, restaurantID) VALUES('Chicken Nuggets', 3.99, 500, '6 Chicken Nuggets', NULL, '4 minutes', 1);
@@ -127,14 +124,14 @@ CREATE TABLE [Order](
 	customerID int,
 	driverID int,
 	orderStatus varChar(255),
-	totalPrice float
+	totalPrice float,
+	totalPrepTime int
 	PRIMARY KEY(orderID),
 	FOREIGN KEY(customerID) REFERENCES Customer(customerID),
 	FOREIGN KEY(driverID) REFERENCES Driver(driverID)
 );
 
-ALTER TABLE [Order]
-ADD totalPrepTime int; --h
+
 
 CREATE TABLE LineItem(
 	lineItemID int not null identity(1,1),
