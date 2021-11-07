@@ -62,8 +62,13 @@ public class FoodOrdering {
     			switch(userIn) //Temporary make navigation easier while waiting for Java FX -Jack
     			{
     			case -2:
-    				String sql = "SELECT * "
-    						+ "\nFROM [Order] JOIN LineItem ON [Order].orderID=LineItem.orderID JOIN FoodItem ON LineItem.foodItemID=FoodItem.foodItemID"; //SQL statement for us to enter stuff in easily -Jack
+    				String sql = "DROP TABLE Restaurant"
+    						+ "\nDROP TABLE RestaurantType"
+    						
+    						; //SQL statement for us to enter stuff in easily -Jack
+    				//+ "\nTRUNCATE TABLE [Order]"
+					//+ "\nTRUNCATE TABLE Restaurant"
+					//+ "\nTRUNCATE TABLE Customer"
     				//System.out.println(sql);
     		    	Statement statement;
     				try {
@@ -90,6 +95,8 @@ public class FoodOrdering {
     				Restaurant r1 = new Restaurant(); //create a new Restaurant object that the user will enter information into, will eventually be sent to database -Jack
 				    System.out.println("\nEnter Restaurant Name: "); //very repetitive, will be done better later, all of these will just get the information to fill out Restaurant -Jack
 				    r1.setRestaurantName(rIn.nextLine()); //set the RestaurantName of our temporary Restaurant to what they enter, could be error checked later -Jack
+				    System.out.println("Enter the zip code of the restauarnt: ");
+				    r1.setRestaurantZip(rIn.nextLine());
 				    System.out.println("\nEnter Restaurant Type ID from the following: ");
 				    getRestaurantType(connection);
 				    Scanner tIn = new Scanner(System.in);
@@ -118,8 +125,8 @@ public class FoodOrdering {
     				//c1.setCustomerState(scin.nextLine());
     				//System.out.println("\nEnter Street: ");
     				//c1.setCustomerStreet(scin.nextLine());
-    				//System.out.println("\nEnter Zip: ");
-    				//c1.setCustomerZip(scin.nextLine());
+    				System.out.println("\nEnter Zip: ");
+    				c1.setCustomerZip(custIn.nextLine());
     				//Same as Restaurant code -Jack
     		
     				insertCustomer(c1, connection); //Call the method that inserts the data -Jack
@@ -230,7 +237,8 @@ public class FoodOrdering {
     		        System.out.println("\nEnter type: " );
     		        f1.setType(foodDataIn.nextLine());
     		        System.out.println("\nEneter preptime");
-    		        f1.setPrepTime(foodDataIn.nextLine());
+    		        f1.setPrepTime(foodDataIn.nextInt());
+    		        //foodDataIn.nextLine();
     		        //The above gets and stores user input about the foodItems -Aayushma
     		        System.out.println("\nEnter category ID from the following:");
     		        getCategory(connection); //Calls the method to allow the user to select categories -Aayushma
@@ -376,11 +384,12 @@ public class FoodOrdering {
     
     public static void insertRestaurant(Restaurant r1, Connection connection)
     {
-    	String rInsert = "INSERT Restaurant ([restaurantName], [restaurantTypeID]) VALUES (?, ?);";
+    	String rInsert = "INSERT Restaurant ([restaurantName], [restaurantTypeID], [restaurantLocation]) VALUES (?, ?, ?);";
 		try {
 			PreparedStatement p = connection.prepareStatement(rInsert);
 			p.setString(1, r1.getRestaurantName());
 			p.setInt(2, r1.getRestaurantTypeID());
+			p.setString(3, r1.getRestaurantZip());
 			p.executeUpdate(); //execute SQL statement
 			System.out.print("Restaurant data succesfully inserted: \n");
 			//The above inserts new data into the DB and then alerts the user that it was successful -Jack
@@ -394,13 +403,14 @@ public class FoodOrdering {
     
     public static void insertCustomer(Customer c1, Connection connection)
     {
-    	String cInsert = "USE master INSERT Customer ([lastName], [firstName], [email], [phone]) VALUES (?, ?, ?, ?);";
+    	String cInsert = "USE master INSERT Customer ([lastName], [firstName], [email], [phone], [customerLocation]) VALUES (?, ?, ?, ?, ?);";
 		try {
 			PreparedStatement p = connection.prepareStatement(cInsert);
 			p.setString(1, c1.getCustomerLName());
 			p.setString(2, c1.getCustomerFName());
 			p.setString(3, c1.getCustomerEmail());
 			p.setString(4, c1.getCustomerPhone());
+			p.setString(5, c1.getCustomerZip());
 			p.executeUpdate();
 			System.out.print("Customer data succesfully inserted: \n");
 			//The above inserts new data into the DB and then alerts the user that it was successful -Jack
@@ -508,7 +518,7 @@ public class FoodOrdering {
     public static void addFood(Connection connection, ArrayList<FoodItem> foodList)
     {
     	//TODO: Fix this code, need to also add the LineItem Table
-    	String sqlCOrder="INSERT [Order](customerID, driverID, orderStatus, totalPrice) VALUES(?, NULL, 'Preparing', NULL)"; //this statement creates an order when called -Jack
+    	String sqlCOrder="INSERT [Order](customerID, driverID, orderStatus, totalPrice, totalPrepTime) VALUES(?, NULL, 'Preparing', NULL, NULL)"; //this statement creates an order when called -Jack
     	try {
     		PreparedStatement p = connection.prepareStatement(sqlCOrder);
     		p.setInt(1, currentCustomer.getCustomerID());
@@ -535,6 +545,7 @@ public class FoodOrdering {
     	String sqlFInsert=""; //this will fill with insert statements to add LineItems to the order -Jack
     	int counter=1;
     	int totalPrepTime=0;
+    	float totalPrice=0;
 		for (FoodItem i:foodList)
 		{
 			try {
@@ -544,25 +555,31 @@ public class FoodOrdering {
 				p2.setInt(1, i.getFoodItemID());
 				p2.setInt(2, oID);
 				p2.executeUpdate();
-			    //totalPrepTime+=i.getPrepTime(); //Commented out for now, will eventually calculate totalPrepTime -Jack
+			    totalPrepTime+=i.getPrepTime(); //Commented out for now, will eventually calculate totalPrepTime -Jack
+			    totalPrice+=i.getFoodPrice();
 				System.out.println("Added item to the order");
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
 			
 		}
-		/*
+		
 		try {
 			String sqlOrderIn="UPDATE [Order]"
-					+ "/nSET totalTime= ?"
-					+ "/nWHERE orderID= ?";
+					+ "\nSET totalTime= ?"
+					+ "\nWHERE orderID= ? ;"
+					+ "\nUPDATE [Order]"
+					+ "\nSET totalPrice= ?"
+					+ "\nWHERE orderId= ?";
 			PreparedStatement p3 = connection.prepareStatement(sqlOrderIn);
 			p3.setInt(1, totalPrepTime);
 			p3.setInt(2, oID);
+			p3.setFloat(3, totalPrice);
+			p3.setInt(4, oID);
 			p3.executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace();
-		}		*/	
+		}			
 			
     }
     
@@ -588,7 +605,7 @@ public class FoodOrdering {
 				rs=p.executeQuery();
 				while(rs.next())
 				{
-					foodList.add(new FoodItem(rs.getInt("foodItemID"), rs.getString("foodName"), rs.getFloat("foodPrice"), rs.getInt("calories"), rs.getString("description"), rs.getString("type"), rs.getString("prepTime"), rs.getString("categoryName"))); //Adds a foodItem to the list which is essentially a cart for right now -Jack
+					foodList.add(new FoodItem(rs.getInt("foodItemID"), rs.getString("foodName"), rs.getFloat("foodPrice"), rs.getInt("calories"), rs.getString("description"), rs.getString("type"), rs.getInt("prepTime"), rs.getString("categoryName"))); //Adds a foodItem to the list which is essentially a cart for right now -Jack
 				}
 			} catch (SQLException e) {
 				e.printStackTrace();
@@ -692,7 +709,7 @@ public class FoodOrdering {
     		p.setInt(3, f1.getCalories());
     		p.setString(4, f1.getDescription());
     		p.setString(5, f1.getType());
-    		p.setString(6, f1.getPrepTime());
+    		p.setInt(6, f1.getPrepTime());
     		p.setInt(7, f1.getCategoryID());
     		p.setInt(8, selectedRestaurant.getRestaurantID());
     		p.executeUpdate();
