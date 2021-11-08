@@ -764,12 +764,11 @@ public class FoodOrdering {
     
     
     private static void loginDriver(Connection connection) {
-		// TODO Auto-generated method stub
     	System.out.println("Enter email");
-		String sql="SELECT email FROM Customer WHERE email = ?";
+		String sql="SELECT email FROM Driver WHERE email = ?";
 		String user="", pass="";
-		Scanner cInput = new Scanner(System.in);
-		user=cInput.nextLine();
+		Scanner dInput = new Scanner(System.in);
+		user=dInput.nextLine();
 		try {
 			PreparedStatement p = connection.prepareStatement(sql);
 			p.setString(1, user);
@@ -782,8 +781,8 @@ public class FoodOrdering {
 			else 
 			{
                 System.out.println("Enter password");
-                pass=cInput.nextLine();
-                String sql2="SELECT email, [password] FROM Customer WHERE email = ? AND [password] = ?";
+                pass=dInput.nextLine();
+                String sql2="SELECT email, [password] FROM Driver WHERE email = ? AND [password] = ?";
                 PreparedStatement p2 = connection.prepareStatement(sql2);
                 p2.setString(1, user);
                 p2.setString(2, pass);
@@ -795,21 +794,100 @@ public class FoodOrdering {
     		    } 
     			else
     			{
-    				currentCustomer.setCustomerID(rs2.getInt("customerID"));
-    				currentCustomer.setCustomerFName(rs2.getString("firstName"));
-    				currentCustomer.setCustomerLName(rs2.getString("lastName"));
-    				currentCustomer.setCustomerEmail(rs2.getString("email"));
-    				currentCustomer.setCustomerPhone(rs2.getString("phone"));
-    				currentCustomer.setCustomerZip(rs2.getString("location"));
-    				currentCustomer.setCustomerPassword(rs2.getString("password"));
+    				currentDriver.setDriverID(rs2.getInt("driverID"));
+    				currentDriver.setFirstName(rs2.getString("firstName"));
+    				currentDriver.setLastName(rs2.getString("lastName"));
+    				currentDriver.setDriverEmail(rs2.getString("email"));
+    				currentDriver.setPhone(rs2.getString("phone"));
+    				currentDriver.setPassword(rs2.getString("password"));
     				System.out.println("Login Succesfull");
-    				customerPage(connection);
+    				driverPage(connection);
     			}
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		cInput.close();
+		dInput.close();
+	}
+
+
+
+	private static void driverPage(Connection connection) {
+		int uIn = -1;
+		Scanner uInput = new Scanner(System.in);
+		while(uIn!=0) {
+			System.out.println("Welcome "+currentDriver.getFirstName());
+			System.out.println("What would you like to do: "
+					+ "\n[0] Logout"
+					+ "\n[1] View/Update Account Information"
+					+ "\n[2] Select an Order"
+					+ "\n[3] View Orders in Progress"
+					//+ "\n[4] Leave a review"
+					+"");
+			uIn=uInput.nextInt();
+			uInput.nextLine();
+			switch(uIn)
+			{
+			case 0:
+				currentDriver = new Driver();
+				break;
+			case 1:
+				viewDriverAccount(connection);
+				break;
+			case 2:
+				//This method will only be shown to drivers, for now will call a driver login method -Jack
+				displayOrders(connection); //Calls method to view the currently open orders -Jack
+				int oSelect =uInput.nextInt();
+				uInput.nextLine();
+				System.out.println("Enter the zip code you are currently in: ");
+				String zip=uInput.nextLine();
+				selectOrder(connection, oSelect, zip); //calls the method that will update the orderTable to say it's selected and to create a delivery -Jack
+				break;
+			case 3:
+				viewDriverOrders(connection);
+				break;
+			}
+		}
+		uInput.close();
+	}
+
+
+
+	private static void viewDriverOrders(Connection connection) {
+		String sql="SELECT * FROM Delivery JOIN [Order] ON Delivery.orderID=[Order].orderID WHERE driverID= ?"; // getting orders that are not taken by a driver and are open- Ahsan
+
+    	ResultSet rs;
+    	try {
+    		PreparedStatement p =connection.prepareStatement(sql);
+    		p.setInt(1, currentDriver.getDriverID());
+    		rs=p.executeQuery();
+    		while(rs.next())
+    		{
+    			String s = "[" + rs.getInt("orderID") + "] " + rs.getFloat("totalPrice" ); //+ " " + rs.getInt("totalPrepTime") ; //will be changed in the future when we get a better idea of what to show the customer -Ahsan
+    			System.out.println(s);
+    		}
+    	} catch (SQLException e) {
+    		e.printStackTrace();
+    }
+	}
+
+
+
+	private static void viewDriverAccount(Connection connection) {
+		String sql="SELECT * FROM Driver WHERE driverID= ?";
+		try {
+			PreparedStatement p = connection.prepareStatement(sql);
+			p.setInt(1, currentDriver.getDriverID());
+			ResultSet rs;
+			rs=p.executeQuery();
+			while(rs.next())
+			{
+				String s = "Name " +rs.getString("firstName") +" "+rs.getString("lastName")+"\nEmail: "+rs.getString("email")+"\nPhone Number: "+rs.getString("phone");
+				System.out.println(s);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 
 
