@@ -48,35 +48,49 @@ public class FoodOrdering {
 			System.out.println("Connected"); //Display a message to show it successfully connected -Jack
 			while (userIn!=0)
 			{
+				//scin.nextLine();
 				System.out.println("Enter what you want to do: "
+						+ "\n[0] Exit"
 						+ "\n[1] Create an account"
-						+ "\n[2] Login"
-						+ "\n[3] Exit");
+						+ "\n[2] Login");
 				userIn=scin.nextInt();
 				scin.nextLine();
 				switch(userIn)
 				{
 				case -2:
+					/*
 					String sql = "ALTER TABLE Customer"
 							+ "\nADD [password] varchar(100);"
 							+ "\nALTER TABLE Restaurant"
-							+ "\nADD [userName] varchar(50)"
+							+ "\nADD [userName] varchar(50);"
+							+ "\nALTER TABLE Restaurant"
 							+ "\nADD [password] varchar(100);"		
 							+ "\nALTER TABLE Driver"
 							+ "\nADD [password] varchar(100);";
+							*/
+					/*String sql="UPDATE Customer"
+							+ "\nSET [password]='abc123'"
+							+ "\nWHERE email='georj1@farmingdale.edu';"
+							+ "\nUPDATE Restaurant"
+							+ "\nSET [password]='abcd1234', [userName]='wend101'"
+							+ "\nWHERE restaurantName='Wendys';"
+							+ "UPDATE Driver"
+							+ "\nSET [password]='12ab'"
+							+ "\nWHERE firstName='John';";*/
+					String sql="SELECT * FROM Driver";
     		    	Statement statement;
     				try {
-    					//ResultSet rs;
+    					ResultSet rs;
     					statement = connection.createStatement();
-    					statement.executeUpdate(sql);
-						/*
-						 * rs=statement.executeQuery(sql); //execute SQL statement
-						 * 
-						 * while(rs.next()) { String
-						 * s=""+rs.getInt("driverID")+", "+rs.getString("firstName")+", "+rs.getString(
-						 * "lastName")+", "+rs.getString("phone")+", "+rs.getString("email");
-						 * System.out.println(s); }
-						 */
+    					//statement.executeUpdate(sql);
+						
+						  rs=statement.executeQuery(sql); //execute SQL statement
+						  
+						  while(rs.next()) { String
+						  s=""+rs.getInt("driverID")+", "+rs.getString("firstName")+", "+rs.getString(
+						  "lastName")+", "+rs.getString("phone")+", "+rs.getString("email");
+						  System.out.println(s); }
+						 
     					System.out.println("Statement success");
     				} catch (SQLException e) {
     					e.printStackTrace();
@@ -93,7 +107,6 @@ public class FoodOrdering {
 							+ "\n[3] Driver"
 							+ "\n[4] Go back");
 					accC=scin.nextInt();
-					scin.nextLine();
 					switch(accC)
 					{
 					case 1:
@@ -119,7 +132,6 @@ public class FoodOrdering {
 							+ "\n[3] Driver"
 							+ "\n[4] Go back");
 					logIn=scin.nextInt();
-					scin.nextLine();
 					switch(logIn)
 					{
 					case 1:
@@ -782,7 +794,7 @@ public class FoodOrdering {
 			{
                 System.out.println("Enter password");
                 pass=dInput.nextLine();
-                String sql2="SELECT email, [password] FROM Driver WHERE email = ? AND [password] = ?";
+                String sql2="SELECT * FROM Driver WHERE email = ? AND [password] = ?";
                 PreparedStatement p2 = connection.prepareStatement(sql2);
                 p2.setString(1, user);
                 p2.setString(2, pass);
@@ -807,7 +819,7 @@ public class FoodOrdering {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		dInput.close();
+		//dInput.close();
 	}
 
 
@@ -848,13 +860,13 @@ public class FoodOrdering {
 				break;
 			}
 		}
-		uInput.close();
+		//uInput.close();
 	}
 
 
 
 	private static void viewDriverOrders(Connection connection) {
-		String sql="SELECT * FROM Delivery JOIN [Order] ON Delivery.orderID=[Order].orderID WHERE driverID= ?"; // getting orders that are not taken by a driver and are open- Ahsan
+		String sql="SELECT * FROM Delivery JOIN [Order] ON Delivery.orderID=[Order].orderID WHERE Delivery.driverID= ?"; // getting orders that are not taken by a driver and are open- Ahsan
 
     	ResultSet rs;
     	try {
@@ -911,7 +923,7 @@ public class FoodOrdering {
 			{
                 System.out.println("Enter password");
                 pass=rInput.nextLine();
-                String sql2="SELECT userName, [password] FROM Restaurant WHERE userName = ? AND [password] = ?";
+                String sql2="SELECT * FROM Restaurant WHERE userName = ? AND [password] = ?";
                 PreparedStatement p2 = connection.prepareStatement(sql2);
                 p2.setString(1, user);
                 p2.setString(2, pass);
@@ -925,7 +937,7 @@ public class FoodOrdering {
     			{
     				currentRestaurant.setRestaurantID(rs2.getInt("restaurantID"));
     				currentRestaurant.setRestaurantName(rs2.getString("restaurantName"));
-    				currentRestaurant.setRestaurantZip(rs2.getString("location"));
+    				currentRestaurant.setRestaurantZip(rs2.getString("restaurantLocation"));
     				currentRestaurant.setRestaurantTypeID(rs2.getInt("restaurantTypeID"));
     				currentRestaurant.setRestaurantUserName(rs2.getString("userName"));
     				currentRestaurant.setRestaurantPassword(rs2.getString("password"));
@@ -936,7 +948,7 @@ public class FoodOrdering {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		rInput.close();
+		//rInput.close();
 	}
 
 
@@ -1002,7 +1014,7 @@ public class FoodOrdering {
 			rs=p.executeQuery();
 			while(rs.next())
 			{
-				String s = "Name " +rs.getString("restaurantName") +"\nUsername: "+rs.getString("userName")+"\nType: "+rs.getString("restaurantType") +"\nZip Code: "+rs.getString("location");
+				String s = "Name " +rs.getString("restaurantName") +"\nUsername: "+rs.getString("userName")+"\nType: "+rs.getString("restaurantType") +"\nZip Code: "+rs.getString("restaurantLocation");
 				System.out.println(s);
 			}
 		} catch (SQLException e) {
@@ -1031,7 +1043,7 @@ public class FoodOrdering {
 			{
                 System.out.println("Enter password");
                 pass=cInput.nextLine();
-                String sql2="SELECT email, [password] FROM Customer WHERE email = ? AND [password] = ?";
+                String sql2="SELECT * FROM Customer WHERE email = ? AND [password] = ?";
                 PreparedStatement p2 = connection.prepareStatement(sql2);
                 p2.setString(1, user);
                 p2.setString(2, pass);
@@ -1048,7 +1060,7 @@ public class FoodOrdering {
     				currentCustomer.setCustomerLName(rs2.getString("lastName"));
     				currentCustomer.setCustomerEmail(rs2.getString("email"));
     				currentCustomer.setCustomerPhone(rs2.getString("phone"));
-    				currentCustomer.setCustomerZip(rs2.getString("location"));
+    				currentCustomer.setCustomerZip(rs2.getString("customerLocation"));
     				currentCustomer.setCustomerPassword(rs2.getString("password"));
     				System.out.println("Login Succesfull");
     				customerPage(connection);
@@ -1057,7 +1069,7 @@ public class FoodOrdering {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		cInput.close();
+		//cInput.close();
 	}
 
 
@@ -1157,7 +1169,7 @@ public class FoodOrdering {
 			}
 			
 		}
-		uInput.close();;
+		//uInput.close();;
 	}
 
 
@@ -1171,7 +1183,7 @@ public class FoodOrdering {
 			rs=p.executeQuery();
 			while(rs.next())
 			{
-				String s = "Name " +rs.getString("firstName") +" "+rs.getString("lastName")+"\nEmail: "+rs.getString("email")+"\nPhone Number: "+rs.getString("phone") +"\nZip Code: "+rs.getString("location");
+				String s = "Name " +rs.getString("firstName") +" "+rs.getString("lastName")+"\nEmail: "+rs.getString("email")+"\nPhone Number: "+rs.getString("phone") +"\nZip Code: "+rs.getString("customerLocation");
 				System.out.println(s);
 			}
 		} catch (SQLException e) {
@@ -1233,7 +1245,7 @@ public class FoodOrdering {
 		        pass=dInput.nextLine();
 		        System.out.println("\nEnter password Again");
 		        passA=dInput.nextLine();
-                if(pass==passA)
+                if(pass.equals(passA))
                 {
                 	d1.setPassword(pass);
                 	contr=0;
@@ -1274,7 +1286,7 @@ public class FoodOrdering {
 
 
 	private static void createRestaurantAcc(Connection connection) {
-		String sql="SELECT [userName] FROM Restaurnat WHERE [userName] = ?";
+		String sql="SELECT [userName] FROM Restaurant WHERE [userName] = ?";
 		String rIn="";
 		Scanner rInput = new Scanner(System.in);
 		System.out.println("Enter user name to be used on the account: ");
@@ -1297,7 +1309,7 @@ public class FoodOrdering {
 		        pass=rInput.nextLine();
 		        System.out.println("\nEnter password Again");
 		        passA=rInput.nextLine();
-                if(pass==passA)
+                if(pass.equals(passA))
                 {
                 	r1.setRestaurantPassword(pass);
                 	contr=0;
@@ -1362,7 +1374,7 @@ public class FoodOrdering {
 		        pass=cInput.nextLine();
 		        System.out.println("\nEnter passwordAgain");
 		        passA=cInput.nextLine();
-                if(pass==passA)
+                if(pass.equals(passA))
                 {
                 	c1.setCustomerPassword(pass);
                 	contr=0;
@@ -1706,6 +1718,7 @@ public class FoodOrdering {
     		p2.setInt(7, orderID);
     		p2.setInt(8, currentDriver.getDriverID());
     		p2.executeUpdate();
+    		System.out.println("Order taken");
     	} catch(SQLException e) {
 			e.printStackTrace();
 		} 
