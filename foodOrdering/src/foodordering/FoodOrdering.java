@@ -39,6 +39,115 @@ public class FoodOrdering {
     	 //right now this is an empty string but it will contain the actual SQL statements and then be passed to the execute update method -Jack
     	
     	
+    	
+    	
+    	
+    	try {
+			Connection connection = DriverManager.getConnection(url); //this is attempting to open the connection to the server -Jack
+			System.out.println("Connected"); //Display a message to show it successfully connected -Jack
+			while (userIn!=0)
+			{
+				System.out.println("Enter what you want to do: "
+						+ "\n[1] Create an account"
+						+ "\n[2] Login"
+						+ "\n[3] Exit");
+				userIn=scin.nextInt();
+				scin.nextLine();
+				switch(userIn)
+				{
+				case -2:
+					String sql = "ALTER TABLE Customer"
+							+ "\nADD [password] varchar(100);"
+							+ "\nALTER TABLE Restaurant"
+							+ "\nADD [userName] varchar(50)"
+							+ "\nADD [password] varchar(100);"		
+							+ "\nALTER TABLE Driver"
+							+ "\nADD [password] varchar(100);";
+    		    	Statement statement;
+    				try {
+    					//ResultSet rs;
+    					statement = connection.createStatement();
+    					statement.executeUpdate(sql);
+						/*
+						 * rs=statement.executeQuery(sql); //execute SQL statement
+						 * 
+						 * while(rs.next()) { String
+						 * s=""+rs.getInt("driverID")+", "+rs.getString("firstName")+", "+rs.getString(
+						 * "lastName")+", "+rs.getString("phone")+", "+rs.getString("email");
+						 * System.out.println(s); }
+						 */
+    					System.out.println("Statement success");
+    				} catch (SQLException e) {
+    					e.printStackTrace();
+    				}
+					break;
+				case 0:
+					break;
+				case 1:
+					
+					int accC=0;
+					System.out.println("Please enter which account you want to create something for: "
+							+ "\n[1] Customer"
+							+ "\n[2] Restaurant"
+							+ "\n[3] Driver"
+							+ "\n[4] Go back");
+					accC=scin.nextInt();
+					scin.nextLine();
+					switch(accC)
+					{
+					case 1:
+						createCustomerAcc(connection);
+						break;
+					case 2:
+						createRestaurantAcc(connection);
+						break;
+					case 3:
+						createDriverAccount(connection);
+						break;
+					case 4:
+						break;
+					default:
+						break;
+					}
+					break;
+				case 2:
+					int logIn=0;
+					System.out.println("Please enter which account you want to login for: "
+							+ "\n[1] Customer"
+							+ "\n[2] Restaurant"
+							+ "\n[3] Driver"
+							+ "\n[4] Go back");
+					logIn=scin.nextInt();
+					scin.nextLine();
+					switch(logIn)
+					{
+					case 1:
+						loginCustomer(connection);
+						break;
+					case 2:
+						loginRestaurant(connection);
+						break;
+					case 3:
+						loginDriver(connection);
+						break;
+					case 4:
+						break;
+					default:
+						break;
+					}
+					break;
+				}
+			}
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+		}
+    	
+    	
+    	
+    	
+    	
+    	
+/*   	
     	try 
     	{
     		//Test
@@ -46,6 +155,7 @@ public class FoodOrdering {
     		System.out.println("Connected"); //Display a message to show it successfully connected -Jack
     		while(userIn !=0) //Once again is temporary, for now this is so it can be tested and accessed multiple times, will eventually have a nicer UI -Jack
     		{
+    			
     			System.out.println("\nPlease let us know what you'd like to do by entering the number:  "
     					+ "\n[1] Enter a Restaurant"
     					+"\n[2] View Restaurants"
@@ -213,10 +323,10 @@ public class FoodOrdering {
     				    		}
     				    			
     				    	} 
-    				    	/*Okay so the way this crazy thing works is it asks the user to enter the id of the item they want to remove, stores that then because of how ArrayList works
-    				    	 * I need to get the object based on the id so it loops through the arrayList until the foodItemID matches the customer selected id to remove, from here it
-    				    	 * stores the FoodItem in a temporary FoodItem object where after the loop it will then remove the FoodItem from the ArrayList -Jack
-    				    	 */
+    				    	//Okay so the way this crazy thing works is it asks the user to enter the id of the item they want to remove, stores that then because of how ArrayList works
+    				    	 // I need to get the object based on the id so it loops through the arrayList until the foodItemID matches the customer selected id to remove, from here it
+    				    	 // stores the FoodItem in a temporary FoodItem object where after the loop it will then remove the FoodItem from the ArrayList -Jack
+    				    	 
     				    	
     				    }
     				    else if(nFoodNum==-1)
@@ -297,13 +407,13 @@ public class FoodOrdering {
     				break;
     			
     			}
-    		}
+    		} 
     	}
     	catch (SQLException e) 
     	{ //catch an error or two -Jack
     		System.out.println("ERROR"); //display that there was an error -Jack
     		e.printStackTrace(); //display what the error was -Jack
-    	}
+    	} */
     }
     
     
@@ -401,14 +511,16 @@ public class FoodOrdering {
     
     public static void insertRestaurant(Restaurant r1, Connection connection)
     {
-    	String rInsert = "INSERT Restaurant ([restaurantName], [restaurantTypeID], [restaurantLocation]) VALUES (?, ?, ?);";
+    	String rInsert = "INSERT Restaurant ([restaurantName], [restaurantTypeID], [restaurantLocation], [userName], [password]) VALUES (?, ?, ?, ?, ?);";
 		try {
 			PreparedStatement p = connection.prepareStatement(rInsert);
 			p.setString(1, r1.getRestaurantName());
 			p.setInt(2, r1.getRestaurantTypeID());
 			p.setString(3, r1.getRestaurantZip());
+			p.setString(4, r1.getRestaurantUserName());
+			p.setString(5,  r1.getRestaurantPassword());
 			p.executeUpdate(); //execute SQL statement
-			System.out.print("Restaurant data succesfully inserted: \n");
+			System.out.print("Restaurant account succesfully created: \n");
 			//The above inserts new data into the DB and then alerts the user that it was successful -Jack
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -420,7 +532,7 @@ public class FoodOrdering {
     
     public static void insertCustomer(Customer c1, Connection connection)
     {
-    	String cInsert = "USE master INSERT Customer ([lastName], [firstName], [email], [phone], [customerLocation]) VALUES (?, ?, ?, ?, ?);";
+    	String cInsert = "USE master INSERT Customer ([lastName], [firstName], [email], [phone], [customerLocation], [password]) VALUES (?, ?, ?, ?, ?, ?);";
 		try {
 			PreparedStatement p = connection.prepareStatement(cInsert);
 			p.setString(1, c1.getCustomerLName());
@@ -428,8 +540,27 @@ public class FoodOrdering {
 			p.setString(3, c1.getCustomerEmail());
 			p.setString(4, c1.getCustomerPhone());
 			p.setString(5, c1.getCustomerZip());
+			p.setString(6, c1.getCustomerPassword());
 			p.executeUpdate();
-			System.out.print("Customer data succesfully inserted: \n");
+			System.out.print("Customer profile succesfully created: \n");
+			//The above inserts new data into the DB and then alerts the user that it was successful -Jack
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}	
+    }
+    
+    public static void insertDriver(Driver d1, Connection connection)
+    {
+    	String dInsert = "USE master INSERT Driver ([lastName], [firstName], [email], [phone], [password]) VALUES (?, ?, ?, ?, ?);";
+		try {
+			PreparedStatement p = connection.prepareStatement(dInsert);
+			p.setString(1, d1.getLastName());
+			p.setString(2, d1.getFirstName());
+			p.setString(3, d1.getDriverEmail());
+			p.setString(4, d1.getPhone());
+			p.setString(5, d1.getPassword());
+			p.executeUpdate();
+			System.out.print("Driver profile succesfully created: \n");
 			//The above inserts new data into the DB and then alerts the user that it was successful -Jack
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -631,7 +762,395 @@ public class FoodOrdering {
     
     
     
-    public static void viewFoodList(Connection connection, ArrayList<FoodItem> foodList)
+    private static void loginDriver(Connection connection) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
+	private static void loginRestaurant(Connection connection) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
+	private static void loginCustomer(Connection connection) {
+		System.out.println("Enter email");
+		String sql="SELECT email FROM Customer WHERE email = ?";
+		String user="", pass="";
+		Scanner cInput = new Scanner(System.in);
+		user=cInput.nextLine();
+		try {
+			PreparedStatement p = connection.prepareStatement(sql);
+			p.setString(1, user);
+			ResultSet rs;
+			rs = p.executeQuery();
+			if (rs.next() == false) 
+			{
+		        System.out.println("No such account with this email");
+		    } 
+			else 
+			{
+                System.out.println("Enter password");
+                pass=cInput.nextLine();
+                String sql2="SELECT email, [password] FROM Customer WHERE email = ? AND [password] = ?";
+                PreparedStatement p2 = connection.prepareStatement(sql2);
+                p2.setString(1, user);
+                p2.setString(2, pass);
+                ResultSet rs2; 
+                rs2 = p2.executeQuery();
+                if (rs2.next() == false) 
+    			{
+    		        System.out.println("Invalid Password");
+    		    } 
+    			else
+    			{
+    				currentCustomer.setCustomerID(rs2.getInt("customerID"));
+    				currentCustomer.setCustomerFName(rs2.getString("firstName"));
+    				currentCustomer.setCustomerLName(rs2.getString("lastName"));
+    				currentCustomer.setCustomerEmail(rs2.getString("email"));
+    				currentCustomer.setCustomerPhone(rs2.getString("phone"));
+    				currentCustomer.setCustomerZip(rs2.getString("location"));
+    				currentCustomer.setCustomerPassword(rs2.getString("password"));
+    				System.out.println("Login Succesfull");
+    				customerPage(connection);
+    			}
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+	}
+
+
+
+	private static void customerPage(Connection connection) {
+		// TODO Auto-generated method stub
+		int uIn = -1;
+		Scanner uInput = new Scanner(System.in);
+		while(uIn!=0) {
+			System.out.println("Welcome "+currentCustomer.getCustomerFName());
+			System.out.println("What would you like to do: "
+					+ "\n[0] Logout"
+					+ "\n[1] View/Update Account Information"
+					+ "\n[2] Place an Order"
+					+ "\n[3] View Order in Progress"
+					//+ "\n[4] Leave a review"
+					+"");
+			switch(uIn)
+			{
+			case 0:
+				currentCustomer = new Customer();
+				break;
+			case 1:
+				viewCustomerAccount(connection);
+				break;
+			case 2:
+				ArrayList<FoodItem> newFList = new ArrayList<FoodItem>(); //List to store foodItemID's to be put into order later -Jack
+				Scanner nFood = new Scanner(System.in); //this will get the foodItemID -Jack
+				int nFoodNum=-3; //variable that will do 2 things, add foodItemIDs, control the loops -Jack
+				while(nFoodNum!=-1)
+				{
+					
+				    System.out.println("Enter the number of the food you want to order:"
+				    		+ "\n[-2] Complete Order "
+						    + "\n[-1] Exit"
+						    + "\n[0] View Items in Order or remove items"); //little statement here to give user menu options -Jack
+				    displayMenu(connection); //will show the menu -Jack
+				    nFoodNum=nFood.nextInt();
+				    if(nFoodNum==0)
+				    {
+				    	Scanner remOrBack = new Scanner(System.in);
+				    	int rBack = -1;
+				    	while(rBack!=0)
+				    	{
+				    		System.out.println("Enter ID of the item you want to remove: "
+    				    			+ "\n[0] Go back");
+				    		viewFoodList(connection, newFList); //this will show what is currently in the order -Jack
+				    		rBack=remOrBack.nextInt();    
+				    		if(rBack==0)
+				    			break;
+				    		else
+				    		{
+				    			FoodItem foodRemove = null;
+				    			for(FoodItem i:newFList)
+				    			{
+				    				if(i.getFoodItemID()==rBack)
+				    					foodRemove=i;
+				    					
+				    			}
+				    			newFList.remove(foodRemove);
+				    		}
+				    			
+				    	} 
+				    	//Okay so the way this crazy thing works is it asks the user to enter the id of the item they want to remove, stores that then because of how ArrayList works
+				    	 // I need to get the object based on the id so it loops through the arrayList until the foodItemID matches the customer selected id to remove, from here it
+				    	 // stores the FoodItem in a temporary FoodItem object where after the loop it will then remove the FoodItem from the ArrayList -Jack
+				    	 
+				    	
+				    }
+				    else if(nFoodNum==-1)
+					    break; //exits the loop -Jack
+				    else if(nFoodNum==-2)
+				    {
+				    	addFood(connection, newFList); //This is the complete order method and will add all the food items to the order through the database -Jack
+				    	nFoodNum=-1;
+				    }
+				    else
+				    {
+				    	addItemToFList(connection, nFoodNum, newFList);
+				    }
+				}
+				break;
+			case 3:
+				viewOpenCustomerOrder(connection);
+				break;
+			case 4:
+				break;
+			}
+			
+		}
+		uInput=null;
+	}
+
+
+
+	private static void viewCustomerAccount(Connection connection) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
+	private static void viewOpenCustomerOrder(Connection connection) {
+		String sql="SELECT * FROM [Order] WHERE customerID= ? AND orderStatus!='closed'";
+		try {
+			PreparedStatement p = connection.prepareStatement(sql);
+			p.setInt(1, currentCustomer.getCustomerID());
+			ResultSet rs;
+			rs=p.executeQuery();
+			if(rs.next()==false)
+			{
+				System.out.println("No active orders");
+			}
+			else {
+			while(rs.next())
+			{
+				String s = rs.getInt("orderID")+") " +rs.getString("orderStatus") +", "+rs.getFloat("totalPrice");
+				System.out.println(s);
+			}
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+	}
+
+
+
+	private static void createDriverAccount(Connection connection) {
+		String sql="SELECT email FROM Driver WHERE email = ?";
+		String dIn="";
+		Scanner dInput = new Scanner(System.in);
+		System.out.println("Enter email to be used on the account: ");
+		dIn=dInput.nextLine();
+		try {
+			PreparedStatement p = connection.prepareStatement(sql);
+			p.setString(1, dIn);
+			ResultSet rs;
+			rs = p.executeQuery();
+			if (rs.next() == false) 
+			{
+		        String sqlIn="";
+		        Driver d1 = new Driver(); //create a new Customer object that the user will enter information into, will eventually be sent to database -Jack
+		        d1.setDriverEmail(dIn);
+		        String pass="", passA="";
+		        int contr=1;
+		        while(contr!=0)
+		        {
+		        System.out.println("\nEnter a password");
+		        pass=dInput.nextLine();
+		        System.out.println("\nEnter password Again");
+		        passA=dInput.nextLine();
+                if(pass==passA)
+                {
+                	d1.setPassword(pass);
+                	contr=0;
+                }
+                else
+                	System.out.println("Passwords do not match");
+		        }
+				System.out.println("\nEnter First Name: ");
+				d1.setFirstName(dInput.nextLine());
+				System.out.println("\nEnter Last Name: ");
+				d1.setLastName(dInput.nextLine());
+				
+				System.out.println("\nEnter Phone Number: ");
+				d1.setPhone(dInput.nextLine());
+				//System.out.println("\nEnter City: ");
+				//c1.setCustomerCity(scin.nextLine());
+				//System.out.println("\nEnter State: ");
+				//c1.setCustomerState(scin.nextLine());
+				//System.out.println("\nEnter Street: ");
+				//c1.setCustomerStreet(scin.nextLine());	
+				insertDriver(d1, connection); //Call the method that inserts the data -Jack
+		    } 
+			else 
+			{
+
+		        do 
+		        {
+		          String data = rs.getString("email")+" is already taken";
+		          System.out.println(data);
+		        } 
+		        while (rs.next());
+		    }
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+
+
+	private static void createRestaurantAcc(Connection connection) {
+		String sql="SELECT [userName] FROM Restaurnat WHERE [userName] = ?";
+		String rIn="";
+		Scanner rInput = new Scanner(System.in);
+		System.out.println("Enter user name to be used on the account: ");
+		rIn=rInput.nextLine();
+		try {
+			PreparedStatement p = connection.prepareStatement(sql);
+			p.setString(1, rIn);
+			ResultSet rs;
+			rs = p.executeQuery();
+			if (rs.next() == false) 
+			{
+		        String sqlIn="";
+		        Restaurant r1 = new Restaurant(); //create a new Customer object that the user will enter information into, will eventually be sent to database -Jack
+		        r1.setRestaurantUserName(rIn);
+		        String pass="", passA="";
+		        int contr=1;
+		        while(contr!=0)
+		        {
+		        System.out.println("\nEnter a password");
+		        pass=rInput.nextLine();
+		        System.out.println("\nEnter password Again");
+		        passA=rInput.nextLine();
+                if(pass==passA)
+                {
+                	r1.setRestaurantPassword(pass);
+                	contr=0;
+                }
+                else
+                	System.out.println("Passwords do not match");
+		        }
+				System.out.println("\nEnter Restaurant Name: ");
+				r1.setRestaurantName(rInput.nextLine());
+				System.out.println("\nEnter Zip: ");
+				r1.setRestaurantZip(rInput.nextLine());
+				System.out.println("\nEnter Restaurant Type ID from the following: ");
+				    getRestaurantType(connection);
+				    Scanner tIn = new Scanner(System.in);
+				    int typeID = 0;
+				    typeID = tIn.nextInt();
+				    r1.setRestaurantTypeID(typeID);
+				    inputRestaurantType(connection, r1, typeID);
+				//insertRestaurant(r1, connection); //Call the method that inserts the data -Jack
+		    } 
+			else 
+			{
+
+		        do 
+		        {
+		          String data = rs.getString("email")+" is already taken";
+		          System.out.println(data);
+		        } 
+		        while (rs.next());
+		    }
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+	}
+
+
+
+	private static void createCustomerAcc(Connection connection) {
+		String sql="SELECT email FROM Customer WHERE email = ?";
+		String cIn="";
+		Scanner cInput = new Scanner(System.in);
+		System.out.println("Enter email to be used on the account: ");
+		cIn=cInput.nextLine();
+		try {
+			PreparedStatement p = connection.prepareStatement(sql);
+			p.setString(1, cIn);
+			ResultSet rs;
+			rs = p.executeQuery();
+			if (rs.next() == false) 
+			{
+		        String sqlIn="";
+		        Customer c1 = new Customer(); //create a new Customer object that the user will enter information into, will eventually be sent to database -Jack
+		        c1.setCustomerEmail(cIn);
+		        String pass="", passA="";
+		        int contr=1;
+		        while(contr!=0)
+		        {
+		        System.out.println("\nEnter a password");
+		        pass=cInput.nextLine();
+		        System.out.println("\nEnter passwordAgain");
+		        passA=cInput.nextLine();
+                if(pass==passA)
+                {
+                	c1.setCustomerPassword(pass);
+                	contr=0;
+                }
+                else
+                	System.out.println("Passwords do not match");
+		        }
+				System.out.println("\nEnter First Name: ");
+				c1.setCustomerFName(cInput.nextLine());
+				System.out.println("\nEnter Last Name: ");
+				c1.setCustomerLName(cInput.nextLine());
+				
+				System.out.println("\nEnter Phone Number: ");
+				c1.setCustomerPhone(cInput.nextLine());
+				//System.out.println("\nEnter City: ");
+				//c1.setCustomerCity(scin.nextLine());
+				//System.out.println("\nEnter State: ");
+				//c1.setCustomerState(scin.nextLine());
+				//System.out.println("\nEnter Street: ");
+				//c1.setCustomerStreet(scin.nextLine());
+				System.out.println("\nEnter Zip: ");
+				c1.setCustomerZip(cInput.nextLine());	
+				insertCustomer(c1, connection); //Call the method that inserts the data -Jack
+		    } 
+			else 
+			{
+
+		        do 
+		        {
+		          String data = rs.getString("email")+" is already taken";
+		          System.out.println(data);
+		        } 
+		        while (rs.next());
+		    }
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+
+
+	public static void viewFoodList(Connection connection, ArrayList<FoodItem> foodList)
     {
     	float totalPrice=0;
     	for(FoodItem f:foodList)

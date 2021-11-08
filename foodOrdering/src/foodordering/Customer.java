@@ -3,14 +3,14 @@ package foodordering;
 public class Customer {
 	private int customerID;
 	
-	private String customerFName, customerLName, customerEmail, customerPhone, customerCity, customerState, customerStreet, customerZip;
+	private String customerFName, customerLName, customerEmail, customerPhone, customerCity, customerState, customerStreet, customerZip, customerPassword;
      public Customer() 
      {
     	 //default Constructor -Jack
 	 }
      public Customer(int customerID, String customerFName, String customerLName, String customerEmail,
  			String customerPhone, String customerCity, String customerState, String customerStreet,
- 			String customerZip) {
+ 			String customerZip, String customerPassword) {
  		this.customerID = customerID;
  		this.customerFName = customerFName;
  		this.customerLName = customerLName;
@@ -20,9 +20,16 @@ public class Customer {
  		this.customerState = customerState;
  		this.customerStreet = customerStreet;
  		this.customerZip = customerZip;
+ 		this.customerPassword = customerPassword;
  		//Constructor with all  variables -Jack
  	}
-     //all getters and setters -Jack
+     public String getCustomerPassword() {
+		return customerPassword;
+	}
+	public void setCustomerPassword(String customerPassword) {
+		this.customerPassword = customerPassword;
+	}
+	//all getters and setters -Jack
      public int getCustomerID() {
  		return customerID;
  	}

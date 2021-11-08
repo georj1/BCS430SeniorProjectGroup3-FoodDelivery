@@ -13,7 +13,7 @@ import java.util.ArrayList;
 public class Restaurant {
     
     private int restaurantID, restaurantTypeID; 
-	private String restaurantName, restaurantCity, restaurantState, restaurantStreet, restaurantZip, restaurantType;
+	private String restaurantName, restaurantCity, restaurantState, restaurantStreet, restaurantZip, restaurantType, restaurantUserName, restaurantPassword;
 	private double rating;
 	//private ArrayList<FoodItem> menu = new ArrayList<>(); //menu for now, may change this later -Jack
 	    
@@ -21,7 +21,7 @@ public class Restaurant {
     {
 		
     }
-	public Restaurant(int restaurantID, String restaurantName, String restaurantCity, String restaurantState, String restaurantStreet, String restaurantZip, int restaurantTypeID, String restaurantType, double rating)
+	public Restaurant(int restaurantID, String restaurantName, String restaurantCity, String restaurantState, String restaurantStreet, String restaurantZip, int restaurantTypeID, String restaurantType, double rating, String restaurantUserName, String restaurantPassword)
 	{
 		this.restaurantID=restaurantID;
 		this.rating=rating;
@@ -32,10 +32,24 @@ public class Restaurant {
         this.restaurantZip=restaurantZip;
         this.restaurantTypeID=restaurantTypeID;
         this.restaurantType=restaurantType;
+        this.restaurantUserName=restaurantUserName;
+        this.restaurantPassword=restaurantPassword;
         //Standard constructor that sets all the values -Jack
     }
 	   
-    public int getRestaurantTypeID() {
+    public String getRestaurantUserName() {
+		return restaurantUserName;
+	}
+	public void setRestaurantUserName(String restaurantUserName) {
+		this.restaurantUserName = restaurantUserName;
+	}
+	public String getRestaurantPassword() {
+		return restaurantPassword;
+	}
+	public void setRestaurantPassword(String restaurantPassword) {
+		this.restaurantPassword = restaurantPassword;
+	}
+	public int getRestaurantTypeID() {
 		return restaurantTypeID;
 	}
 	public void setRestaurantTypeID(int restaurantTypeID) {
