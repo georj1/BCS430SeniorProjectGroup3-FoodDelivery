@@ -25,6 +25,7 @@ public class FoodOrdering {
      * @param args the command line arguments
      */
 	private static Restaurant selectedRestaurant = new Restaurant(); //This is a restaurant dataType that will store the selected restaurant so that it can be used to get the menu -Jack
+	private static Restaurant currentRestaurant = new Restaurant();
 	private static Customer currentCustomer = new Customer(); //This is the current customer for use with the order, it will be replaced with Chris's login system when that is done -Jack
     private static Driver currentDriver = new Driver(); //This is the current Driver, will be replaced by login eventually hopefully -Jack 
 	public static void main(String[] args) 
@@ -764,14 +765,171 @@ public class FoodOrdering {
     
     private static void loginDriver(Connection connection) {
 		// TODO Auto-generated method stub
-		
+    	System.out.println("Enter email");
+		String sql="SELECT email FROM Customer WHERE email = ?";
+		String user="", pass="";
+		Scanner cInput = new Scanner(System.in);
+		user=cInput.nextLine();
+		try {
+			PreparedStatement p = connection.prepareStatement(sql);
+			p.setString(1, user);
+			ResultSet rs;
+			rs = p.executeQuery();
+			if (rs.next() == false) 
+			{
+		        System.out.println("No such account with this email");
+		    } 
+			else 
+			{
+                System.out.println("Enter password");
+                pass=cInput.nextLine();
+                String sql2="SELECT email, [password] FROM Customer WHERE email = ? AND [password] = ?";
+                PreparedStatement p2 = connection.prepareStatement(sql2);
+                p2.setString(1, user);
+                p2.setString(2, pass);
+                ResultSet rs2; 
+                rs2 = p2.executeQuery();
+                if (rs2.next() == false) 
+    			{
+    		        System.out.println("Invalid Password");
+    		    } 
+    			else
+    			{
+    				currentCustomer.setCustomerID(rs2.getInt("customerID"));
+    				currentCustomer.setCustomerFName(rs2.getString("firstName"));
+    				currentCustomer.setCustomerLName(rs2.getString("lastName"));
+    				currentCustomer.setCustomerEmail(rs2.getString("email"));
+    				currentCustomer.setCustomerPhone(rs2.getString("phone"));
+    				currentCustomer.setCustomerZip(rs2.getString("location"));
+    				currentCustomer.setCustomerPassword(rs2.getString("password"));
+    				System.out.println("Login Succesfull");
+    				customerPage(connection);
+    			}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		cInput.close();
 	}
 
 
 
 	private static void loginRestaurant(Connection connection) {
-		// TODO Auto-generated method stub
-		
+		System.out.println("Enter username");
+		String sql="SELECT userName FROM Restaurant WHERE userName = ?";
+		String user="", pass="";
+		Scanner rInput = new Scanner(System.in);
+		user=rInput.nextLine();
+		try {
+			PreparedStatement p = connection.prepareStatement(sql);
+			p.setString(1, user);
+			ResultSet rs;
+			rs = p.executeQuery();
+			if (rs.next() == false) 
+			{
+		        System.out.println("No such account with this username");
+		    } 
+			else 
+			{
+                System.out.println("Enter password");
+                pass=rInput.nextLine();
+                String sql2="SELECT userName, [password] FROM Restaurant WHERE userName = ? AND [password] = ?";
+                PreparedStatement p2 = connection.prepareStatement(sql2);
+                p2.setString(1, user);
+                p2.setString(2, pass);
+                ResultSet rs2; 
+                rs2 = p2.executeQuery();
+                if (rs2.next() == false) 
+    			{
+    		        System.out.println("Invalid Password");
+    		    } 
+    			else
+    			{
+    				currentRestaurant.setRestaurantID(rs2.getInt("restaurantID"));
+    				currentRestaurant.setRestaurantName(rs2.getString("restaurantName"));
+    				currentRestaurant.setRestaurantZip(rs2.getString("location"));
+    				currentRestaurant.setRestaurantTypeID(rs2.getInt("restaurantTypeID"));
+    				currentRestaurant.setRestaurantUserName(rs2.getString("userName"));
+    				currentRestaurant.setRestaurantPassword(rs2.getString("password"));
+    				System.out.println("Login Succesfull");
+    				restaurantPage(connection);
+    			}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		rInput.close();
+	}
+
+
+
+	private static void restaurantPage(Connection connection) {
+		int uIn = -1;
+		Scanner uInput = new Scanner(System.in);
+		while(uIn!=0) {
+			System.out.println("Welcome "+currentRestaurant.getRestaurantName());
+			System.out.println("What would you like to do: "
+					+ "\n[0] Logout"
+					+ "\n[1] View/Update Account Information"
+					+ "\n[2] Add items to Menu"
+					+"");
+			uIn=uInput.nextInt();
+			uInput.nextLine();
+			switch(uIn)
+			{
+			case 0:
+				currentRestaurant = new Restaurant();
+				break;
+			case 1:
+				viewRestaurantAccount(connection);
+				break;
+			case 2:
+		        Scanner foodDataIn = new Scanner(System.in);
+		        FoodItem f1 = new FoodItem();
+		        System.out.println("\nEnter Food Name: ");              
+		        f1.setFoodName(foodDataIn.nextLine());
+		        System.out.println("\nEnter Food Price: ");
+		        f1.setFoodPrice(foodDataIn.nextFloat());
+		        System.out.println("\nEnter calories: ");
+		        f1.setCalories(foodDataIn.nextInt());
+		        foodDataIn.nextLine();
+		        System.out.println("\nEnter description: ");
+		        f1.setDescription(foodDataIn.nextLine());
+		        System.out.println("\nEnter type: " );
+		        f1.setType(foodDataIn.nextLine());
+		        System.out.println("\nEneter preptime");
+		        f1.setPrepTime(foodDataIn.nextInt());
+		        //foodDataIn.nextLine();
+		        //The above gets and stores user input about the foodItems -Aayushma
+		        System.out.println("\nEnter category ID from the following:");
+		        getCategory(connection); //Calls the method to allow the user to select categories -Aayushma
+		        Scanner catIn = new Scanner(System.in);
+		        int categoryID = 0;
+		        categoryID = catIn.nextInt();
+		        f1.setCategoryID(categoryID);
+		        inputCategoryType(connection, f1, categoryID); //Calls the method to insert the category based on user input -Aayushma
+				break;
+			}
+		}
+	}
+
+
+
+	private static void viewRestaurantAccount(Connection connection) {
+		String sql="SELECT *, restaurantType FROM Restaurant JOIN RestaurantType ON Restaurant.restaurantTypeID=RestaurantType.restaurantTypeID WHERE Restaurant.restaurantID= ?";
+		try {
+			PreparedStatement p = connection.prepareStatement(sql);
+			p.setInt(1, currentRestaurant.getRestaurantID());
+			ResultSet rs;
+			rs=p.executeQuery();
+			while(rs.next())
+			{
+				String s = "Name " +rs.getString("restaurantName") +"\nUsername: "+rs.getString("userName")+"\nType: "+rs.getString("restaurantType") +"\nZip Code: "+rs.getString("location");
+				System.out.println(s);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 
 
@@ -819,17 +977,14 @@ public class FoodOrdering {
     			}
 			}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		
+		cInput.close();
 	}
 
 
 
 	private static void customerPage(Connection connection) {
-		// TODO Auto-generated method stub
 		int uIn = -1;
 		Scanner uInput = new Scanner(System.in);
 		while(uIn!=0) {
@@ -841,6 +996,8 @@ public class FoodOrdering {
 					+ "\n[3] View Order in Progress"
 					//+ "\n[4] Leave a review"
 					+"");
+			uIn=uInput.nextInt();
+			uInput.nextLine();
 			switch(uIn)
 			{
 			case 0:
@@ -850,6 +1007,12 @@ public class FoodOrdering {
 				viewCustomerAccount(connection);
 				break;
 			case 2:
+				showRestaurants(connection);
+				int rID=0;
+				System.out.println("Enter the number of the restaurant you want to select: ");
+				rID=uInput.nextInt();
+				uInput.nextLine();
+				selectRestaurant(connection, rID);
 				ArrayList<FoodItem> newFList = new ArrayList<FoodItem>(); //List to store foodItemID's to be put into order later -Jack
 				Scanner nFood = new Scanner(System.in); //this will get the foodItemID -Jack
 				int nFoodNum=-3; //variable that will do 2 things, add foodItemIDs, control the loops -Jack
@@ -911,16 +1074,31 @@ public class FoodOrdering {
 				break;
 			case 4:
 				break;
+			default:
+				break;
 			}
 			
 		}
-		uInput=null;
+		uInput.close();;
 	}
 
 
 
 	private static void viewCustomerAccount(Connection connection) {
-		// TODO Auto-generated method stub
+		String sql="SELECT * FROM Customer WHERE customerID= ?";
+		try {
+			PreparedStatement p = connection.prepareStatement(sql);
+			p.setInt(1, currentCustomer.getCustomerID());
+			ResultSet rs;
+			rs=p.executeQuery();
+			while(rs.next())
+			{
+				String s = "Name " +rs.getString("firstName") +" "+rs.getString("lastName")+"\nEmail: "+rs.getString("email")+"\nPhone Number: "+rs.getString("phone") +"\nZip Code: "+rs.getString("location");
+				System.out.println(s);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		
 	}
 
@@ -1011,7 +1189,6 @@ public class FoodOrdering {
 		        while (rs.next());
 		    }
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -1247,7 +1424,7 @@ public class FoodOrdering {
     		p.setString(5, f1.getType());
     		p.setInt(6, f1.getPrepTime());
     		p.setInt(7, f1.getCategoryID());
-    		p.setInt(8, selectedRestaurant.getRestaurantID());
+    		p.setInt(8, currentRestaurant.getRestaurantID());
     		p.executeUpdate();
     			System.out.print("Menu data succesfully inserted: \n");
     			//The above inserts new data into the DB and then alerts the user that it was successful -Aayushma
