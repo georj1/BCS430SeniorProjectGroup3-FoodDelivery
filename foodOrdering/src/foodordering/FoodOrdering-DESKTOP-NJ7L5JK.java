@@ -31,8 +31,8 @@ public class FoodOrdering {
 	public static void main(String[] args) 
     {
     	
-    	String url = "jdbc:sqlserver://DESKTOP-NJ7L5JK\\sqlexpress;integratedSecurity=true;databaseName=master;"; //Jack surface-Jack
-		//String url = "jdbc:sqlserver://DESKTOP-JJR7T08\\sqlexpress;integratedSecurity=true;databaseName=master;"; //Jack PC -Jack
+    	String url = "jdbc:sqlserver://DESKTOP-NJ7L5JK\\sqlexpress;integratedSecurity=true;databaseName=master;"; //Jacks Surface -Jack
+		//String url = "jdbc:sqlserver://DESKTOP-JJR7T08\\sqlexpress;integratedSecurity=true;databaseName=master;"; //Jacks PC -Jack
     	//String user ="NT Service\\MSSQL$SQLEXPRESS"; //not needed right now but might be needed for remote access -Jack
     	//String password="bcs430group3"; // same as above comment -Jack
     	Scanner scin = new Scanner(System.in);
