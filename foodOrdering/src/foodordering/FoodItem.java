@@ -11,8 +11,8 @@ package foodordering;
  */
 public class FoodItem {
 
-    private int foodItemID, calories, restaurantID, categoryID;
-    private String foodName, description, type, prepTime, categoryName;
+    private int foodItemID, calories, restaurantID, categoryID, prepTime;
+    private String foodName, description, type, categoryName;
     private float foodPrice;
     
     public FoodItem()
@@ -20,7 +20,7 @@ public class FoodItem {
         
         //basic constructor for food item -Jack
     }
-    public FoodItem(int foodItemID, String foodName, float foodPrice, int calories, String description, String type, String prepTime, String categoryName)
+    public FoodItem(int foodItemID, String foodName, float foodPrice, int calories, String description, String type, int prepTime, String categoryName)
     {
     	this.foodItemID=foodItemID;
     	this.foodName=foodName;
@@ -68,10 +68,10 @@ public class FoodItem {
 	public void setType(String type) {
 		this.type = type;
 	}
-	public String getPrepTime() {
+	public int getPrepTime() {
 		return prepTime;
 	}
-	public void setPrepTime(String prepTime) {
+	public void setPrepTime(int prepTime) {
 		this.prepTime = prepTime;
 	}
 	public String getCategoryName() {
