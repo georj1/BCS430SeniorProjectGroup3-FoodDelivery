@@ -1,14 +1,15 @@
 CREATE TABLE Customer (
-    customerID INT NOT NULL IDENTITY(1,1),     
+    	customerID INT NOT NULL IDENTITY(1,1),     
 	lastName varchar(25),
-    firstName varchar(25),
-    --city varchar(55),
+    	firstName varchar(25),
+    	--city varchar(55),
 	--street varchar(155),
 	--[state] varchar(25),
 	--zipCode varChar(15),
 	email varchar(55),
 	phone varChar(20),
-	customerLocation varChar(5)
+	customerLocation varChar(5),
+	password varchar(100)
 	PRIMARY KEY(CustomerID),
 );
 
@@ -19,11 +20,11 @@ CREATE TABLE RestaurantType (
 	PRIMARY KEY(restaurantTypeID),
 );
 
---INSERT RestaurantType(restaurantType) VALUES('Italian');
---INSERT RestaurantType(restaurantType) VALUES('Japanese');
---INSERT RestaurantType(restaurantType) VALUES('American');
---INSERT RestaurantType(restaurantType) VALUES('Mexican');
---INSERT RestaurantType(restaurantType) VALUES('Halal');
+INSERT RestaurantType(restaurantType) VALUES('Italian');
+INSERT RestaurantType(restaurantType) VALUES('Japanese');
+INSERT RestaurantType(restaurantType) VALUES('American');
+INSERT RestaurantType(restaurantType) VALUES('Mexican');
+INSERT RestaurantType(restaurantType) VALUES('Halal');
 
 
 
@@ -33,22 +34,24 @@ CREATE TABLE Category(
 	PRIMARY KEY(categoryID),
 );
 
---INSERT Category(categoryName) VALUES('Vegan');
---INSERT Category(categoryName) VALUES('Vegetarian');
---INSERT Category(categoryName) VALUES('Dairy Free');
---INSERT Category(categoryName) VALUES('Gluten Free');
---INSERT Category(categoryName) VALUES('Nut-Free');
---INSERT Category(categoryName) VALUES('Fish Free');
---INSERT Category(categoryName) VALUES('Shellfish Free');
---INSERT Category(categoryName) VALUES('Pescatarian');
---INSERT Category(categoryName) VALUES('Other');
+INSERT Category(categoryName) VALUES('Vegan');
+INSERT Category(categoryName) VALUES('Vegetarian');
+INSERT Category(categoryName) VALUES('Dairy Free');
+INSERT Category(categoryName) VALUES('Gluten Free');
+INSERT Category(categoryName) VALUES('Nut-Free');
+INSERT Category(categoryName) VALUES('Fish Free');
+INSERT Category(categoryName) VALUES('Shellfish Free');
+INSERT Category(categoryName) VALUES('Pescatarian');
+INSERT Category(categoryName) VALUES('Other');
 
 
 CREATE TABLE Restaurant (
-    restaurantID int NOT NULL IDENTITY(1,1),
-    restaurantName varchar(25),
+    	restaurantID int NOT NULL IDENTITY(1,1),
+   	restaurantName varchar(25),
 	restaurantTypeID int,
-	restaurantLocation varChar(5)
+	restaurantLocation varChar(5),
+	userName varChar(50),
+	password varchar(100)
 	--city varchar(55),
 	--street varchar(155),
 	--[state] varchar(25),
@@ -58,7 +61,6 @@ CREATE TABLE Restaurant (
 );
 
 
-INSERT Restaurant(restaurantName, restaurantTypeID) VALUES('Wendys', 3);
 CREATE TABLE Rating (
 	ratingID int not null identity(1,1),
 	restaurantID int,
@@ -83,23 +85,12 @@ CREATE TABLE FoodItem (
 	FOREIGN KEY(restaurantID) REFERENCES Restaurant(restaurantID)
 );
 
-
-
-INSERT FoodItem(foodName, foodPrice, calories, [description], [type], prepTime, categoryID, restaurantID) VALUES('Hamburger', 4.99, 600, 'A hamburger with lettuce, tomato, onions and ketchup', NULL, '5 minutes', 1);
-INSERT FoodItem(foodName, foodPrice, calories, [description], [type], prepTime, categoryID, restaurantID) VALUES('Chicken Nuggets', 3.99, 500, '6 Chicken Nuggets', NULL, '4 minutes', 1);
-INSERT FoodItem(foodName, foodPrice, calories, [description], [type], prepTime, categoryID, restaurantID) VALUES('Salad', 4.99, 400, 'Garden Salad', 1, '5 minutes', 1);
-
-
-
-
-
-
-
 CREATE TABLE Driver (
 	driverID int not null identity(1,1),
 	firstName varChar(25),
 	lastName varChar(25),
-	phone varChar(20)
+	phone varChar(20),
+	password varChar(100)
 	PRIMARY KEY(driverID)
 );
 
