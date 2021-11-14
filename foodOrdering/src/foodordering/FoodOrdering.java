@@ -609,7 +609,7 @@ public class FoodOrdering {
 
 
 	private static void viewDriverOrders(Connection connection) {
-		String sql="SELECT * FROM Delivery JOIN [Order] ON Delivery.orderID=[Order].orderID WHERE Delivery.driverID= ?"; // getting orders that are not taken by a driver and are open- Ahsan
+		String sql="SELECT * FROM Delivery JOIN [Order] ON Delivery.orderID=[Order].orderID JOIN Customer ON [Order].customerID=Customer.customerID WHERE Delivery.driverID= ?"; // getting orders that are not taken by a driver and are open- Ahsan
 
     	ResultSet rs;
     	try {
@@ -618,7 +618,7 @@ public class FoodOrdering {
     		rs=p.executeQuery();
     		while(rs.next())
     		{
-    			String s = "[" + rs.getInt("orderID") + "] " + rs.getFloat("totalPrice" ); //+ " " + rs.getInt("totalPrepTime") ; //will be changed in the future when we get a better idea of what to show the customer -Ahsan
+    			String s = "[" + rs.getInt("orderID") + "] " + rs.getString("firstName") + " " + rs.getString("lastName") + ", " + rs.getFloat("totalPrice" ); //+ " " + rs.getInt("totalPrepTime") ; //will be changed in the future when we get a better idea of what to show the customer -Ahsan
     			System.out.println(s);
     		}
     	} catch (SQLException e) {
