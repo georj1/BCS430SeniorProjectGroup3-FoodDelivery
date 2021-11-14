@@ -1466,11 +1466,12 @@ public class FoodOrdering {
 			e.printStackTrace();
 		} 
     	String sqlUpdateO ="UPDATE [Order]"
-    			+ "\nSET orderStatus = 'Driver on the way to the restaurant'"
+    			+ "\nSET orderStatus = 'Driver on the way to the restaurant', driverID = ?"
     			+ "\nWHERE orderID= ?";
     	try {
     		PreparedStatement p3 = connection.prepareStatement(sqlUpdateO);
-    		p3.setInt(1, orderID);
+    		p3.setInt(1, currentDriver.getDriverID());
+    		p3.setInt(2, orderID);
     		p3.executeUpdate();
     	} catch(SQLException e) {
 			e.printStackTrace();
