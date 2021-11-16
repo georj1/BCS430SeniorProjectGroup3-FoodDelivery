@@ -705,6 +705,7 @@ public class FoodOrdering {
 					+ "\n[0] Logout"
 					+ "\n[1] View/Update Account Information"
 					+ "\n[2] Add items to Menu"
+					+ "\n[3] Update Order"
 					+"");
 			uIn=uInput.nextInt();
 			uInput.nextLine();
@@ -742,8 +743,19 @@ public class FoodOrdering {
 		        f1.setCategoryID(categoryID);
 		        inputCategoryType(connection, f1, categoryID); //Calls the method to insert the category based on user input -Aayushma
 				break;
+			case 3:
+				updateRestaurantOrder(connection);
+				break;
 			}
 		}
+	}
+
+
+
+	private static void updateRestaurantOrder(Connection connection) {
+		// TODO Auto-generated method stub
+		System.out.println("Enter the order number you want to update");
+		
 	}
 
 
