@@ -744,7 +744,7 @@ public class FoodOrdering {
 		        inputCategoryType(connection, f1, categoryID); //Calls the method to insert the category based on user input -Aayushma
 				break;
 			case 3:
-				updateRestaurantOrder(connection);
+				showOpenRestaurantOrders(connection);
 				break;
 			}
 		}
@@ -752,9 +752,69 @@ public class FoodOrdering {
 
 
 
-	private static void updateRestaurantOrder(Connection connection) {
+	private static void updateRestaurantOrder(Connection connection, int uOIn) {
 		// TODO Auto-generated method stub
+		String sql="UPDATE [Order]"
+				+ "\nSET orderStatus='Food is ready'"
+				+ "\nWhere orderID=?";
+		try {
+			PreparedStatement p=connection.prepareStatement(sql);
+			p.setInt(1, uOIn);
+			p.executeUpdate();
+			System.out.println("Order Updated Succesfully");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+	}
+
+
+
+	private static void showOpenRestaurantOrders(Connection connection) {
 		System.out.println("Enter the order number you want to update");
+		String sql="SELECT lineItemNumber, foodName, ROUND(foodPrice,2) AS 'foodPriceR'\r\n"
+				+ "FROM [Order] JOIN LineItem ON [Order].orderID=LineItem.orderID JOIN FoodItem ON LineItem.foodItemID=FoodItem.foodItemID \r\n"
+				+ "WHERE FoodItem.restaurantID=? AND (orderStatus='Driver on the way to the restaurant' OR orderStatus='Preparing')\r\n";
+		
+				String sql2= "SELECT DISTINCT [Order].orderID, orderStatus, ROUND(totalPrice, 2) AS 'totPriceR', totalPrepTime\r\n"
+				+ "FROM [Order] JOIN LineItem ON [Order].orderID=LineItem.orderID JOIN FoodItem ON LineItem.foodItemID=FoodItem.foodItemID \r\n"
+				+ "WHERE FoodItem.restaurantID=? AND (orderStatus='Driver on the way to the restaurant' OR orderStatus='Preparing')";
+				String r="";
+		try {
+			PreparedStatement p = connection.prepareStatement(sql2);
+			p.setInt(1, currentRestaurant.getRestaurantID());
+			ResultSet rs=p.executeQuery();
+			if (rs.next() == false) 
+			{
+		        r="No Open Orders";
+		    } 
+			else 
+			{
+				do
+				{
+					r+="\n ["+rs.getInt("orderID") +"] "+rs.getString("orderStatus")+", "+rs.getFloat("totPriceR")+", "+rs.getInt("totalPrepTime");
+				}
+				while (rs.next());
+				p = connection.prepareStatement(sql);
+				p.setInt(1, currentRestaurant.getRestaurantID());
+				rs = p.executeQuery();
+				while(rs.next())
+				{
+					r+="\n\t"+rs.getInt("lineItemNumber")+" "+rs.getString("foodName")+", "+rs.getFloat("foodPriceR");
+				}
+				Scanner oInput = new Scanner(System.in);
+				int uOIn=0;
+				uOIn=oInput.nextInt();
+				oInput.nextLine();
+				updateRestaurantOrder(connection, uOIn);
+			}
+			System.out.println(r);
+			
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
 		
 	}
 
