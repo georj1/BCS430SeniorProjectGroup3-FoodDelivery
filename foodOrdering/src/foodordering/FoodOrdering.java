@@ -585,6 +585,7 @@ public class FoodOrdering {
 			{
 			case 0:
 				currentDriver = new Driver();
+				System.out.println("You have been logged out");
 				break;
 			case 1:
 				viewDriverAccount(connection);
@@ -713,6 +714,7 @@ public class FoodOrdering {
 			{
 			case 0:
 				currentRestaurant = new Restaurant();
+				System.out.println("You have been logged out");
 				break;
 			case 1:
 				viewRestaurantAccount(connection);
@@ -787,6 +789,7 @@ public class FoodOrdering {
 			if (rs.next() == false) 
 			{
 		        r="No Open Orders";
+		        System.out.println(r);
 		    } 
 			else 
 			{
@@ -802,13 +805,14 @@ public class FoodOrdering {
 				{
 					r+="\n\t"+rs.getInt("lineItemNumber")+" "+rs.getString("foodName")+", "+rs.getFloat("foodPriceR");
 				}
+				System.out.println(r);
 				Scanner oInput = new Scanner(System.in);
 				int uOIn=0;
 				uOIn=oInput.nextInt();
 				oInput.nextLine();
 				updateRestaurantOrder(connection, uOIn);
 			}
-			System.out.println(r);
+			
 			
 			
 		} catch (SQLException e) {
@@ -907,6 +911,7 @@ public class FoodOrdering {
 			{
 			case 0:
 				currentCustomer = new Customer();
+				System.out.println("You have been logged out");
 				break;
 			case 1:
 				viewCustomerAccount(connection);
