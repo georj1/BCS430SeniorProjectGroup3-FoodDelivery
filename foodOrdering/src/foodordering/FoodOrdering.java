@@ -577,7 +577,7 @@ public class FoodOrdering {
 					+ "\n[1] View/Update Account Information"
 					+ "\n[2] Select an Order"
 					+ "\n[3] View Orders in Progress"
-					//+ "\n[4] Leave a review"
+					+ "\n[4] Pick-up Order"
 					+"");
 			uIn=uInput.nextInt();
 			uInput.nextLine();
@@ -593,18 +593,85 @@ public class FoodOrdering {
 			case 2:
 				//This method will only be shown to drivers, for now will call a driver login method -Jack
 				displayOrders(connection); //Calls method to view the currently open orders -Jack
-				int oSelect =uInput.nextInt();
-				uInput.nextLine();
-				System.out.println("Enter the zip code you are currently in: ");
-				String zip=uInput.nextLine();
-				selectOrder(connection, oSelect, zip); //calls the method that will update the orderTable to say it's selected and to create a delivery -Jack
 				break;
 			case 3:
 				viewDriverOrders(connection);
 				break;
+			case 4:
+				pickUpOrder(connection);
+				break;
 			}
 		}
 		//uInput.close();
+	}
+
+
+
+	private static void pickUpOrder(Connection connection) {
+		// TODO Auto-generated method stub
+		System.out.println("Enter the order number you want to update");
+		String sql="SELECT lineItemNumber, foodName, ROUND(foodPrice,2) AS 'foodPriceR'\r\n"
+				+ "FROM [Order] JOIN LineItem ON [Order].orderID=LineItem.orderID JOIN FoodItem ON LineItem.foodItemID=FoodItem.foodItemID \r\n"
+				+ "WHERE [Order].driverID=? AND orderStatus='Food is ready'\r\n";
+		
+				String sql2= "SELECT DISTINCT [Order].orderID, orderStatus, ROUND(totalPrice, 2) AS 'totPriceR', totalPrepTime\r\n"
+				+ "FROM [Order] JOIN LineItem ON [Order].orderID=LineItem.orderID JOIN FoodItem ON LineItem.foodItemID=FoodItem.foodItemID \r\n"
+				+ "WHERE [Order].driverID=? AND orderStatus='Food is ready'";
+				String r="";
+		try {
+			PreparedStatement p = connection.prepareStatement(sql2);
+			p.setInt(1, currentDriver.getDriverID());
+			ResultSet rs=p.executeQuery();
+			if (rs.next() == false) 
+			{
+		        r="No Open Orders";
+		        System.out.println(r);
+		    } 
+			else 
+			{
+				do
+				{
+					r+="\n ["+rs.getInt("orderID") +"] "+rs.getString("orderStatus")+", "+rs.getFloat("totPriceR")+", "+rs.getInt("totalPrepTime");
+				}
+				while (rs.next());
+				p = connection.prepareStatement(sql);
+				p.setInt(1, currentDriver.getDriverID());
+				rs = p.executeQuery();
+				while(rs.next())
+				{
+					r+="\n\t"+rs.getInt("lineItemNumber")+" "+rs.getString("foodName")+", "+rs.getFloat("foodPriceR");
+				}
+				System.out.println(r);
+				System.out.println("Enter the order id to pick up: ");
+				Scanner oInput = new Scanner(System.in);
+				int uOIn=0;
+				uOIn=oInput.nextInt();
+				oInput.nextLine();
+				updateDriverPickUp(connection, uOIn);
+			}
+			
+			
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+
+
+	private static void updateDriverPickUp(Connection connection, int uOIn) {
+		// TODO Auto-generated method stub
+		String sql="UPDATE [Order]"
+				+ "\nSET orderStatus='"+currentDriver.getFirstName()+" is on the way with your order'"
+				+ "\nWhere orderID=?";
+		try {
+			PreparedStatement p=connection.prepareStatement(sql);
+			p.setInt(1, uOIn);
+			p.executeUpdate();
+			System.out.println("Order Picked Up");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 
 
@@ -1392,21 +1459,53 @@ public class FoodOrdering {
     
     public static void displayOrders(Connection connection)
     {
-    	String sql="SELECT * FROM [Order] WHERE orderStatus='preparing'"; // getting orders that are not taken by a driver and are open- Ahsan
+    	String sql="SELECT lineItemNumber, foodName, ROUND(foodPrice,2) AS 'foodPriceR'\r\n"
+				+ "FROM [Order] JOIN LineItem ON [Order].orderID=LineItem.orderID JOIN FoodItem ON LineItem.foodItemID=FoodItem.foodItemID \r\n"
+				+ "WHERE orderStatus='preparing'";
+    	String r="";
+    	String sql2= "SELECT DISTINCT [Order].orderID, orderStatus, ROUND(totalPrice, 2) AS 'totPriceR', totalPrepTime, restaurantName, restaurantLocation, firstName, lastName, customerLocation\r\n"
+				+ "FROM [Order] JOIN LineItem ON [Order].orderID=LineItem.orderID JOIN FoodItem ON LineItem.foodItemID=FoodItem.foodItemID JOIN Customer ON [Order].customerID=Customer.customerID JOIN Restaurant ON FoodItem.restaurantID=Restaurant.restaurantID\r\n"
+				+ "WHERE orderStatus='preparing'";
 
     	Statement statement;
     	ResultSet rs;
     	try {
-    		statement=connection.createStatement();
-    		rs=statement.executeQuery(sql);
-    		while(rs.next())
-    		{
-    			String s = "[" + rs.getInt("orderID") + "] " + rs.getFloat("totalPrice" ); //+ " " + rs.getInt("totalPrepTime") ; //will be changed in the future when we get a better idea of what to show the customer -Ahsan
-    			System.out.println(s);
-    		}
-    	} catch (SQLException e) {
-    		e.printStackTrace();
-    }
+			statement= connection.createStatement();
+			
+			rs=statement.executeQuery(sql2);
+			if (rs.next() == false) 
+			{
+		        r="No Open Orders";
+		        System.out.println(r);
+		    } 
+			else 
+			{
+				do
+				{
+					r+="\n ["+rs.getInt("orderID") +"] "+rs.getString("orderStatus")+", "+rs.getFloat("totPriceR")+", "+rs.getInt("totalPrepTime") +", "+rs.getString("restaurantName")+", "+rs.getString("restaurantLocation") + ", "+rs.getString("firstName") + ", "+ rs.getString("lastName")+", "+rs.getString("customerLocation");
+				}
+				while (rs.next());
+				statement = connection.createStatement();
+				rs = statement.executeQuery(sql);
+				while(rs.next())
+				{
+					r+="\n\t"+rs.getInt("lineItemNumber")+" "+rs.getString("foodName")+", "+rs.getFloat("foodPriceR");
+				}
+				System.out.println(r);
+				Scanner uInput = new Scanner(System.in);
+				System.out.println("Enter id of order you want");
+				int oSelect =uInput.nextInt();
+				uInput.nextLine();
+				System.out.println("Enter the zip code you are currently in: ");
+				String zip=uInput.nextLine();
+				selectOrder(connection, oSelect, zip); //calls the method that will update the orderTable to say it's selected and to create a delivery -Jack
+			}
+			
+			
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 
 
 
