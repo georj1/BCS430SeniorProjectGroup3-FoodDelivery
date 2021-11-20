@@ -1069,7 +1069,7 @@ public class FoodOrdering {
 					+ "\n[1] View/Update Account Information"
 					+ "\n[2] Place an Order"
 					+ "\n[3] View Order in Progress"
-					//+ "\n[4] Leave a review"
+					+ "\n[4] Leave a review"
 					+"");
 			uIn=uInput.nextInt();
 			uInput.nextLine();
@@ -1156,6 +1156,7 @@ public class FoodOrdering {
 					viewFullOrder(connection, uIn);
 				break;
 			case 4:
+				leaveReview(connection);
 				break;
 			default:
 				break;
@@ -1163,6 +1164,78 @@ public class FoodOrdering {
 			
 		}
 		//uInput.close();;
+	}
+
+
+
+	private static void leaveReview(Connection connection) {
+		String sql="SELECT DISTINCT Restaurant.restaurantID, restaurantName"
+				+ "\nFROM Restaurant JOIN FoodItem ON Restaurant.restaurantID=FoodItem.restaurantID JOIN LineItem ON FoodItem.foodItemID=LineItem.foodItemID JOIN [Order] ON LineItem.orderID=[Order].orderID"
+				+ "\nWHERE [Order].customerID= ?";
+		try {
+			PreparedStatement p = connection.prepareStatement(sql);
+			p.setInt(1, currentCustomer.getCustomerID());
+			ResultSet rs = p.executeQuery();
+			if(rs.next()==false)
+				System.out.println("No orders placed");
+			else
+			{
+				do
+				{
+					String s="["+rs.getInt("restaurantID")+"] "+rs.getString("restaurantName");
+					System.out.println(s);
+				}
+				while(rs.next());
+				System.out.println("Enter ID of restaurant to leave a review for: ");
+				Scanner i = new Scanner(System.in);
+				int id = i.nextInt();
+				createReview(connection, id);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+				
+	}
+
+
+
+	private static void createReview(Connection connection, int id) {
+		// TODO Auto-generated method stub
+		String sql1="SELECT customerID"
+				+ "\nFROM Rating"
+				+ "\nWHERE restaurantID=?";
+		try {
+			PreparedStatement p = connection.prepareStatement(sql1);
+			p.setInt(1, id);
+			ResultSet rs=p.executeQuery();
+			if(rs.next()==false)
+			{
+				Scanner i = new Scanner(System.in);
+				int score=0;
+				String review="";
+				while(score<1||score>10)
+				{
+					System.out.println("Enter the score from 1-10");
+					score=i.nextInt();
+					i.nextLine();
+				}
+				System.out.println("Enter a review if desired");
+				review=i.nextLine();
+				String sql2="INSERT Rating(restaurantID, ratingScore, ratingReview, customerID) VALUES(?, ?, ?, ?)";
+				PreparedStatement p1 = connection.prepareStatement(sql2);
+				p1.setInt(1, id);
+				p1.setInt(2, score);
+				p1.setString(3, review);
+				p1.setInt(4, currentCustomer.getCustomerID());
+				p1.executeUpdate();
+				System.out.println("Review left");
+				
+			}
+			else
+				System.out.println("You've already left a review for this restaurant");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 
 
