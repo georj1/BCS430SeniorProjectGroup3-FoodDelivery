@@ -24,7 +24,7 @@ public class FoodOrdering {
     /**
      * @param args the command line arguments
      */
-	private static Restaurant selectedRestaurant = new Restaurant(); //This is a restaurant dataType that will store the selected restaurant so that it can be used to get the menu -Jack
+	private static Restaurant selectedRestaurant = null; //This is a restaurant dataType that will store the selected restaurant so that it can be used to get the menu -Jack
 	private static Restaurant currentRestaurant = new Restaurant();
 	private static Customer currentCustomer = new Customer(); //This is the current customer for use with the order, it will be replaced with Chris's login system when that is done -Jack
     private static Driver currentDriver = new Driver(); //This is the current Driver, will be replaced by login eventually hopefully -Jack 
@@ -325,19 +325,33 @@ public class FoodOrdering {
     
     
     //TODO: Rework this method 
-    public static void rZipSearch(String searchZip, Connection connection)
+    public static void zipSearch(Connection connection)
     {
-    	String sql="SELECT * FROM [dbo].[Restaurant] WHERE [location]= ?"; //code to get all data from the restaurant -Jack
+    	Scanner i = new Scanner(System.in);
+    	String searchZip;
+    	System.out.println("Enter Zip Code to find restauarnts");
+    	searchZip=i.nextLine();
+    	String sql="SELECT * "
+    			+ "\nFROM Restaurant JOIN RestaurantType ON Restaurant.restaurantTypeID=RestaurantType.restaurantTypeID "
+    			+ "\nWHERE restaurantLocation LIKE CONCAT(?, '%')"; //code to get all data from the restaurant -Jack
 		try {
 			ResultSet rs;
 			PreparedStatement p = connection.prepareStatement(sql);
 			p.setString(1, searchZip);
 			rs = p.executeQuery();
-			while(rs.next())
+			if(rs.next()==false)
+				System.out.println("No Restaurants matching that Zip Code");
+			else
 			{
-				String s = "[" + rs.getString("RestaurantID") + "] "+ rs.getString("RestaurantName")+ ": "+rs.getString("ZipCode")+", "+rs.getString("RestaurantType")+", "+rs.getString("RestaurantRating");
-				System.out.println(s);
+				do
+				{
+					String s = "[" + rs.getString("RestaurantID") + "] "+ rs.getString("RestaurantName")+ ": "+rs.getString("restaurantLocation")+", "+rs.getString("RestaurantType");
+					System.out.println(s);
+				}
+				while(rs.next());
+				
 			}
+			
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} //this isn't used yet but is how SQL statements will be inputed -Jack
@@ -348,6 +362,7 @@ public class FoodOrdering {
     
     public static void selectRestaurant(Connection connection, int rSelect)
     {
+    	selectedRestaurant = new Restaurant();
     	String sql="SELECT restaurantID, restaurantName, Restaurant.restaurantTypeID, restaurantType FROM [dbo].[Restaurant] JOIN RestaurantType ON Restaurant.restaurantTypeID=RestaurantType.restaurantTypeID  WHERE RestaurantID= ?"; //code to get the restaurant based on the ID the customer selected, will need to have the menu added -Jack
 		try {
 			ResultSet rs;
@@ -481,6 +496,7 @@ public class FoodOrdering {
 			p3.setFloat(3, totalPrice);
 			p3.setInt(4, oID);
 			p3.executeUpdate();
+			selectedRestaurant=null;
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}			
@@ -1083,12 +1099,31 @@ public class FoodOrdering {
 				viewCustomerAccount(connection);
 				break;
 			case 2:
-				showRestaurants(connection);
-				int rID=0;
-				System.out.println("Enter the number of the restaurant you want to select: ");
-				rID=uInput.nextInt();
+				while (selectedRestaurant == null)
+				{
+					
+				System.out.println("How would you like to search for a restaurant"
+						+ "\n[-3]Go Back"
+						+ "\n[1]View All"
+						+ "\n[2]Search by Zip Code"
+						//+ "\n[3]Search by Type"
+						+ "");
+				int uIn2 = uInput.nextInt();
 				uInput.nextLine();
-				selectRestaurant(connection, rID);
+						switch(uIn2)
+						{
+						case -3:
+							break;
+						case 1:
+							showRestaurants(connection);
+							break;
+						case 2:
+							zipSearch(connection);
+						default:
+							break;
+						}
+						customerOrder(connection);
+				}
 				ArrayList<FoodItem> newFList = new ArrayList<FoodItem>(); //List to store foodItemID's to be put into order later -Jack
 				Scanner nFood = new Scanner(System.in); //this will get the foodItemID -Jack
 				int nFoodNum=-3; //variable that will do 2 things, add foodItemIDs, control the loops -Jack
@@ -1164,6 +1199,17 @@ public class FoodOrdering {
 			
 		}
 		//uInput.close();;
+	}
+
+
+
+	private static void customerOrder(Connection connection) {
+		int rID=0;
+		Scanner uInput = new Scanner(System.in);
+		System.out.println("Enter the number of the restaurant you want to select: ");
+		rID=uInput.nextInt();
+		uInput.nextLine();
+		selectRestaurant(connection, rID);
 	}
 
 
