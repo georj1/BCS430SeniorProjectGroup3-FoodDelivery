@@ -1171,7 +1171,7 @@ public class FoodOrdering {
 	private static void leaveReview(Connection connection) {
 		String sql="SELECT DISTINCT Restaurant.restaurantID, restaurantName"
 				+ "\nFROM Restaurant JOIN FoodItem ON Restaurant.restaurantID=FoodItem.restaurantID JOIN LineItem ON FoodItem.foodItemID=LineItem.foodItemID JOIN [Order] ON LineItem.orderID=[Order].orderID"
-				+ "\nWHERE [Order].customerID= ?";
+				+ "\nWHERE [Order].customerID= ? AND orderStatus='Order Complete'";
 		try {
 			PreparedStatement p = connection.prepareStatement(sql);
 			p.setInt(1, currentCustomer.getCustomerID());
