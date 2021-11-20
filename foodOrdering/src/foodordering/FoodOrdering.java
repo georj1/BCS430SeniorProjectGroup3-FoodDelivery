@@ -1220,11 +1220,15 @@ public class FoodOrdering {
 				System.out.println("No active orders");
 			}
 			else {
-			while(rs.next())
-			{
+			do {
+				
+			
+			
+			
 				String s = rs.getInt("orderID")+") " +rs.getString("orderStatus") +", "+rs.getFloat("totalPrice");
 				System.out.println(s);
 			}
+			while(rs.next());
 			}
 			
 		} catch (SQLException e) {
@@ -1494,6 +1498,7 @@ public class FoodOrdering {
     
     public static void inputCategoryType(Connection connection, FoodItem f, int idToInsert)
     {
+    	//TODO: Add check to see if incorrect number is selected
     	String sql="SELECT categoryName"
 				+ "\nFROM Category"
 				+ "\nWHERE categoryID= ?"; //This will get us the full data from the specific category -Aayushma
@@ -1563,6 +1568,7 @@ public class FoodOrdering {
     
     public static void rTypeSearch(int searchID, Connection connection)
     {
+    	//TODO: Add check to see if a number is actually selected
     	String sql="SELECT *"
     			+ "\nFROM Restaurant JOIN RestaurantType ON Restaurant.restaurantTypeID=RestaurantType.restaurantTypeID"
     			+ "\nWHERE Restaurant.restaurantTypeID= ? ";
@@ -1716,6 +1722,7 @@ public class FoodOrdering {
     
     public static void selectOrder(Connection connection, int orderID, String curLoc)
     {
+    	//TODO: FIX
     	int cID=0, rID=0;
     	String custLoc="", restLoc="";
     	String sqlGetC = "SELECT customerLocation, Customer.customerID"
