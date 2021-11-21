@@ -65,9 +65,11 @@ CREATE TABLE Rating (
 	ratingID int not null identity(1,1),
 	restaurantID int,
 	ratingScore int,
-	ratingReview varChar(1000)
+	ratingReview varChar(1000),
+	customerID int
 	PRIMARY KEY(ratingID),
-	FOREIGN KEY(restaurantID) REFERENCES Restaurant(restaurantID)
+	FOREIGN KEY(restaurantID) REFERENCES Restaurant(restaurantID),
+	FOREIGN KEY(customerID) REFERENCES Customer(customerID)
 );
 
 CREATE TABLE FoodItem (
