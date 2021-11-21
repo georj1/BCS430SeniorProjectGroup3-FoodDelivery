@@ -150,13 +150,15 @@ CREATE TABLE Delivery (
 	deliveryID int not null identity(1, 1),
 	estimatedTimeToArrival int,
 	startLocation varChar(5),
+	restaurantID int,
 	restaurantLocation varChar(5),
+	customerID int,
 	customerLocation varChar(5),
 	orderID int,
 	driverID int
 	PRIMARY KEY(deliveryID),
-	FOREIGN KEY(restaurantLocation) REFERENCES Restaurant(restaurantLocation),
-	FOREIGN KEY(customerLocation) REFERENCES Customer(customerLocation),
+	FOREIGN KEY(restaurantID) REFERENCES Restaurant(restaurantID),
+	FOREIGN KEY(customerID) REFERENCES Customer(customerID),
 	FOREIGN KEY(orderID) REFERENCES [Order](orderID),
 	FOREIGN KEY(driverID) REFERENCES Driver(driverID)
 	
