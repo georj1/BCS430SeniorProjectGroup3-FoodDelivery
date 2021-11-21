@@ -92,6 +92,7 @@ CREATE TABLE Driver (
 	firstName varChar(25),
 	lastName varChar(25),
 	phone varChar(20),
+	email varchar(50),
 	password varChar(100)
 	PRIMARY KEY(driverID)
 );
