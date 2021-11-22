@@ -956,7 +956,7 @@ public class FoodOrdering {
 	private static void showOpenRestaurantOrders(Connection connection) {
 		String sql="SELECT lineItemNumber, foodName, ROUND(foodPrice,2) AS 'foodPriceR'\r\n"
 				+ "FROM [Order] JOIN LineItem ON [Order].orderID=LineItem.orderID JOIN FoodItem ON LineItem.foodItemID=FoodItem.foodItemID \r\n"
-				+ "WHERE FoodItem.restaurantID=? AND (orderStatus='Driver on the way to the restaurant' OR orderStatus='Preparing')\r\n";
+				+ "WHERE FoodItem.restaurantID=? AND orderStatus='Driver on the way to the restaurant'\r\n";
 		
 				String sql2= "SELECT DISTINCT [Order].orderID, orderStatus, ROUND(totalPrice, 2) AS 'totPriceR', totalPrepTime\r\n"
 				+ "FROM [Order] JOIN LineItem ON [Order].orderID=LineItem.orderID JOIN FoodItem ON LineItem.foodItemID=FoodItem.foodItemID \r\n"
@@ -1106,7 +1106,7 @@ public class FoodOrdering {
 						+ "\n[-3]Go Back"
 						+ "\n[1]View All"
 						+ "\n[2]Search by Zip Code"
-						//+ "\n[3]Search by Type"
+						+ "\n[3]Search by Type"
 						+ "");
 				int uIn2 = uInput.nextInt();
 				uInput.nextLine();
@@ -1119,6 +1119,10 @@ public class FoodOrdering {
 							break;
 						case 2:
 							zipSearch(connection);
+							break;
+						case 3:
+							typeSearch(connection);
+							break;
 						default:
 							break;
 						}
@@ -1685,9 +1689,15 @@ public class FoodOrdering {
     
     
     
-    public static void rTypeSearch(int searchID, Connection connection)
+    public static void typeSearch(Connection connection)
     {
     	//TODO: Add check to see if a number is actually selected
+    	printType(connection);
+    	System.out.println("Enter ID of type to search: ");
+    	int searchID;
+    	Scanner i = new Scanner(System.in);
+    	searchID=i.nextInt();
+    	i.nextLine();
     	String sql="SELECT *"
     			+ "\nFROM Restaurant JOIN RestaurantType ON Restaurant.restaurantTypeID=RestaurantType.restaurantTypeID"
     			+ "\nWHERE Restaurant.restaurantTypeID= ? ";
