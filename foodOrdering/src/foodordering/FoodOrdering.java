@@ -1107,6 +1107,7 @@ public class FoodOrdering {
 						+ "\n[1]View All"
 						+ "\n[2]Search by Zip Code"
 						+ "\n[3]Search by Type"
+						+ "\n[4] Search by Name"
 						+ "");
 				int uIn2 = uInput.nextInt();
 				uInput.nextLine();
@@ -1122,6 +1123,9 @@ public class FoodOrdering {
 							break;
 						case 3:
 							typeSearch(connection);
+							break;
+						case 4:
+							nameSearch(connection);
 							break;
 						default:
 							break;
@@ -1203,6 +1207,31 @@ public class FoodOrdering {
 			
 		}
 		//uInput.close();;
+	}
+
+
+
+	private static void nameSearch(Connection connection) {
+		System.out.println("Enter name to search for restaurants that match");
+		String searchName;
+		Scanner i = new Scanner(System.in);
+		searchName=i.nextLine();
+    	String sql="SELECT *"
+    			+ "\nFROM Restaurant JOIN RestaurantType ON Restaurant.restaurantTypeID=RestaurantType.restaurantTypeID"
+    			+ "\nWHERE restaurantName LIKE CONCAT(?, '%')";
+    	try {
+    		ResultSet rs;
+    		PreparedStatement p = connection.prepareStatement(sql); //Uses a prepared statement to make sure that nothing else can be added -Jack
+			p.setString(1, searchName); //Setting the value in the String -Jack
+			rs = p.executeQuery();
+    		while(rs.next())
+    		{
+    			String s = "[" + rs.getString("restaurantID") + "] "+ rs.getString("restaurantName")+ ", "+rs.getString("restaurantType");
+    			System.out.println(s); //Displays all the restaurants with a specific type -Ahsan
+    		}
+    	} catch (SQLException e) {
+    		e.printStackTrace();
+    	} 
 	}
 
 
