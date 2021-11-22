@@ -914,7 +914,7 @@ public class FoodOrdering {
 		        f1.setDescription(foodDataIn.nextLine());
 		        System.out.println("\nEnter type: " );
 		        f1.setType(foodDataIn.nextLine());
-		        System.out.println("\nEneter preptime");
+		        System.out.println("\nEnter preptime");
 		        f1.setPrepTime(foodDataIn.nextInt());
 		        //foodDataIn.nextLine();
 		        //The above gets and stores user input about the foodItems -Aayushma
