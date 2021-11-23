@@ -888,6 +888,7 @@ public class FoodOrdering {
 					+ "\n[1] View/Update Account Information"
 					+ "\n[2] Add items to Menu"
 					+ "\n[3] Update Order"
+					+ "\n[4] View All Orders"
 					+"");
 			uIn=uInput.nextInt();
 			uInput.nextLine();
@@ -929,8 +930,74 @@ public class FoodOrdering {
 			case 3:
 				showOpenRestaurantOrders(connection);
 				break;
+			case 4:
+				viewAllRestaurantOrders(connection);
+                System.out.println("Enter the order id to view more or -3 to go back:");
+                uIn = uInput.nextInt();
+                uInput.nextLine();
+                if(uIn==-3)
+                    break;
+                else
+                    viewFullRestaurantOrder(connection, uIn);
+                break;
 			}
 		}
+	}
+
+
+
+	private static void viewFullRestaurantOrder(Connection connection, int uIn) {
+        String sql="SELECT lineItemNumber, foodName, ROUND(foodPrice,2) AS 'foodPriceR'\r\n"
+                + "FROM [Order] JOIN LineItem ON [Order].orderID=LineItem.orderID JOIN FoodItem ON LineItem.foodItemID=FoodItem.foodItemID JOIN Restaurant ON FoodItem.restaurantID = Restaurant.restaurantID\r\n"
+                + "WHERE [Order].orderID= ? AND Restaurant.restaurantID = ?\r\n";
+        try {
+            PreparedStatement p = connection.prepareStatement(sql);
+            p.setInt(1, uIn);
+            p.setInt(2, currentRestaurant.getRestaurantID());
+            ResultSet rs=p.executeQuery();
+            while(rs.next())
+            {
+                String r="\n\t"+rs.getInt("lineItemNumber")+" "+rs.getString("foodName")+", "+rs.getFloat("foodPriceR");
+                System.out.println(r);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+	}
+
+
+
+	private static void viewAllRestaurantOrders(Connection connection) {
+		// TODO Auto-generated method stub
+	        String sql="SELECT DISTINCT [Order].orderID, orderStatus, totalPrice \r\n"
+	        		+ "FROM [Order] JOIN LineItem ON [Order].OrderID = LineItem.orderID JOIN FoodItem ON LineItem.foodItemID=FoodItem.foodItemID JOIN Restaurant ON FoodItem.restaurantID=Restaurant.restaurantID\r\n"
+	        		+ "WHERE Restaurant.restaurantID=?";
+	        try {
+	            PreparedStatement p = connection.prepareStatement(sql);
+	            p.setInt(1, currentRestaurant.getRestaurantID());
+	            ResultSet rs;
+	            rs=p.executeQuery();
+	            if(rs.next()==false)
+	            {
+	                System.out.println("No orders");
+	            }
+	            else {
+	            do {
+
+
+
+
+	                String s = rs.getInt("orderID")+") " +rs.getString("orderStatus") +", "+rs.getFloat("totalPrice");
+	                System.out.println(s);
+	            }
+	            while(rs.next());
+	            }
+
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        }
+
+		
 	}
 
 
@@ -1316,7 +1383,6 @@ public class FoodOrdering {
 			e.printStackTrace();
 		}
 	}
-
 
 
 	private static void viewFullOrder(Connection connection, int uIn) {
