@@ -14,13 +14,10 @@ import java.sql.Statement;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Scanner;
-
 /**
- *
  * @author Jack
  */
 public class FoodOrdering {
-
     /**
      * @param args the command line arguments
      */
@@ -30,7 +27,6 @@ public class FoodOrdering {
     private static Driver currentDriver = new Driver(); //This is the current Driver, will be replaced by login eventually hopefully -Jack 
 	public static void main(String[] args) 
     {
-    	
     	String url = "jdbc:sqlserver://DESKTOP-NJ7L5JK\\sqlexpress;integratedSecurity=true;databaseName=master;"; //Jack surface-Jack
 		//String url = "jdbc:sqlserver://DESKTOP-JJR7T08\\sqlexpress;integratedSecurity=true;databaseName=master;"; //Jack PC -Jack
     	//String user ="NT Service\\MSSQL$SQLEXPRESS"; //not needed right now but might be needed for remote access -Jack
@@ -39,11 +35,6 @@ public class FoodOrdering {
     	Scanner scSin = new Scanner(System.in); //Scanner is used to get data from the user -Jack
     	int userIn=-1;
     	 //right now this is an empty string but it will contain the actual SQL statements and then be passed to the execute update method -Jack
-    	
-    	
-    	
-    	
-    	
     	try {
 			Connection connection = DriverManager.getConnection(url); //this is attempting to open the connection to the server -Jack
 			System.out.println("Connected"); //Display a message to show it successfully connected -Jack
@@ -1101,10 +1092,10 @@ public class FoodOrdering {
 				{
 					
 				System.out.println("How would you like to search for a restaurant"
-						+ "\n[-3]Go Back"
-						+ "\n[1]View All"
-						+ "\n[2]Search by Zip Code"
-						+ "\n[3]Search by Type"
+						+ "\n[-3] Go Back"
+						+ "\n[1] View All"
+						+ "\n[2] Search by Zip Code"
+						+ "\n[3] Search by Type"
 						+ "\n[4] Search by Name"
 						+ "");
 				int uIn2 = uInput.nextInt();
@@ -1128,8 +1119,18 @@ public class FoodOrdering {
 						default:
 							break;
 						}
-						customerOrder(connection);
+						if(uIn2==-3) //if the user entered to exit then it will break them out of the loop -Jack
+							break;
+						else
+							customerOrder(connection);
 				}
+				if (selectedRestaurant == null) //if the user hasn't selected a restaurant it will return them to the main menu -Jack
+				{
+					System.out.println("No restaurant selected, no order created");
+					break;
+				}
+				else
+				{
 				ArrayList<FoodItem> newFList = new ArrayList<FoodItem>(); //List to store foodItemID's to be put into order later -Jack
 				Scanner nFood = new Scanner(System.in); //this will get the foodItemID -Jack
 				int nFoodNum=-3; //variable that will do 2 things, add foodItemIDs, control the loops -Jack
@@ -1184,6 +1185,7 @@ public class FoodOrdering {
 				    }
 				}
 				break;
+				}
 			case 3:
 				viewOpenCustomerOrder(connection);
 				System.out.println("Enter the order id to view more or -3 to go back:");
@@ -1346,6 +1348,88 @@ public class FoodOrdering {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		System.out.println("Edit Data(y/n):");
+		Scanner inn = new Scanner(System.in);
+		String i="";
+		i=inn.nextLine();
+		if(i.equals("y"))
+			editCustomerData(connection); //calls the method that allows the customer to edit their account information -Jack
+	}
+
+
+
+	private static void editCustomerData(Connection connection) {
+		Customer tempC = new Customer();
+		Scanner inn = new Scanner(System.in);
+		String tmpEml="";
+		String sql="SELECT email FROM Customer where email=? AND customerID != ?"; //SQL Statement to make sure they don't use an email that is already in the system, will allow them to reuse their email though -Jack
+		String sqlI = "UPDATE Customer"
+				+ "\nSET firstName= ?,"
+				+ "\nlastName= ?,"
+				+ "\nemail= ?,"
+				+ "\nphone = ?,"
+				+ "\ncustomerLocation = ?,"
+				+ "\npassword=?"
+				+ "\nWHERE customerID = ?"; //This is the SQL statement that will update the data -Jack
+		try {
+			PreparedStatement p = connection.prepareStatement(sql);
+			System.out.println("Enter new email: ");
+			tmpEml=inn.nextLine();
+			p.setString(1, tmpEml);
+			p.setInt(2, currentCustomer.getCustomerID());
+			ResultSet rs = p.executeQuery();
+			if(rs.next()==false) //This and above checks to make sure that the email isn't used already -Jack
+			{
+				tempC.setCustomerEmail(tmpEml);
+				String pass="", passA="";
+		        int contr=1;
+		        while(contr!=0)
+		        {
+		        System.out.println("\nEnter a new password");
+		        pass=inn.nextLine();
+		        System.out.println("\nEnter the password again");
+		        passA=inn.nextLine();
+                if(pass.equals(passA))
+                {
+                	tempC.setCustomerPassword(pass);
+                	contr=0;
+                }
+                else
+                	System.out.println("Passwords do not match, no data was changed");
+		        } //All the above is the same password check as on create account, it makes sure they enter the same password twice -Jack
+		        System.out.println("Enter a new First Name");
+		        tempC.setCustomerFName(inn.nextLine());
+		        System.out.println("Enter a new Last Name");
+		        tempC.setCustomerLName(inn.nextLine());
+		        System.out.println("Enter a new phone number");
+		        tempC.setCustomerPhone(inn.nextLine());
+		        System.out.println("Enter a new Zip Code");
+		        tempC.setCustomerZip(inn.nextLine());
+		        //The above is getting all the new information -Jack
+				try {
+					PreparedStatement p1 = connection.prepareStatement(sqlI);
+					p1.setString(1, tempC.getCustomerLName());
+					p1.setString(2, tempC.getCustomerFName());
+					p1.setString(3, tempC.getCustomerEmail());
+					p1.setString(4, tempC.getCustomerPhone());
+					p1.setString(5, tempC.getCustomerZip());
+					p1.setString(6, tempC.getCustomerPassword());
+					p1.setInt(7, currentCustomer.getCustomerID());
+					p1.executeUpdate();
+					System.out.print("Customer profile succesfully updated: \n");
+					tempC.setCustomerID(currentCustomer.getCustomerID());
+					currentCustomer=tempC; //used a temp customer to allow the switching, this will now change it over to the new customer data -Jack
+					//The above inserts new data into the DB and then alerts the user that it was successfully updated-Jack
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			else
+				System.out.println("Email is already taken, no changes made");
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+		}
+		
 	}
 
 
