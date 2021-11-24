@@ -1840,12 +1840,6 @@ public class FoodOrdering {
 				do
 				{
 					r+="\n ["+rs.getInt("orderID") +"] "+rs.getString("orderStatus")+", "+rs.getFloat("totPriceR")+", "+rs.getInt("totalPrepTime") +", "+rs.getString("restaurantName")+", "+rs.getString("restaurantLocation") + ", "+rs.getString("firstName") + ", "+ rs.getString("lastName")+", "+rs.getString("customerLocation");
-					PreparedStatement p1 = connection.prepareStatement(sql);
-					ResultSet rs1 = p1.executeQuery();
-					while(rs1.next())
-					{
-						r+="\n\t"+rs1.getInt("lineItemNumber")+" "+rs1.getString("foodName")+", "+rs1.getFloat("foodPriceR");
-					}
 					System.out.println(r);
 					r="";
 				}
