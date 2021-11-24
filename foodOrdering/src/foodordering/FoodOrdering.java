@@ -24,14 +24,15 @@ public class FoodOrdering {
     /**
      * @param args the command line arguments
      */
-	private static Restaurant selectedRestaurant = new Restaurant(); //This is a restaurant dataType that will store the selected restaurant so that it can be used to get the menu -Jack
+	private static Restaurant selectedRestaurant = null; //This is a restaurant dataType that will store the selected restaurant so that it can be used to get the menu -Jack
 	private static Restaurant currentRestaurant = new Restaurant();
 	private static Customer currentCustomer = new Customer(); //This is the current customer for use with the order, it will be replaced with Chris's login system when that is done -Jack
     private static Driver currentDriver = new Driver(); //This is the current Driver, will be replaced by login eventually hopefully -Jack 
 	public static void main(String[] args) 
     {
     	
-    	String url = "jdbc:sqlserver://DESKTOP-NJ7L5JK\\sqlexpress;integratedSecurity=true;databaseName=master;"; //this is the server URL on my local machine -Jack
+    	String url = "jdbc:sqlserver://DESKTOP-NJ7L5JK\\sqlexpress;integratedSecurity=true;databaseName=master;"; //Jack surface-Jack
+		//String url = "jdbc:sqlserver://DESKTOP-JJR7T08\\sqlexpress;integratedSecurity=true;databaseName=master;"; //Jack PC -Jack
     	//String user ="NT Service\\MSSQL$SQLEXPRESS"; //not needed right now but might be needed for remote access -Jack
     	//String password="bcs430group3"; // same as above comment -Jack
     	Scanner scin = new Scanner(System.in);
@@ -154,240 +155,13 @@ public class FoodOrdering {
 		} catch (SQLException e1) {
 			e1.printStackTrace();
 		}
-    	
-    	
-    	
-    	
-    	
-    	
-/*   	
-    	try 
-    	{
-    		//Test
-    		Connection connection = DriverManager.getConnection(url); //this is attempting to open the connection to the server -Jack
-    		System.out.println("Connected"); //Display a message to show it successfully connected -Jack
-    		while(userIn !=0) //Once again is temporary, for now this is so it can be tested and accessed multiple times, will eventually have a nicer UI -Jack
-    		{
-    			
-    			System.out.println("\nPlease let us know what you'd like to do by entering the number:  "
-    					+ "\n[1] Enter a Restaurant"
-    					+"\n[2] View Restaurants"
-    					+ "\n[3] Enter a Customer"
-    					+ "\n[4] View Customers"
-    					+ "\n[5] Select a Restaurant"
-    					//+ "\n[6] Search Restaurnts by Zip Code"
-    					+ "\n[7] After Selecting a Restaurant, create an order"
-    					+ "\n[8] Enter food for a Restaurant"
-    					+ "\n[9] Search for a Restaurant based on Type"
-    					+ "\n[11] Display Orders that are open"
-    					+ "\n[0] Exit"); //For now this well be used to see if a Restaurant or Customer is being added and other functionality -Jack
-    			userIn = scin.nextInt(); //code to put the user input into a String -Jack
-    			switch(userIn) //Temporary make navigation easier while waiting for Java FX -Jack
-    			{
-    			case -2:
-    				
-    				String sql = ""
-    						+ "CREATE TABLE Delivery (\r\n"
-    						+ "	deliveryID int not null identity(1, 1),\r\n"
-    						+ "	estimatedTimeToArrival int,\r\n"
-    						+ "	startLocation varChar(5),\r\n"
-    						+ "	restaurantLocation varChar(5),\r\n"
-    						+ " restaurantID int,\r\n"
-    						+ "	customerLocation varChar(5),\r\n"
-    						+ " customerID int, \r\n"
-    						+ "	orderID int,\r\n"
-    						+ "	driverID int\r\n"
-    						+ "	PRIMARY KEY(deliveryID),\r\n"
-    						+ "	FOREIGN KEY(restaurantID) REFERENCES Restaurant(restaurantID),\r\n"
-    						+ "	FOREIGN KEY(customerID) REFERENCES Customer( customerID),\r\n"
-    						+ "	FOREIGN KEY(orderID) REFERENCES [Order](orderID),\r\n"
-    						+ "	FOREIGN KEY(driverID) REFERENCES Driver(driverID)\r\n"
-    						+ "	\r\n"
-    						+ ");";
-    						
-    						; //SQL statement for us to enter stuff in easily -Jack
-    				//+ "\nTRUNCATE TABLE [Order]"
-					//+ "\nTRUNCATE TABLE Restaurant"
-					//+ "\nTRUNCATE TABLE Customer"
-    				//System.out.println(sql);
-    		    	Statement statement;
-    				try {
-    					ResultSet rs;
-    					statement = connection.createStatement();
-    					
-    					rs=statement.executeQuery(sql); //execute SQL statement
-    					
-    					while(rs.next())
-    					{
-    						String s=""+rs.getInt("driverID")+", "+rs.getString("firstName")+", "+rs.getString("lastName")+", "+rs.getString("phone")+", "+rs.getString("email");
-    						System.out.println(s);
-    					}
-    					System.out.println("Statement success");
-    				} catch (SQLException e) {
-    					e.printStackTrace();
-    				}
-    				break;
-    				//The above exists for us to enter in SQL statements and for testing purposes. -Jack
-    			case 0: 
-    				break;
-    			case 1: 
-    				Scanner rIn = new Scanner(System.in);
-    				Restaurant r1 = new Restaurant(); //create a new Restaurant object that the user will enter information into, will eventually be sent to database -Jack
-				    System.out.println("\nEnter Restaurant Name: "); //very repetitive, will be done better later, all of these will just get the information to fill out Restaurant -Jack
-				    r1.setRestaurantName(rIn.nextLine()); //set the RestaurantName of our temporary Restaurant to what they enter, could be error checked later -Jack
-				    System.out.println("Enter the zip code of the restauarnt: ");
-				    r1.setRestaurantZip(rIn.nextLine());
-				    System.out.println("\nEnter Restaurant Type ID from the following: ");
-				    getRestaurantType(connection);
-				    Scanner tIn = new Scanner(System.in);
-				    int typeID = 0;
-				    typeID = tIn.nextInt();
-				    r1.setRestaurantTypeID(typeID);
-				    inputRestaurantType(connection, r1, typeID);
-    				break;
-    			case 2:
-    				showRestaurants(connection); //Call the method that shows the data -Ahsan
-    		    	break;
-    			case 3:
-    				Scanner custIn = new Scanner(System.in);
-    				Customer c1 = new Customer(); //create a new Customer object that the user will enter information into, will eventually be sent to database -Jack
-    				System.out.println("\nEnter First Name: ");
-    				c1.setCustomerFName(custIn.nextLine());
-    				System.out.println("\nEnter Last Name: ");
-    				c1.setCustomerLName(custIn.nextLine());
-    				System.out.println("\nEnter Email: ");
-    				c1.setCustomerEmail(custIn.nextLine());
-    				System.out.println("\nEnter Phone Number: ");
-    				c1.setCustomerPhone(custIn.nextLine());
-    				//System.out.println("\nEnter City: ");
-    				//c1.setCustomerCity(scin.nextLine());
-    				//System.out.println("\nEnter State: ");
-    				//c1.setCustomerState(scin.nextLine());
-    				//System.out.println("\nEnter Street: ");
-    				//c1.setCustomerStreet(scin.nextLine());
-    				System.out.println("\nEnter Zip: ");
-    				c1.setCustomerZip(custIn.nextLine());
-    				//Same as Restaurant code -Jack
-    		
-    				insertCustomer(c1, connection); //Call the method that inserts the data -Jack
-    				break;
-    			case 4:
-    				customerData(connection);
-    				break;
-    			case 5:
-    				
-    				showRestaurants(connection); //Call the method that shows the data -Ahsan
-    				System.out.println("Enter the number of the restaurant you want to order from: ");
-    				Scanner selectR = new Scanner(System.in); //Scanner is used to get data from the user -Jack
-    		    	int rSelectIn=0;
-    		    	rSelectIn=selectR.nextInt();
-    		    	selectRestaurant(connection, rSelectIn); //method to select a restaurant based on the number they clicked which is just the restaurant id -Jack
-    				break;
-    			case 6:
+    			/*case 6:
     				//System.out.println("\nEnter a zipcode to search for restaurants in that zip code: "); 
     				//String searchZip = scSin.nextLine();
     				//rZipSearch(searchZip, connection);
     				break;
     				
-    			case 7:
-    				ArrayList<FoodItem> newFList = new ArrayList<FoodItem>(); //List to store foodItemID's to be put into order later -Jack
-    				String cEmail; //Will use email to get the customer for now -Jack
-    				int nFoodNum=-3; //variable that will do 2 things, add foodItemIDs, control the loops -Jack
-    				System.out.println("Please enter your email linked to your account: ");
-    				Scanner cIn = new Scanner(System.in); //this will get the email -Jack
-    				Scanner nFood = new Scanner(System.in); //this will get the foodItemID -Jack
-    				cEmail=cIn.nextLine();
-    				
-    				//All of the above is to get an email for the account, right now this is instead of login and will have error checking later -Jack
-    				getCurrentCustomer(connection, cEmail); //calls the method that sets the current customer -Jack
-    				
-    				
-    				while(nFoodNum!=-1)
-    				{
-    					
-    				    System.out.println("Enter the number of the food you want to order:"
-    				    		+ "\n[-2] Complete Order "
-    						    + "\n[-1] Exit"
-    						    + "\n[0] View Items in Order or remove items"); //little statement here to give user menu options -Jack
-    				    displayMenu(connection); //will show the menu -Jack
-    				    nFoodNum=nFood.nextInt();
-    				    if(nFoodNum==0)
-    				    {
-    				    	Scanner remOrBack = new Scanner(System.in);
-    				    	int rBack = -1;
-    				    	while(rBack!=0)
-    				    	{
-    				    		System.out.println("Enter ID of the item you want to remove: "
-        				    			+ "\n[0] Go back");
-    				    		viewFoodList(connection, newFList); //this will show what is currently in the order -Jack
-    				    		rBack=remOrBack.nextInt();    
-    				    		if(rBack==0)
-    				    			break;
-    				    		else
-    				    		{
-    				    			FoodItem foodRemove = null;
-    				    			for(FoodItem i:newFList)
-    				    			{
-    				    				if(i.getFoodItemID()==rBack)
-    				    					foodRemove=i;
-    				    					
-    				    			}
-    				    			newFList.remove(foodRemove);
-    				    		}
-    				    			
-    				    	} 
-    				    	//Okay so the way this crazy thing works is it asks the user to enter the id of the item they want to remove, stores that then because of how ArrayList works
-    				    	 // I need to get the object based on the id so it loops through the arrayList until the foodItemID matches the customer selected id to remove, from here it
-    				    	 // stores the FoodItem in a temporary FoodItem object where after the loop it will then remove the FoodItem from the ArrayList -Jack
-    				    	 
-    				    	
-    				    }
-    				    else if(nFoodNum==-1)
-    					    break; //exits the loop -Jack
-    				    else if(nFoodNum==-2)
-    				    {
-    				    	addFood(connection, newFList); //This is the complete order method and will add all the food items to the order through the database -Jack
-    				    	nFoodNum=-1;
-    				    }
-    				    else
-    				    {
-    				    	addItemToFList(connection, nFoodNum, newFList);
-    				    }
-    				}
-    				break;
-    			case 8:
-    		        showRestaurants(connection); //Call the method that shows the data -Aayushma
-    		        System.out.println("Enter the number of the restaurant you want to add food to: ");
-    		        Scanner selectF = new Scanner(System.in); //Scanner is used to get data from the user
-    		        int fSelectIn=0;
-    		        fSelectIn=selectF.nextInt();
-    		        selectRestaurant(connection, fSelectIn); //method to select a restaurant based on the number they clicked which is just the restaurant id -Aayushma
-    		        //The above will get the user to pick their restaurant to enter food into -Aayushma
-    		        Scanner foodDataIn = new Scanner(System.in);
-    		        FoodItem f1 = new FoodItem();
-    		        System.out.println("\nEnter Food Name: ");              
-    		        f1.setFoodName(foodDataIn.nextLine());
-    		        System.out.println("\nEnter Food Price: ");
-    		        f1.setFoodPrice(foodDataIn.nextFloat());
-    		        System.out.println("\nEnter calories: ");
-    		        f1.setCalories(foodDataIn.nextInt());
-    		        foodDataIn.nextLine();
-    		        System.out.println("\nEnter description: ");
-    		        f1.setDescription(foodDataIn.nextLine());
-    		        System.out.println("\nEnter type: " );
-    		        f1.setType(foodDataIn.nextLine());
-    		        System.out.println("\nEneter preptime");
-    		        f1.setPrepTime(foodDataIn.nextInt());
-    		        //foodDataIn.nextLine();
-    		        //The above gets and stores user input about the foodItems -Aayushma
-    		        System.out.println("\nEnter category ID from the following:");
-    		        getCategory(connection); //Calls the method to allow the user to select categories -Aayushma
-    		        Scanner catIn = new Scanner(System.in);
-    		        int categoryID = 0;
-    		        categoryID = catIn.nextInt();
-    		        f1.setCategoryID(categoryID);
-    		        inputCategoryType(connection, f1, categoryID); //Calls the method to insert the category based on user input -Aayushma
-    				break;
+    			
     			case 9:
     				System.out.println("\nEnter the type of restaurant you are looking for:  ");
     				printType(connection);
@@ -395,38 +169,7 @@ public class FoodOrdering {
     				int typeSelectIn;
     			    typeSelectIn=selectRT.nextInt();
     			    rTypeSearch(typeSelectIn, connection);
-    			    break;
-    			case 10:
-    				//This method will only be shown to drivers, for now will call a driver login method -Jack
-    				scin.nextLine();
-    				String dFirstName, dLastName;
-    				System.out.println("Enter the first name of the driver: ");
-    				dFirstName=scin.nextLine();
-    				System.out.println("Enter the last name of the driver: ");
-    				dLastName=scin.nextLine();
-    				getCurrentDriver(connection, dFirstName, dLastName); //calls the method that will set the current driver. 
-    				displayOrders(connection); //Calls method to view the currently open orders -Jack
-    				System.out.println("Enter the ID of the order you want to select: ");
-    				int oSelect =scin.nextInt();
-    				scin.nextLine();
-    				System.out.println("Enter the zip code you are currently in: ");
-    				String zip=scin.nextLine();
-    				selectOrder(connection, oSelect, zip); //calls the method that will update the orderTable to say it's selected and to create a delivery -Jack
-    				break;
-    			case 11:
-    				displayOrders(connection);
-    				break;
-    			default:
-    				break;
-    			
-    			}
-    		} 
-    	}
-    	catch (SQLException e) 
-    	{ //catch an error or two -Jack
-    		System.out.println("ERROR"); //display that there was an error -Jack
-    		e.printStackTrace(); //display what the error was -Jack
-    	} */
+    			    break; */
     }
     
     
@@ -582,19 +325,33 @@ public class FoodOrdering {
     
     
     //TODO: Rework this method 
-    public static void rZipSearch(String searchZip, Connection connection)
+    public static void zipSearch(Connection connection)
     {
-    	String sql="SELECT * FROM [dbo].[Restaurant] WHERE [location]= ?"; //code to get all data from the restaurant -Jack
+    	Scanner i = new Scanner(System.in);
+    	String searchZip;
+    	System.out.println("Enter Zip Code to find restauarnts");
+    	searchZip=i.nextLine();
+    	String sql="SELECT * "
+    			+ "\nFROM Restaurant JOIN RestaurantType ON Restaurant.restaurantTypeID=RestaurantType.restaurantTypeID "
+    			+ "\nWHERE restaurantLocation LIKE CONCAT(?, '%')"; //code to get all data from the restaurant -Jack
 		try {
 			ResultSet rs;
 			PreparedStatement p = connection.prepareStatement(sql);
 			p.setString(1, searchZip);
 			rs = p.executeQuery();
-			while(rs.next())
+			if(rs.next()==false)
+				System.out.println("No Restaurants matching that Zip Code");
+			else
 			{
-				String s = "[" + rs.getString("RestaurantID") + "] "+ rs.getString("RestaurantName")+ ": "+rs.getString("ZipCode")+", "+rs.getString("RestaurantType")+", "+rs.getString("RestaurantRating");
-				System.out.println(s);
+				do
+				{
+					String s = "[" + rs.getString("RestaurantID") + "] "+ rs.getString("RestaurantName")+ ": "+rs.getString("restaurantLocation")+", "+rs.getString("RestaurantType");
+					System.out.println(s);
+				}
+				while(rs.next());
+				
 			}
+			
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} //this isn't used yet but is how SQL statements will be inputed -Jack
@@ -605,6 +362,7 @@ public class FoodOrdering {
     
     public static void selectRestaurant(Connection connection, int rSelect)
     {
+    	selectedRestaurant = new Restaurant();
     	String sql="SELECT restaurantID, restaurantName, Restaurant.restaurantTypeID, restaurantType FROM [dbo].[Restaurant] JOIN RestaurantType ON Restaurant.restaurantTypeID=RestaurantType.restaurantTypeID  WHERE RestaurantID= ?"; //code to get the restaurant based on the ID the customer selected, will need to have the menu added -Jack
 		try {
 			ResultSet rs;
@@ -738,6 +496,7 @@ public class FoodOrdering {
 			p3.setFloat(3, totalPrice);
 			p3.setInt(4, oID);
 			p3.executeUpdate();
+			selectedRestaurant=null;
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}			
@@ -833,8 +592,9 @@ public class FoodOrdering {
 					+ "\n[0] Logout"
 					+ "\n[1] View/Update Account Information"
 					+ "\n[2] Select an Order"
-					+ "\n[3] View Orders in Progress"
-					//+ "\n[4] Leave a review"
+					+ "\n[3] View Orders"
+					+ "\n[4] Pick-up Order"
+					+ "\n[5] Complete Order"
 					+"");
 			uIn=uInput.nextInt();
 			uInput.nextLine();
@@ -842,6 +602,7 @@ public class FoodOrdering {
 			{
 			case 0:
 				currentDriver = new Driver();
+				System.out.println("You have been logged out");
 				break;
 			case 1:
 				viewDriverAccount(connection);
@@ -849,14 +610,15 @@ public class FoodOrdering {
 			case 2:
 				//This method will only be shown to drivers, for now will call a driver login method -Jack
 				displayOrders(connection); //Calls method to view the currently open orders -Jack
-				int oSelect =uInput.nextInt();
-				uInput.nextLine();
-				System.out.println("Enter the zip code you are currently in: ");
-				String zip=uInput.nextLine();
-				selectOrder(connection, oSelect, zip); //calls the method that will update the orderTable to say it's selected and to create a delivery -Jack
 				break;
 			case 3:
 				viewDriverOrders(connection);
+				break;
+			case 4:
+				pickUpOrder(connection);
+				break;
+			case 5:
+				completeOrder(connection);
 				break;
 			}
 		}
@@ -865,22 +627,185 @@ public class FoodOrdering {
 
 
 
-	private static void viewDriverOrders(Connection connection) {
-		String sql="SELECT * FROM Delivery JOIN [Order] ON Delivery.orderID=[Order].orderID WHERE Delivery.driverID= ?"; // getting orders that are not taken by a driver and are open- Ahsan
+	private static void completeOrder(Connection connection) {
+		String sql="SELECT lineItemNumber, foodName, ROUND(foodPrice,2) AS 'foodPriceR'\r\n"
+				+ "FROM [Order] JOIN LineItem ON [Order].orderID=LineItem.orderID JOIN FoodItem ON LineItem.foodItemID=FoodItem.foodItemID \r\n"
+				+ "WHERE [Order].driverID=? AND orderStatus LIKE '%is on the way with your order'\r\n";
+		
+				String sql2= "SELECT DISTINCT [Order].orderID, orderStatus, ROUND(totalPrice, 2) AS 'totPriceR', totalPrepTime\r\n"
+				+ "FROM [Order] JOIN LineItem ON [Order].orderID=LineItem.orderID JOIN FoodItem ON LineItem.foodItemID=FoodItem.foodItemID \r\n"
+				+ "WHERE [Order].driverID=? AND orderStatus LIKE '%is on the way with your order'";
+				String r="";
+		try {
+			PreparedStatement p = connection.prepareStatement(sql2);
+			p.setInt(1, currentDriver.getDriverID());
+			ResultSet rs=p.executeQuery();
+			if (rs.next() == false) 
+			{
+		        r="No Open Orders";
+		        System.out.println(r);
+		    } 
+			else 
+			{
+				do
+				{
+					r+="\n ["+rs.getInt("orderID") +"] "+rs.getString("orderStatus")+", "+rs.getFloat("totPriceR")+", "+rs.getInt("totalPrepTime");
+					PreparedStatement p1 = connection.prepareStatement(sql);
+					p1.setInt(1, currentDriver.getDriverID());
+					ResultSet rs1 = p1.executeQuery();
+					while(rs1.next())
+					{
+						r+="\n\t"+rs1.getInt("lineItemNumber")+" "+rs1.getString("foodName")+", "+rs1.getFloat("foodPriceR");
+					}
+					System.out.println(r);
+					r="";
+				}
+				while (rs.next());
+				System.out.println("Enter the order id to complete: ");
+				Scanner oInput = new Scanner(System.in);
+				int uOIn=0;
+				uOIn=oInput.nextInt();
+				oInput.nextLine();
+				updateDriverComplete(connection, uOIn);
+			}
+			
+			
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
 
-    	ResultSet rs;
-    	try {
-    		PreparedStatement p =connection.prepareStatement(sql);
-    		p.setInt(1, currentDriver.getDriverID());
-    		rs=p.executeQuery();
-    		while(rs.next())
-    		{
-    			String s = "[" + rs.getInt("orderID") + "] " + rs.getFloat("totalPrice" ); //+ " " + rs.getInt("totalPrepTime") ; //will be changed in the future when we get a better idea of what to show the customer -Ahsan
-    			System.out.println(s);
-    		}
-    	} catch (SQLException e) {
-    		e.printStackTrace();
-    }
+
+
+	private static void updateDriverComplete(Connection connection, int uOIn) {
+		String sql="UPDATE [Order]"
+				+ "\nSET orderStatus='Order Complete'"
+				+ "\nWhere orderID=?";
+		try {
+			PreparedStatement p=connection.prepareStatement(sql);
+			p.setInt(1, uOIn);
+			p.executeUpdate();
+			System.out.println("Order Complete");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+
+
+	private static void pickUpOrder(Connection connection) {
+		System.out.println("Enter the order number you want to pick up");
+		String sql="SELECT lineItemNumber, foodName, ROUND(foodPrice,2) AS 'foodPriceR'\r\n"
+				+ "FROM [Order] JOIN LineItem ON [Order].orderID=LineItem.orderID JOIN FoodItem ON LineItem.foodItemID=FoodItem.foodItemID \r\n"
+				+ "WHERE [Order].driverID=? AND orderStatus='Food is ready'\r\n";
+		
+				String sql2= "SELECT DISTINCT [Order].orderID, orderStatus, ROUND(totalPrice, 2) AS 'totPriceR', totalPrepTime\r\n"
+				+ "FROM [Order] JOIN LineItem ON [Order].orderID=LineItem.orderID JOIN FoodItem ON LineItem.foodItemID=FoodItem.foodItemID \r\n"
+				+ "WHERE [Order].driverID=? AND orderStatus='Food is ready'";
+				String r="";
+		try {
+			PreparedStatement p = connection.prepareStatement(sql2);
+			p.setInt(1, currentDriver.getDriverID());
+			ResultSet rs=p.executeQuery();
+			if (rs.next() == false) 
+			{
+		        r="No Open Orders";
+		        System.out.println(r);
+		    } 
+			else 
+			{
+				do
+				{
+					r+="\n ["+rs.getInt("orderID") +"] "+rs.getString("orderStatus")+", "+rs.getFloat("totPriceR")+", "+rs.getInt("totalPrepTime");
+					PreparedStatement p1 = connection.prepareStatement(sql);
+					p1.setInt(1, currentDriver.getDriverID());
+					ResultSet rs1 = p1.executeQuery();
+					while(rs1.next())
+					{
+						r+="\n\t"+rs1.getInt("lineItemNumber")+" "+rs1.getString("foodName")+", "+rs1.getFloat("foodPriceR");
+					}
+					System.out.println(r);
+					r="";
+				}
+				while (rs.next());
+				System.out.println("Enter the order id to pick up: ");
+				Scanner oInput = new Scanner(System.in);
+				int uOIn=0;
+				uOIn=oInput.nextInt();
+				oInput.nextLine();
+				updateDriverPickUp(connection, uOIn);
+			}
+			
+			
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+
+
+	private static void updateDriverPickUp(Connection connection, int uOIn) {
+		String sql="UPDATE [Order]"
+				+ "\nSET orderStatus='"+currentDriver.getFirstName()+" is on the way with your order'"
+				+ "\nWhere orderID=?";
+		try {
+			PreparedStatement p=connection.prepareStatement(sql);
+			p.setInt(1, uOIn);
+			p.executeUpdate();
+			System.out.println("Order Picked Up");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+
+
+	private static void viewDriverOrders(Connection connection) {
+		String sql="SELECT lineItemNumber, foodName, ROUND(foodPrice,2) AS 'foodPriceR'\r\n"
+				+ "FROM [Order] JOIN LineItem ON [Order].orderID=LineItem.orderID JOIN FoodItem ON LineItem.foodItemID=FoodItem.foodItemID \r\n"
+				+ "WHERE [Order].driverID=? AND [Order].orderID=?\r\n";
+		
+				String sql2= "SELECT DISTINCT [Order].orderID, orderStatus, ROUND(totalPrice, 2) AS 'totPriceR', totalPrepTime\r\n"
+				+ "FROM [Order] JOIN LineItem ON [Order].orderID=LineItem.orderID JOIN FoodItem ON LineItem.foodItemID=FoodItem.foodItemID \r\n"
+				+ "WHERE [Order].driverID=?";
+				String r="";
+		try {
+			PreparedStatement p = connection.prepareStatement(sql2);
+			p.setInt(1, currentDriver.getDriverID());
+			ResultSet rs=p.executeQuery();
+			if (rs.next() == false) 
+			{
+		        r="No Open Orders";
+		        System.out.println(r);
+		    } 
+			else 
+			{
+				do
+				{
+					int orderID;
+					r+="\n ["+rs.getInt("orderID") +"] "+rs.getString("orderStatus")+", "+rs.getFloat("totPriceR")+", "+rs.getInt("totalPrepTime");
+					orderID=rs.getInt("orderID");
+					PreparedStatement p1 = connection.prepareStatement(sql);
+					p1.setInt(1, currentDriver.getDriverID());
+					p1.setInt(2, orderID);
+					ResultSet rs1 = p1.executeQuery();
+					while(rs1.next())
+					{
+						r+="\n\t"+rs1.getInt("lineItemNumber")+" "+rs1.getString("foodName")+", "+rs1.getFloat("foodPriceR");
+					}
+					System.out.println(r);
+					r="";
+				}
+				while (rs.next());
+			}
+			
+			
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 
 
@@ -962,6 +887,8 @@ public class FoodOrdering {
 					+ "\n[0] Logout"
 					+ "\n[1] View/Update Account Information"
 					+ "\n[2] Add items to Menu"
+					+ "\n[3] Update Order"
+					+ "\n[4] View All Orders"
 					+"");
 			uIn=uInput.nextInt();
 			uInput.nextLine();
@@ -969,6 +896,7 @@ public class FoodOrdering {
 			{
 			case 0:
 				currentRestaurant = new Restaurant();
+				System.out.println("You have been logged out");
 				break;
 			case 1:
 				viewRestaurantAccount(connection);
@@ -987,7 +915,7 @@ public class FoodOrdering {
 		        f1.setDescription(foodDataIn.nextLine());
 		        System.out.println("\nEnter type: " );
 		        f1.setType(foodDataIn.nextLine());
-		        System.out.println("\nEneter preptime");
+		        System.out.println("\nEnter preptime");
 		        f1.setPrepTime(foodDataIn.nextInt());
 		        //foodDataIn.nextLine();
 		        //The above gets and stores user input about the foodItems -Aayushma
@@ -999,8 +927,148 @@ public class FoodOrdering {
 		        f1.setCategoryID(categoryID);
 		        inputCategoryType(connection, f1, categoryID); //Calls the method to insert the category based on user input -Aayushma
 				break;
+			case 3:
+				showOpenRestaurantOrders(connection);
+				break;
+			case 4:
+				viewAllRestaurantOrders(connection);
+                System.out.println("Enter the order id to view more or -3 to go back:");
+                uIn = uInput.nextInt();
+                uInput.nextLine();
+                if(uIn==-3)
+                    break;
+                else
+                    viewFullRestaurantOrder(connection, uIn);
+                break;
 			}
 		}
+	}
+
+
+
+	private static void viewFullRestaurantOrder(Connection connection, int uIn) {
+        String sql="SELECT lineItemNumber, foodName, ROUND(foodPrice,2) AS 'foodPriceR'\r\n"
+                + "FROM [Order] JOIN LineItem ON [Order].orderID=LineItem.orderID JOIN FoodItem ON LineItem.foodItemID=FoodItem.foodItemID JOIN Restaurant ON FoodItem.restaurantID = Restaurant.restaurantID\r\n"
+                + "WHERE [Order].orderID= ? AND Restaurant.restaurantID = ?\r\n";
+        try {
+            PreparedStatement p = connection.prepareStatement(sql);
+            p.setInt(1, uIn);
+            p.setInt(2, currentRestaurant.getRestaurantID());
+            ResultSet rs=p.executeQuery();
+            while(rs.next())
+            {
+                String r="\n\t"+rs.getInt("lineItemNumber")+" "+rs.getString("foodName")+", "+rs.getFloat("foodPriceR");
+                System.out.println(r);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+	}
+
+
+
+	private static void viewAllRestaurantOrders(Connection connection) {
+		// TODO Auto-generated method stub
+	        String sql="SELECT DISTINCT [Order].orderID, orderStatus, totalPrice \r\n"
+	        		+ "FROM [Order] JOIN LineItem ON [Order].OrderID = LineItem.orderID JOIN FoodItem ON LineItem.foodItemID=FoodItem.foodItemID JOIN Restaurant ON FoodItem.restaurantID=Restaurant.restaurantID\r\n"
+	        		+ "WHERE Restaurant.restaurantID=?";
+	        try {
+	            PreparedStatement p = connection.prepareStatement(sql);
+	            p.setInt(1, currentRestaurant.getRestaurantID());
+	            ResultSet rs;
+	            rs=p.executeQuery();
+	            if(rs.next()==false)
+	            {
+	                System.out.println("No orders");
+	            }
+	            else {
+	            do {
+
+
+
+
+	                String s = rs.getInt("orderID")+") " +rs.getString("orderStatus") +", "+rs.getFloat("totalPrice");
+	                System.out.println(s);
+	            }
+	            while(rs.next());
+	            }
+
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        }
+
+		
+	}
+
+
+
+	private static void updateRestaurantOrder(Connection connection, int uOIn) {
+		// TODO Auto-generated method stub
+		String sql="UPDATE [Order]"
+				+ "\nSET orderStatus='Food is ready'"
+				+ "\nWhere orderID=?";
+		try {
+			PreparedStatement p=connection.prepareStatement(sql);
+			p.setInt(1, uOIn);
+			p.executeUpdate();
+			System.out.println("Order Updated Succesfully");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+	}
+
+
+
+	private static void showOpenRestaurantOrders(Connection connection) {
+		String sql="SELECT lineItemNumber, foodName, ROUND(foodPrice,2) AS 'foodPriceR'\r\n"
+				+ "FROM [Order] JOIN LineItem ON [Order].orderID=LineItem.orderID JOIN FoodItem ON LineItem.foodItemID=FoodItem.foodItemID \r\n"
+				+ "WHERE FoodItem.restaurantID=? AND orderStatus='Driver on the way to the restaurant'\r\n";
+		
+				String sql2= "SELECT DISTINCT [Order].orderID, orderStatus, ROUND(totalPrice, 2) AS 'totPriceR', totalPrepTime\r\n"
+				+ "FROM [Order] JOIN LineItem ON [Order].orderID=LineItem.orderID JOIN FoodItem ON LineItem.foodItemID=FoodItem.foodItemID \r\n"
+				+ "WHERE FoodItem.restaurantID=? AND (orderStatus='Driver on the way to the restaurant' OR orderStatus='Preparing')";
+				String r="";
+		try {
+			PreparedStatement p = connection.prepareStatement(sql2);
+			p.setInt(1, currentRestaurant.getRestaurantID());
+			ResultSet rs=p.executeQuery();
+			if (rs.next() == false) 
+			{
+		        r="No Open Orders";
+		        System.out.println(r);
+		    } 
+			else 
+			{
+				do
+				{
+					r+="\n ["+rs.getInt("orderID") +"] "+rs.getString("orderStatus")+", "+rs.getFloat("totPriceR")+", "+rs.getInt("totalPrepTime");
+					PreparedStatement p1 = connection.prepareStatement(sql);
+					p1.setInt(1, currentRestaurant.getRestaurantID());
+					ResultSet rs1 = p1.executeQuery();
+					while(rs1.next())
+					{
+						r+="\n\t"+rs1.getInt("lineItemNumber")+" "+rs1.getString("foodName")+", "+rs1.getFloat("foodPriceR");
+					}
+					System.out.println(r);
+					r="";
+				}
+				while (rs.next());
+				System.out.println("Enter the order number you want to update");
+				Scanner oInput = new Scanner(System.in);
+				int uOIn=0;
+				uOIn=oInput.nextInt();
+				oInput.nextLine();
+				updateRestaurantOrder(connection, uOIn);
+			}
+			
+			
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		
 	}
 
 
@@ -1084,7 +1152,7 @@ public class FoodOrdering {
 					+ "\n[1] View/Update Account Information"
 					+ "\n[2] Place an Order"
 					+ "\n[3] View Order in Progress"
-					//+ "\n[4] Leave a review"
+					+ "\n[4] Leave a review"
 					+"");
 			uIn=uInput.nextInt();
 			uInput.nextLine();
@@ -1092,17 +1160,45 @@ public class FoodOrdering {
 			{
 			case 0:
 				currentCustomer = new Customer();
+				System.out.println("You have been logged out");
 				break;
 			case 1:
 				viewCustomerAccount(connection);
 				break;
 			case 2:
-				showRestaurants(connection);
-				int rID=0;
-				System.out.println("Enter the number of the restaurant you want to select: ");
-				rID=uInput.nextInt();
+				while (selectedRestaurant == null)
+				{
+					
+				System.out.println("How would you like to search for a restaurant"
+						+ "\n[-3]Go Back"
+						+ "\n[1]View All"
+						+ "\n[2]Search by Zip Code"
+						+ "\n[3]Search by Type"
+						+ "\n[4] Search by Name"
+						+ "");
+				int uIn2 = uInput.nextInt();
 				uInput.nextLine();
-				selectRestaurant(connection, rID);
+						switch(uIn2)
+						{
+						case -3:
+							break;
+						case 1:
+							showRestaurants(connection);
+							break;
+						case 2:
+							zipSearch(connection);
+							break;
+						case 3:
+							typeSearch(connection);
+							break;
+						case 4:
+							nameSearch(connection);
+							break;
+						default:
+							break;
+						}
+						customerOrder(connection);
+				}
 				ArrayList<FoodItem> newFList = new ArrayList<FoodItem>(); //List to store foodItemID's to be put into order later -Jack
 				Scanner nFood = new Scanner(System.in); //this will get the foodItemID -Jack
 				int nFoodNum=-3; //variable that will do 2 things, add foodItemIDs, control the loops -Jack
@@ -1161,8 +1257,16 @@ public class FoodOrdering {
 				break;
 			case 3:
 				viewOpenCustomerOrder(connection);
+				System.out.println("Enter the order id to view more or -3 to go back:");
+				uIn = uInput.nextInt();
+				uInput.nextLine();
+				if(uIn==-3)
+					break;
+				else
+					viewFullOrder(connection, uIn);
 				break;
 			case 4:
+				leaveReview(connection);
 				break;
 			default:
 				break;
@@ -1170,6 +1274,134 @@ public class FoodOrdering {
 			
 		}
 		//uInput.close();;
+	}
+
+
+
+	private static void nameSearch(Connection connection) {
+		System.out.println("Enter name to search for restaurants that match");
+		String searchName;
+		Scanner i = new Scanner(System.in);
+		searchName=i.nextLine();
+    	String sql="SELECT *"
+    			+ "\nFROM Restaurant JOIN RestaurantType ON Restaurant.restaurantTypeID=RestaurantType.restaurantTypeID"
+    			+ "\nWHERE restaurantName LIKE CONCAT(?, '%')";
+    	try {
+    		ResultSet rs;
+    		PreparedStatement p = connection.prepareStatement(sql); //Uses a prepared statement to make sure that nothing else can be added -Jack
+			p.setString(1, searchName); //Setting the value in the String -Jack
+			rs = p.executeQuery();
+    		while(rs.next())
+    		{
+    			String s = "[" + rs.getString("restaurantID") + "] "+ rs.getString("restaurantName")+ ", "+rs.getString("restaurantType");
+    			System.out.println(s); //Displays all the restaurants with a specific type -Ahsan
+    		}
+    	} catch (SQLException e) {
+    		e.printStackTrace();
+    	} 
+	}
+
+
+
+	private static void customerOrder(Connection connection) {
+		int rID=0;
+		Scanner uInput = new Scanner(System.in);
+		System.out.println("Enter the number of the restaurant you want to select: ");
+		rID=uInput.nextInt();
+		uInput.nextLine();
+		selectRestaurant(connection, rID);
+	}
+
+
+
+	private static void leaveReview(Connection connection) {
+		String sql="SELECT DISTINCT Restaurant.restaurantID, restaurantName"
+				+ "\nFROM Restaurant JOIN FoodItem ON Restaurant.restaurantID=FoodItem.restaurantID JOIN LineItem ON FoodItem.foodItemID=LineItem.foodItemID JOIN [Order] ON LineItem.orderID=[Order].orderID"
+				+ "\nWHERE [Order].customerID= ? AND orderStatus='Order Complete'";
+		try {
+			PreparedStatement p = connection.prepareStatement(sql);
+			p.setInt(1, currentCustomer.getCustomerID());
+			ResultSet rs = p.executeQuery();
+			if(rs.next()==false)
+				System.out.println("No orders placed");
+			else
+			{
+				do
+				{
+					String s="["+rs.getInt("restaurantID")+"] "+rs.getString("restaurantName");
+					System.out.println(s);
+				}
+				while(rs.next());
+				System.out.println("Enter ID of restaurant to leave a review for: ");
+				Scanner i = new Scanner(System.in);
+				int id = i.nextInt();
+				createReview(connection, id);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+				
+	}
+
+
+
+	private static void createReview(Connection connection, int id) {
+		// TODO Auto-generated method stub
+		String sql1="SELECT customerID"
+				+ "\nFROM Rating"
+				+ "\nWHERE restaurantID=?";
+		try {
+			PreparedStatement p = connection.prepareStatement(sql1);
+			p.setInt(1, id);
+			ResultSet rs=p.executeQuery();
+			if(rs.next()==false)
+			{
+				Scanner i = new Scanner(System.in);
+				int score=0;
+				String review="";
+				while(score<1||score>10)
+				{
+					System.out.println("Enter the score from 1-10");
+					score=i.nextInt();
+					i.nextLine();
+				}
+				System.out.println("Enter a review if desired");
+				review=i.nextLine();
+				String sql2="INSERT Rating(restaurantID, ratingScore, ratingReview, customerID) VALUES(?, ?, ?, ?)";
+				PreparedStatement p1 = connection.prepareStatement(sql2);
+				p1.setInt(1, id);
+				p1.setInt(2, score);
+				p1.setString(3, review);
+				p1.setInt(4, currentCustomer.getCustomerID());
+				p1.executeUpdate();
+				System.out.println("Review left");
+				
+			}
+			else
+				System.out.println("You've already left a review for this restaurant");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+
+	private static void viewFullOrder(Connection connection, int uIn) {
+		// TODO Auto-generated method stub
+		String sql="SELECT lineItemNumber, foodName, ROUND(foodPrice,2) AS 'foodPriceR'\r\n"
+				+ "FROM [Order] JOIN LineItem ON [Order].orderID=LineItem.orderID JOIN FoodItem ON LineItem.foodItemID=FoodItem.foodItemID \r\n"
+				+ "WHERE [Order].orderID= ? AND orderStatus!='Order Complete'\r\n";
+		try {
+			PreparedStatement p = connection.prepareStatement(sql);
+			p.setInt(1, uIn);
+			ResultSet rs=p.executeQuery();
+			while(rs.next())
+			{
+				String r="\n\t"+rs.getInt("lineItemNumber")+" "+rs.getString("foodName")+", "+rs.getFloat("foodPriceR");
+				System.out.println(r);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 
 
@@ -1195,7 +1427,7 @@ public class FoodOrdering {
 
 
 	private static void viewOpenCustomerOrder(Connection connection) {
-		String sql="SELECT * FROM [Order] WHERE customerID= ? AND orderStatus!='closed'";
+		String sql="SELECT * FROM [Order] WHERE customerID= ? AND orderStatus!='Order Complete'";
 		try {
 			PreparedStatement p = connection.prepareStatement(sql);
 			p.setInt(1, currentCustomer.getCustomerID());
@@ -1206,11 +1438,15 @@ public class FoodOrdering {
 				System.out.println("No active orders");
 			}
 			else {
-			while(rs.next())
-			{
+			do {
+				
+			
+			
+			
 				String s = rs.getInt("orderID")+") " +rs.getString("orderStatus") +", "+rs.getFloat("totalPrice");
 				System.out.println(s);
 			}
+			while(rs.next());
 			}
 			
 		} catch (SQLException e) {
@@ -1480,6 +1716,7 @@ public class FoodOrdering {
     
     public static void inputCategoryType(Connection connection, FoodItem f, int idToInsert)
     {
+    	//TODO: Add check to see if incorrect number is selected
     	String sql="SELECT categoryName"
 				+ "\nFROM Category"
 				+ "\nWHERE categoryID= ?"; //This will get us the full data from the specific category -Aayushma
@@ -1547,8 +1784,15 @@ public class FoodOrdering {
     
     
     
-    public static void rTypeSearch(int searchID, Connection connection)
+    public static void typeSearch(Connection connection)
     {
+    	//TODO: Add check to see if a number is actually selected
+    	printType(connection);
+    	System.out.println("Enter ID of type to search: ");
+    	int searchID;
+    	Scanner i = new Scanner(System.in);
+    	searchID=i.nextInt();
+    	i.nextLine();
     	String sql="SELECT *"
     			+ "\nFROM Restaurant JOIN RestaurantType ON Restaurant.restaurantTypeID=RestaurantType.restaurantTypeID"
     			+ "\nWHERE Restaurant.restaurantTypeID= ? ";
@@ -1572,21 +1816,48 @@ public class FoodOrdering {
     
     public static void displayOrders(Connection connection)
     {
-    	String sql="SELECT * FROM [Order] WHERE orderStatus='preparing'"; // getting orders that are not taken by a driver and are open- Ahsan
+    	String sql="SELECT lineItemNumber, foodName, ROUND(foodPrice,2) AS 'foodPriceR'\r\n"
+				+ "FROM [Order] JOIN LineItem ON [Order].orderID=LineItem.orderID JOIN FoodItem ON LineItem.foodItemID=FoodItem.foodItemID \r\n"
+				+ "WHERE orderStatus='preparing'";
+    	String r="";
+    	String sql2= "SELECT DISTINCT [Order].orderID, orderStatus, ROUND(totalPrice, 2) AS 'totPriceR', totalPrepTime, restaurantName, restaurantLocation, firstName, lastName, customerLocation\r\n"
+				+ "FROM [Order] JOIN LineItem ON [Order].orderID=LineItem.orderID JOIN FoodItem ON LineItem.foodItemID=FoodItem.foodItemID JOIN Customer ON [Order].customerID=Customer.customerID JOIN Restaurant ON FoodItem.restaurantID=Restaurant.restaurantID\r\n"
+				+ "WHERE orderStatus='preparing'";
 
     	Statement statement;
     	ResultSet rs;
     	try {
-    		statement=connection.createStatement();
-    		rs=statement.executeQuery(sql);
-    		while(rs.next())
-    		{
-    			String s = "[" + rs.getInt("orderID") + "] " + rs.getFloat("totalPrice" ); //+ " " + rs.getInt("totalPrepTime") ; //will be changed in the future when we get a better idea of what to show the customer -Ahsan
-    			System.out.println(s);
-    		}
-    	} catch (SQLException e) {
-    		e.printStackTrace();
-    }
+			statement= connection.createStatement();
+			
+			rs=statement.executeQuery(sql2);
+			if (rs.next() == false) 
+			{
+		        r="No Open Orders";
+		        System.out.println(r);
+		    } 
+			else 
+			{
+				do
+				{
+					r+="\n ["+rs.getInt("orderID") +"] "+rs.getString("orderStatus")+", "+rs.getFloat("totPriceR")+", "+rs.getInt("totalPrepTime") +", "+rs.getString("restaurantName")+", "+rs.getString("restaurantLocation") + ", "+rs.getString("firstName") + ", "+ rs.getString("lastName")+", "+rs.getString("customerLocation");
+					System.out.println(r);
+					r="";
+				}
+				while (rs.next());
+				Scanner uInput = new Scanner(System.in);
+				System.out.println("Enter id of order you want");
+				int oSelect =uInput.nextInt();
+				uInput.nextLine();
+				System.out.println("Enter the zip code you are currently in: ");
+				String zip=uInput.nextLine();
+				selectOrder(connection, oSelect, zip); //calls the method that will update the orderTable to say it's selected and to create a delivery -Jack
+			}
+			
+			
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 
 
 
@@ -1669,6 +1940,7 @@ public class FoodOrdering {
     
     public static void selectOrder(Connection connection, int orderID, String curLoc)
     {
+    	//TODO: FIX
     	int cID=0, rID=0;
     	String custLoc="", restLoc="";
     	String sqlGetC = "SELECT customerLocation, Customer.customerID"
@@ -1723,11 +1995,12 @@ public class FoodOrdering {
 			e.printStackTrace();
 		} 
     	String sqlUpdateO ="UPDATE [Order]"
-    			+ "\nSET orderStatus = 'Driver on the way to the restaurant'"
+    			+ "\nSET orderStatus = 'Driver on the way to the restaurant', driverID = ?"
     			+ "\nWHERE orderID= ?";
     	try {
     		PreparedStatement p3 = connection.prepareStatement(sqlUpdateO);
-    		p3.setInt(1, orderID);
+    		p3.setInt(1, currentDriver.getDriverID());
+    		p3.setInt(2, orderID);
     		p3.executeUpdate();
     	} catch(SQLException e) {
 			e.printStackTrace();
