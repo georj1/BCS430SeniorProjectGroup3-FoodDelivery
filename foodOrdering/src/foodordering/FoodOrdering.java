@@ -49,7 +49,6 @@ public class FoodOrdering {
 			System.out.println("Connected"); //Display a message to show it successfully connected -Jack
 			while (userIn!=0)
 			{
-				//scin.nextLine();
 				System.out.println("Enter what you want to do: "
 						+ "\n[0] Exit"
 						+ "\n[1] Create an account"
@@ -58,45 +57,6 @@ public class FoodOrdering {
 				scin.nextLine();
 				switch(userIn)
 				{
-				case -2:
-					/*
-					String sql = "ALTER TABLE Customer"
-							+ "\nADD [password] varchar(100);"
-							+ "\nALTER TABLE Restaurant"
-							+ "\nADD [userName] varchar(50);"
-							+ "\nALTER TABLE Restaurant"
-							+ "\nADD [password] varchar(100);"		
-							+ "\nALTER TABLE Driver"
-							+ "\nADD [password] varchar(100);";
-							*/
-					/*String sql="UPDATE Customer"
-							+ "\nSET [password]='abc123'"
-							+ "\nWHERE email='georj1@farmingdale.edu';"
-							+ "\nUPDATE Restaurant"
-							+ "\nSET [password]='abcd1234', [userName]='wend101'"
-							+ "\nWHERE restaurantName='Wendys';"
-							+ "UPDATE Driver"
-							+ "\nSET [password]='12ab'"
-							+ "\nWHERE firstName='John';";*/
-					String sql="SELECT * FROM Driver";
-    		    	Statement statement;
-    				try {
-    					ResultSet rs;
-    					statement = connection.createStatement();
-    					//statement.executeUpdate(sql);
-						
-						  rs=statement.executeQuery(sql); //execute SQL statement
-						  
-						  while(rs.next()) { String
-						  s=""+rs.getInt("driverID")+", "+rs.getString("firstName")+", "+rs.getString(
-						  "lastName")+", "+rs.getString("phone")+", "+rs.getString("email");
-						  System.out.println(s); }
-						 
-    					System.out.println("Statement success");
-    				} catch (SQLException e) {
-    					e.printStackTrace();
-    				}
-					break;
 				case 0:
 					break;
 				case 1:
@@ -154,22 +114,7 @@ public class FoodOrdering {
 			}
 		} catch (SQLException e1) {
 			e1.printStackTrace();
-		}
-    			/*case 6:
-    				//System.out.println("\nEnter a zipcode to search for restaurants in that zip code: "); 
-    				//String searchZip = scSin.nextLine();
-    				//rZipSearch(searchZip, connection);
-    				break;
-    				
-    			
-    			case 9:
-    				System.out.println("\nEnter the type of restaurant you are looking for:  ");
-    				printType(connection);
-    				Scanner selectRT = new Scanner(System.in); //Scanner is used to get data from the user -Ahsan
-    				int typeSelectIn;
-    			    typeSelectIn=selectRT.nextInt();
-    			    rTypeSearch(typeSelectIn, connection);
-    			    break; */
+		}		
     }
     
     
@@ -324,7 +269,6 @@ public class FoodOrdering {
     }
     
     
-    //TODO: Rework this method 
     public static void zipSearch(Connection connection)
     {
     	Scanner i = new Scanner(System.in);
@@ -407,36 +351,9 @@ public class FoodOrdering {
     }
     
     
-    //TODO: Rework this method for full login
-    public static void getCurrentCustomer(Connection connection, String cEmail)
-    {
-    	String sql="SELECT * FROM [dbo].[Customer] WHERE email= ?"; //code to get the customer based on their email, will tie into login later -Jack
-		try {
-			ResultSet rs;
-			PreparedStatement p = connection.prepareStatement(sql);
-			p.setString(1, cEmail);
-			rs=p.executeQuery();
-			while(rs.next())
-			{
-				currentCustomer.setCustomerID(rs.getInt("customerID"));
-				currentCustomer.setCustomerFName(rs.getString("firstName"));
-				currentCustomer.setCustomerLName(rs.getString("lastName"));
-				currentCustomer.setCustomerEmail(rs.getString("email"));
-				currentCustomer.setCustomerPhone(rs.getString("phone"));
-				//adds the information to our current customer for more global use -Jack
-				String s = rs.getString("firstName")+ ": "+rs.getString("lastName")+", "+rs.getString("email")+", "+rs.getString("phone"); //Display the Customer for now, will eventually be the menu -Jack
-				System.out.println(s);
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} 
-    }
-    
-    
     
     public static void addFood(Connection connection, ArrayList<FoodItem> foodList)
     {
-    	//TODO: Fix this code, need to also add the LineItem Table
     	String sqlCOrder="INSERT [Order](customerID, driverID, orderStatus, totalPrice, totalPrepTime) VALUES(?, NULL, 'Preparing', NULL, NULL)"; //this statement creates an order when called -Jack
     	try {
     		PreparedStatement p = connection.prepareStatement(sqlCOrder);
@@ -507,21 +424,13 @@ public class FoodOrdering {
     
     public static void addItemToFList(Connection connection, int idToAdd, ArrayList<FoodItem> foodList)
     {
-    	
-    	
-    	/*String sql="SELECT *, categoryName"
-    			+ "\nFROM FoodItem LEFT JOIN Category ON FoodItem.categoryID=Category.categoryID"
-    			+ "\nWHERE foodItemID="+idToAdd +";"; //code to get the restaurant based on the ID the customer selected -Jack */
     	String sql="SELECT *, categoryName"
     			+ "\nFROM FoodItem LEFT JOIN Category ON FoodItem.categoryID=Category.categoryID"
     			+ "\nWHERE foodItemID= ?"; //code to get the restaurant based on the ID the customer selected -Jack
-		//Statement statement;
 			try {
 				ResultSet rs;
 				PreparedStatement p = connection.prepareStatement(sql);
 				p.setInt(1, idToAdd);
-				//statement = connection.createStatement();
-				//rs = statement.executeQuery(sql); //execute SQL statement
 				rs=p.executeQuery();
 				while(rs.next())
 				{
@@ -578,7 +487,6 @@ public class FoodOrdering {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		//dInput.close();
 	}
 
 
@@ -622,7 +530,6 @@ public class FoodOrdering {
 				break;
 			}
 		}
-		//uInput.close();
 	}
 
 
@@ -873,7 +780,6 @@ public class FoodOrdering {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		//rInput.close();
 	}
 
 
@@ -951,7 +857,6 @@ public class FoodOrdering {
 
 
 	private static void viewAllReviews(Connection connection) {
-		// TODO Auto-generated method stub
 		String sql="SELECT restaurantName, AVG(ratingScore) AS arScore"
 				+ "\nFROM Restaurant JOIN Rating ON Restaurant.restaurantID=Rating.restaurantID"
 				+ "\nWHERE Restaurant.restaurantID=?"
@@ -1020,7 +925,6 @@ public class FoodOrdering {
 
 
 	private static void viewAllRestaurantOrders(Connection connection) {
-		// TODO Auto-generated method stub
 	        String sql="SELECT DISTINCT [Order].orderID, orderStatus, totalPrice \r\n"
 	        		+ "FROM [Order] JOIN LineItem ON [Order].OrderID = LineItem.orderID JOIN FoodItem ON LineItem.foodItemID=FoodItem.foodItemID JOIN Restaurant ON FoodItem.restaurantID=Restaurant.restaurantID\r\n"
 	        		+ "WHERE Restaurant.restaurantID=?";
@@ -1035,10 +939,6 @@ public class FoodOrdering {
 	            }
 	            else {
 	            do {
-
-
-
-
 	                String s = rs.getInt("orderID")+") " +rs.getString("orderStatus") +", "+rs.getFloat("totalPrice");
 	                System.out.println(s);
 	            }
@@ -1048,14 +948,11 @@ public class FoodOrdering {
 	        } catch (SQLException e) {
 	            e.printStackTrace();
 	        }
-
-		
 	}
 
 
 
 	private static void updateRestaurantOrder(Connection connection, int uOIn) {
-		// TODO Auto-generated method stub
 		String sql="UPDATE [Order]"
 				+ "\nSET orderStatus='Food is ready'"
 				+ "\nWhere orderID=?";
@@ -1067,16 +964,15 @@ public class FoodOrdering {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		
 	}
 
 
 
 	private static void showOpenRestaurantOrders(Connection connection) {
-				String sql2= "SELECT DISTINCT [Order].orderID, orderStatus, ROUND(totalPrice, 2) AS 'totPriceR', totalPrepTime\r\n"
+		String sql2= "SELECT DISTINCT [Order].orderID, orderStatus, ROUND(totalPrice, 2) AS 'totPriceR', totalPrepTime\r\n"
 				+ "FROM [Order] JOIN LineItem ON [Order].orderID=LineItem.orderID JOIN FoodItem ON LineItem.foodItemID=FoodItem.foodItemID \r\n"
 				+ "WHERE FoodItem.restaurantID=? AND (orderStatus='Driver on the way to the restaurant' OR orderStatus='Preparing')";
-				String r="";
+		String r="";
 		try {
 			PreparedStatement p = connection.prepareStatement(sql2);
 			p.setInt(1, currentRestaurant.getRestaurantID());
@@ -1101,15 +997,10 @@ public class FoodOrdering {
 				uOIn=oInput.nextInt();
 				oInput.nextLine();
 				updateRestaurantOrder(connection, uOIn);
-			}
-			
-			
-			
+			}	
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		
-		
 	}
 
 
@@ -1178,7 +1069,6 @@ public class FoodOrdering {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		//cInput.close();
 	}
 
 
@@ -1279,9 +1169,7 @@ public class FoodOrdering {
 				    	} 
 				    	//Okay so the way this crazy thing works is it asks the user to enter the id of the item they want to remove, stores that then because of how ArrayList works
 				    	 // I need to get the object based on the id so it loops through the arrayList until the foodItemID matches the customer selected id to remove, from here it
-				    	 // stores the FoodItem in a temporary FoodItem object where after the loop it will then remove the FoodItem from the ArrayList -Jack
-				    	 
-				    	
+				    	 // stores the FoodItem in a temporary FoodItem object where after the loop it will then remove the FoodItem from the ArrayList -Jack 	
 				    }
 				    else if(nFoodNum==-1)
 					    break; //exits the loop -Jack
@@ -1312,9 +1200,7 @@ public class FoodOrdering {
 			default:
 				break;
 			}
-			
 		}
-		//uInput.close();;
 	}
 
 
@@ -1380,14 +1266,12 @@ public class FoodOrdering {
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
-		}
-				
+		}		
 	}
 
 
 
 	private static void createReview(Connection connection, int id) {
-		// TODO Auto-generated method stub
 		String sql1="SELECT customerID"
 				+ "\nFROM Rating"
 				+ "\nWHERE restaurantID=? AND customerID= ?";
@@ -1428,7 +1312,6 @@ public class FoodOrdering {
 
 
 	private static void viewFullOrder(Connection connection, int uIn) {
-		// TODO Auto-generated method stub
 		String sql="SELECT lineItemNumber, foodName, ROUND(foodPrice,2) AS 'foodPriceR'\r\n"
 				+ "FROM [Order] JOIN LineItem ON [Order].orderID=LineItem.orderID JOIN FoodItem ON LineItem.foodItemID=FoodItem.foodItemID \r\n"
 				+ "WHERE [Order].orderID= ? AND orderStatus!='Order Complete'\r\n";
@@ -1463,7 +1346,6 @@ public class FoodOrdering {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		
 	}
 
 
@@ -1481,20 +1363,14 @@ public class FoodOrdering {
 			}
 			else {
 			do {
-				
-			
-			
-			
 				String s = rs.getInt("orderID")+") " +rs.getString("orderStatus") +", "+rs.getFloat("totalPrice");
 				System.out.println(s);
 			}
 			while(rs.next());
 			}
-			
 		} catch (SQLException e) {
 			e.printStackTrace();
-		}
-		
+		}	
 	}
 
 
@@ -1548,7 +1424,6 @@ public class FoodOrdering {
 		    } 
 			else 
 			{
-
 		        do 
 		        {
 		          String data = rs.getString("email")+" is already taken";
@@ -1606,7 +1481,6 @@ public class FoodOrdering {
 				    typeID = tIn.nextInt();
 				    r1.setRestaurantTypeID(typeID);
 				    inputRestaurantType(connection, r1, typeID);
-				//insertRestaurant(r1, connection); //Call the method that inserts the data -Jack
 		    } 
 			else 
 			{
@@ -1619,7 +1493,6 @@ public class FoodOrdering {
 		        while (rs.next());
 		    }
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -1688,7 +1561,6 @@ public class FoodOrdering {
 		        while (rs.next());
 		    }
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -1704,33 +1576,6 @@ public class FoodOrdering {
     		totalPrice+=f.getFoodPrice();
     	}
     	System.out.println("Total Price: "+totalPrice);
-    	/*
-    	String sql="SELECT * FROM FoodItem WHERE"; //code to get the restaurant based on the ID the customer selected -Jack
-    	for(FoodItem i : foodList)
-    	{
-    		
-    		if(foodList.indexOf(i)==foodList.size()-1)
-    		{
-    			sql+=(" foodItemID= "+i.getFoodItemID()+";"); //This is here to make sure the end is done correctly -Jack
-    		}
-    		else
-    			sql+=(" foodItemID= "+i.getFoodItemID()+","); //This here will put into the SQL statement to get only the FoodItems from the list -Jack
-    	}
-		Statement statement;
-			try {
-				ResultSet rs;
-				statement = connection.createStatement();
-				rs = statement.executeQuery(sql); //execute SQL statement
-				while(rs.next())
-				{
-					String s = "["+rs.getInt("foodItemID")+"] "+rs.getString("foodName")+", "+rs.getString("description")+", "+rs.getInt("calories")+", "+ rs.getString("categoryName")+", "+rs.getFloat("foodPrice");
-					System.out.println(s);
-					//Prints the foodItems in the order so far -Jack
-				}
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-			*/
     }
     
     
@@ -1758,7 +1603,6 @@ public class FoodOrdering {
     
     public static void inputCategoryType(Connection connection, FoodItem f, int idToInsert)
     {
-    	//TODO: Add check to see if incorrect number is selected
     	String sql="SELECT categoryName"
 				+ "\nFROM Category"
 				+ "\nWHERE categoryID= ?"; //This will get us the full data from the specific category -Aayushma
@@ -1828,7 +1672,6 @@ public class FoodOrdering {
     
     public static void typeSearch(Connection connection)
     {
-    	//TODO: Add check to see if a number is actually selected
     	printType(connection);
     	System.out.println("Enter ID of type to search: ");
     	int searchID;
@@ -1851,7 +1694,6 @@ public class FoodOrdering {
     	} catch (SQLException e) {
     		e.printStackTrace();
     	} 
-
     }
     
     
@@ -1894,43 +1736,12 @@ public class FoodOrdering {
 				String zip=uInput.nextLine();
 				selectOrder(connection, oSelect, zip); //calls the method that will update the orderTable to say it's selected and to create a delivery -Jack
 			}
-			
-			
-			
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 
 
 
-    }
-    
-    
-    //TODO: Rework this method for full login
-    public static void getCurrentDriver(Connection connection, String dFName, String dLName)
-    {
-    	String sql="SELECT * FROM Driver WHERE firstName = ? AND lastName = ?"; //code to get the customer based on their email, will tie into login later -Jack
-		try {
-			ResultSet rs;
-			PreparedStatement p = connection.prepareStatement(sql);
-			p.setString(1, dFName);
-			p.setString(2,  dLName);
-			rs=p.executeQuery();
-			while(rs.next())
-			{
-				/*
-				currentDriver.setDriverID(rs.getInt("driverID"));
-				currentDriver.setDriverFName(rs.getString("firstName"));
-				currentDriver.setDriverLName(rs.getString("lastName"));
-				currentDriver.setDriverPhone(rs.getString("phone"));
-				*/
-				//adds the information to our current driver for more global use -Jack
-				String s = rs.getString("firstName")+ ": "+rs.getString("lastName")+", "+rs.getString("phone"); //Display the Customer for now, will eventually be the menu -Jack
-				System.out.println(s);
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} 
     }
     
     
@@ -1953,7 +1764,6 @@ public class FoodOrdering {
     			e.printStackTrace();
     		}
     	return totalTime;
-    	
     }
     
     
@@ -1982,7 +1792,6 @@ public class FoodOrdering {
     
     public static void selectOrder(Connection connection, int orderID, String curLoc)
     {
-    	//TODO: FIX
     	int cID=0, rID=0;
     	String custLoc="", restLoc="";
     	String sqlGetC = "SELECT customerLocation, Customer.customerID"
@@ -2001,7 +1810,6 @@ public class FoodOrdering {
     	}catch(SQLException e) {
 			e.printStackTrace();
 		} 
-    	
     	String sqlGetR = "SELECT restaurantLocation, Restaurant.restaurantID"
     			+ "\nFROM [Order] JOIN LineItem ON [Order].orderID=LineItem.orderID JOIN FoodItem ON LineItem.foodItemID=FoodItem.foodItemID JOIN Restaurant ON FoodItem.restaurantID=Restaurant.restaurantID"
     			+ "\nWHERE [Order].OrderID = ?";
