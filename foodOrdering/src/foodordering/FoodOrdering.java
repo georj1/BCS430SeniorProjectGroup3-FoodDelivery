@@ -889,6 +889,7 @@ public class FoodOrdering {
 					+ "\n[2] Add items to Menu"
 					+ "\n[3] Update Order"
 					+ "\n[4] View All Orders"
+					+ "\n[5] View All Reviews"
 					+"");
 			uIn=uInput.nextInt();
 			uInput.nextLine();
@@ -940,8 +941,59 @@ public class FoodOrdering {
                 else
                     viewFullRestaurantOrder(connection, uIn);
                 break;
+			case 5:
+				viewAllReviews(connection);
+				break;
 			}
 		}
+	}
+
+
+
+	private static void viewAllReviews(Connection connection) {
+		// TODO Auto-generated method stub
+		String sql="SELECT restaurantName, AVG(ratingScore) AS arScore"
+				+ "\nFROM Restaurant JOIN Rating ON Restaurant.restaurantID=Rating.restaurantID"
+				+ "\nWHERE Restaurant.restaurantID=?"
+				+ "\nGROUP BY restaurantName";
+		
+		String sql2="SELECT *"
+				+ "\nFROM Rating"
+				+ "\nWHERE restaurantID= ?";
+		String r="";
+		try {
+			PreparedStatement p = connection.prepareStatement(sql);
+			p.setInt(1, currentRestaurant.getRestaurantID());
+			ResultSet rs=p.executeQuery();
+			if (rs.next() == false) 
+			{
+		        r="No Reviews";
+		        System.out.println(r);
+		    } 
+			else 
+			{
+				do
+				{
+					r+="\n"+rs.getString("restaurantName") +" Average Rating: "+rs.getDouble("arScore");
+					PreparedStatement p1 = connection.prepareStatement(sql2);
+					p1.setInt(1, currentRestaurant.getRestaurantID());
+					ResultSet rs1 = p1.executeQuery();
+					while(rs1.next())
+					{
+						r+="\n\t"+rs1.getInt("ratingScore")+" "+rs1.getString("ratingReview");
+					}
+					System.out.println(r);
+					r="";
+				}
+				while (rs.next());
+			}
+			
+			
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
 	}
 
 
@@ -1021,10 +1073,6 @@ public class FoodOrdering {
 
 
 	private static void showOpenRestaurantOrders(Connection connection) {
-		String sql="SELECT lineItemNumber, foodName, ROUND(foodPrice,2) AS 'foodPriceR'\r\n"
-				+ "FROM [Order] JOIN LineItem ON [Order].orderID=LineItem.orderID JOIN FoodItem ON LineItem.foodItemID=FoodItem.foodItemID \r\n"
-				+ "WHERE FoodItem.restaurantID=? AND orderStatus='Driver on the way to the restaurant'\r\n";
-		
 				String sql2= "SELECT DISTINCT [Order].orderID, orderStatus, ROUND(totalPrice, 2) AS 'totPriceR', totalPrepTime\r\n"
 				+ "FROM [Order] JOIN LineItem ON [Order].orderID=LineItem.orderID JOIN FoodItem ON LineItem.foodItemID=FoodItem.foodItemID \r\n"
 				+ "WHERE FoodItem.restaurantID=? AND (orderStatus='Driver on the way to the restaurant' OR orderStatus='Preparing')";
@@ -1043,13 +1091,6 @@ public class FoodOrdering {
 				do
 				{
 					r+="\n ["+rs.getInt("orderID") +"] "+rs.getString("orderStatus")+", "+rs.getFloat("totPriceR")+", "+rs.getInt("totalPrepTime");
-					PreparedStatement p1 = connection.prepareStatement(sql);
-					p1.setInt(1, currentRestaurant.getRestaurantID());
-					ResultSet rs1 = p1.executeQuery();
-					while(rs1.next())
-					{
-						r+="\n\t"+rs1.getInt("lineItemNumber")+" "+rs1.getString("foodName")+", "+rs1.getFloat("foodPriceR");
-					}
 					System.out.println(r);
 					r="";
 				}
@@ -1349,10 +1390,11 @@ public class FoodOrdering {
 		// TODO Auto-generated method stub
 		String sql1="SELECT customerID"
 				+ "\nFROM Rating"
-				+ "\nWHERE restaurantID=?";
+				+ "\nWHERE restaurantID=? AND customerID= ?";
 		try {
 			PreparedStatement p = connection.prepareStatement(sql1);
 			p.setInt(1, id);
+			p.setInt(2, currentCustomer.getCustomerID());
 			ResultSet rs=p.executeQuery();
 			if(rs.next()==false)
 			{
