@@ -1011,6 +1011,86 @@ public class FoodOrdering {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		System.out.println("Edit Data(y/n):");
+		Scanner inn = new Scanner(System.in);
+		String i="";
+		i=inn.nextLine();
+		if(i.equals("y"))
+			editRestaurantData(connection); //calls the method that allows the customer to edit their account information -Jack
+	}
+
+
+
+	private static void editRestaurantData(Connection connection) {
+		Restaurant tempR = new Restaurant();
+		Scanner inn = new Scanner(System.in);
+		String tmpUsr="";
+		String sql="SELECT userName FROM Restaurant where userName=? AND restaurantID != ?"; //SQL Statement to make sure they don't use an email that is already in the system, will allow them to reuse their email though -Jack
+		String sqlI = "UPDATE Restaurant"
+				+ "\nSET restaurantName= ?,"
+				+ "\nrestaurantTypeID= ?,"
+				+ "\nrestaurantLocation= ?,"
+				+ "\nuserName= ?,"
+				+ "\npassword= ?"
+				+ "\nWHERE restaurantID = ?"; //This is the SQL statement that will update the data -Jack
+		try {
+			PreparedStatement p = connection.prepareStatement(sql);
+			System.out.println("Enter new username: ");
+			tmpUsr=inn.nextLine();
+			p.setString(1, tmpUsr);
+			p.setInt(2, currentRestaurant.getRestaurantID());
+			ResultSet rs = p.executeQuery();
+			if(rs.next()==false) //This and above checks to make sure that the email isn't used already -Jack
+			{
+				tempR.setRestaurantUserName(tmpUsr);
+				String pass="", passA="";
+		        int contr=1;
+		        while(contr!=0)
+		        {
+		        System.out.println("\nEnter a new password");
+		        pass=inn.nextLine();
+		        System.out.println("\nEnter the password again");
+		        passA=inn.nextLine();
+                if(pass.equals(passA))
+                {
+                	tempR.setRestaurantPassword(pass);
+                	contr=0;
+                }
+                else
+                	System.out.println("Passwords do not match, no data was changed");
+		        } //All the above is the same password check as on create account, it makes sure they enter the same password twice -Jack
+		        System.out.println("Enter a new Restaurant Name");
+		        tempR.setRestaurantName(inn.nextLine());
+		        
+		        getRestaurantType(connection);
+		        System.out.println("Enter the number of the new restaurant type");
+		        tempR.setRestaurantTypeID(inn.nextInt());
+		        inn.nextLine();
+		        System.out.println("Enter a new Zip Code");
+		        tempR.setRestaurantZip(inn.nextLine());
+		        //The above is getting all the new information -Jack
+				try {
+					PreparedStatement p1 = connection.prepareStatement(sqlI);
+					p1.setString(1, tempR.getRestaurantName());
+					p1.setInt(2, tempR.getRestaurantTypeID());
+					p1.setString(3, tempR.getRestaurantZip());
+					p1.setString(4, tempR.getRestaurantUserName());
+					p1.setString(5, tempR.getRestaurantPassword());
+					p1.setInt(6, currentRestaurant.getRestaurantID());
+					p1.executeUpdate();
+					System.out.print("Restaurant profile succesfully updated: \n");
+					tempR.setRestaurantID(currentRestaurant.getRestaurantID());
+					currentRestaurant=tempR; //used a temp restaurant to allow the switching, this will now change it over to the new customer data -Jack
+					//The above inserts new data into the DB and then alerts the user that it was successfully updated-Jack
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			else
+				System.out.println("Email is already taken, no changes made");
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+		}
 	}
 
 
