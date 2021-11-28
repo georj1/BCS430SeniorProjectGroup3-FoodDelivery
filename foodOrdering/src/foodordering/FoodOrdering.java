@@ -1032,7 +1032,7 @@ public class FoodOrdering {
 				+ "\nrestaurantLocation= ?,"
 				+ "\nuserName= ?,"
 				+ "\npassword= ?"
-				+ "\nWHERE restaurantID = ?"; //This is the SQL statement that will update the data -Jack
+				+ "\nWHERE restaurantID = ?"; //This is the SQL statement that will update the data -Jack m
 		try {
 			PreparedStatement p = connection.prepareStatement(sql);
 			System.out.println("Enter new username: ");
