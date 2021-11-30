@@ -102,13 +102,8 @@ CREATE TABLE [Location] (
 	street varchar(155),
 	city varchar(55),
 	[state] varchar(25),
-	zipCode varChar(5),
-	customerID int,
-	restaurantID int,
-	driverID int
-	FOREIGN KEY(customerID) REFERENCES Customer(customerID),
-	FOREIGN KEY(restaurantID) REFERENCES Restaurant(restaurantID),
-	FOREIGN KEY(driverID) REFERENCES Driver(driverID)
+	zipCode varChar(5)
+	PRIMARY KEY(locationID)
 );
 
 
