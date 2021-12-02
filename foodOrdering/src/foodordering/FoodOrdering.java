@@ -723,6 +723,83 @@ public class FoodOrdering {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		System.out.println("Edit Data(y/n):");
+		Scanner inn = new Scanner(System.in);
+		String i="";
+		i=inn.nextLine();
+		if(i.equals("y"))
+			editDriverData(connection); //calls the method that allows the customer to edit their account information -Jack
+	}
+
+
+
+	private static void editDriverData(Connection connection) {
+		Driver tempD = new Driver();
+		Scanner inn = new Scanner(System.in);
+		String tmpEml="";
+		String sql="SELECT email FROM Driver where email=? AND driverID != ?"; //SQL Statement to make sure they don't use an email that is already in the system, will allow them to reuse their email though -Jack
+		String sqlI = "UPDATE Driver"
+				+ "\nSET firstName= ?,"
+				+ "\nlastName= ?,"
+				+ "\nemail= ?,"
+				+ "\nphone = ?,"
+				+ "\npassword=?"
+				+ "\nWHERE driverID = ?"; //This is the SQL statement that will update the data -Jack
+		try {
+			PreparedStatement p = connection.prepareStatement(sql);
+			System.out.println("Enter new email: ");
+			tmpEml=inn.nextLine();
+			p.setString(1, tmpEml);
+			p.setInt(2, currentDriver.getDriverID());
+			ResultSet rs = p.executeQuery();
+			if(rs.next()==false) //This and above checks to make sure that the email isn't used already -Jack
+			{
+				tempD.setDriverEmail(tmpEml);
+				String pass="", passA="";
+		        int contr=1;
+		        while(contr!=0)
+		        {
+		        System.out.println("\nEnter a new password");
+		        pass=inn.nextLine();
+		        System.out.println("\nEnter the password again");
+		        passA=inn.nextLine();
+                if(pass.equals(passA))
+                {
+                	tempD.setPassword(pass);
+                	contr=0;
+                }
+                else
+                	System.out.println("Passwords do not match, no data was changed");
+		        } //All the above is the same password check as on create account, it makes sure they enter the same password twice -Jack
+		        System.out.println("Enter a new First Name");
+		        tempD.setFirstName(inn.nextLine());
+		        System.out.println("Enter a new Last Name");
+		        tempD.setLastName(inn.nextLine());
+		        System.out.println("Enter a new phone number");
+		        tempD.setPhone(inn.nextLine());
+		        //The above is getting all the new information -Jack
+				try {
+					PreparedStatement p1 = connection.prepareStatement(sqlI);
+					p1.setString(1, tempD.getFirstName());
+					p1.setString(2, tempD.getLastName());
+					p1.setString(3, tempD.getDriverEmail());
+					p1.setString(4, tempD.getPhone());
+					p1.setString(5, tempD.getPassword());
+					p1.setInt(6, currentDriver.getDriverID());
+					p1.executeUpdate();
+					System.out.print("Driver profile succesfully updated: \n");
+					tempD.setDriverID(currentDriver.getDriverID());
+					currentDriver=tempD; //used a temp driver to allow the switching, this will now change it over to the new customer data -Jack
+					//The above inserts new data into the DB and then alerts the user that it was successfully updated-Jack
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			else
+				System.out.println("Email is already taken, no changes made");
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+		}
 	}
 
 
@@ -1488,8 +1565,8 @@ public class FoodOrdering {
 		        //The above is getting all the new information -Jack
 				try {
 					PreparedStatement p1 = connection.prepareStatement(sqlI);
-					p1.setString(1, tempC.getCustomerLName());
-					p1.setString(2, tempC.getCustomerFName());
+					p1.setString(1, tempC.getCustomerFName());
+					p1.setString(2, tempC.getCustomerLName());
 					p1.setString(3, tempC.getCustomerEmail());
 					p1.setString(4, tempC.getCustomerPhone());
 					p1.setString(5, tempC.getCustomerZip());
