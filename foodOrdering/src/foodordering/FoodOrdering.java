@@ -2033,10 +2033,9 @@ public class FoodOrdering {
     
     public static void selectOrder(Connection connection, int orderID, String curLoc)
     {
-    	int cID=0, rID=0;
-    	String custLoc="", restLoc="";
-    	String sqlGetC = "SELECT customerLocation, Customer.customerID"
-    			+ "\nFROM [Order] JOIN Customer ON [Order].customerID=Customer.customerID"
+    	int cID=0;
+    	String sqlGetC = "SELECT customerID"
+    			+ "\nFROM [Order]"
     			+ "\nWHERE [Order].orderID= ?";
     	try {
     		PreparedStatement p = connection.prepareStatement(sqlGetC);
@@ -2045,41 +2044,21 @@ public class FoodOrdering {
     		rs=p.executeQuery();
     		while(rs.next())
     		{
-    			custLoc=rs.getString("customerLocation");
     			cID=rs.getInt("customerID");
     		}
     	}catch(SQLException e) {
 			e.printStackTrace();
 		} 
-    	String sqlGetR = "SELECT restaurantLocation, Restaurant.restaurantID"
-    			+ "\nFROM [Order] JOIN LineItem ON [Order].orderID=LineItem.orderID JOIN FoodItem ON LineItem.foodItemID=FoodItem.foodItemID JOIN Restaurant ON FoodItem.restaurantID=Restaurant.restaurantID"
-    			+ "\nWHERE [Order].OrderID = ?";
-    	try {
-    		PreparedStatement p1 = connection.prepareStatement(sqlGetR);
-    		p1.setInt(1,  orderID);
-    		ResultSet rs;
-    		rs=p1.executeQuery();
-    		while(rs.next())
-    		{
-    			restLoc=rs.getString("restaurantLocation");
-    			rID=rs.getInt("restaurantID");
-    		}
-    	}catch(SQLException e) {
-			e.printStackTrace();
-		} 
-    	int totalTime=calcTotalTime(connection, orderID);
-    	float totalPrice=calcTotalPrice(connection, orderID);
-    	String sqlIn = "INSERT Delivery(estimatedTimeToArrival, startLocation, restaurantLocation, restaurantID, customerLocation, customerID, orderID, driverID) VALUES(?, ?, ?, ?, ?, ?, ?, ?)";
+    	
+    	int totalTime=calcTotalTime(connection, orderID); //Calculates totalTime of the order, for now this just includes the food items, may later include driving time -Jack
+    	String sqlIn = "INSERT Delivery(estimatedTimeToArrival, startLocation, customerID, orderID, driverID) VALUES(?, ?, ?, ?, ?, ?, ?, ?)"; //SQL Insert statement that creates a delivery -Jack
     	try {
     		PreparedStatement p2 = connection.prepareStatement(sqlIn);
     		p2.setInt(1, totalTime);
     		p2.setString(2, curLoc);
-    		p2.setString(3, restLoc);
-    		p2.setInt(4,  rID);
-    		p2.setString(5, custLoc);
-    		p2.setInt(6, cID);
-    		p2.setInt(7, orderID);
-    		p2.setInt(8, currentDriver.getDriverID());
+    		p2.setInt(3, cID);
+    		p2.setInt(4, orderID);
+    		p2.setInt(5, currentDriver.getDriverID());
     		p2.executeUpdate();
     		System.out.println("Order taken");
     	} catch(SQLException e) {
@@ -2090,9 +2069,9 @@ public class FoodOrdering {
     			+ "\nWHERE orderID= ?";
     	try {
     		PreparedStatement p3 = connection.prepareStatement(sqlUpdateO);
-    		p3.setInt(1, currentDriver.getDriverID());
+    		p3.setInt(1, currentDriver.getDriverID()); 
     		p3.setInt(2, orderID);
-    		p3.executeUpdate();
+    		p3.executeUpdate(); //This whole try catch changes the order status to alert the user it has been taken -Jack
     	} catch(SQLException e) {
 			e.printStackTrace();
 		} 
