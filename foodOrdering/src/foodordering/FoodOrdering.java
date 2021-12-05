@@ -2044,7 +2044,7 @@ public class FoodOrdering {
     		rs=p.executeQuery();
     		while(rs.next())
     		{
-    			cID=rs.getInt("customerID");
+    			cID=rs.getInt("customerID"); //gets the customerID of the order to put in -Jack
     		}
     	}catch(SQLException e) {
 			e.printStackTrace();
