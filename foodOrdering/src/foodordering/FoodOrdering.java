@@ -11,8 +11,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
 import java.util.Scanner;
 /**
  * @author Jack
@@ -343,7 +347,7 @@ public class FoodOrdering {
     
     
     
-    public static void addFood(Connection connection, ArrayList<FoodItem> foodList)
+    public static int addFood(Connection connection, ArrayList<FoodItem> foodList)
     {
     	String sqlCOrder="INSERT [Order](customerID, driverID, orderStatus, totalPrice, totalPrepTime) VALUES(?, NULL, 'Preparing', NULL, NULL)"; //this statement creates an order when called -Jack
     	try {
@@ -407,7 +411,8 @@ public class FoodOrdering {
 			selectedRestaurant=null;
 		} catch (SQLException e) {
 			e.printStackTrace();
-		}			
+		}	
+		return oID;
 			
     }
     
@@ -1333,7 +1338,8 @@ public class FoodOrdering {
 					    break; //exits the loop -Jack
 				    else if(nFoodNum==-2)
 				    {
-				    	addFood(connection, newFList); //This is the complete order method and will add all the food items to the order through the database -Jack
+				    	int oID=addFood(connection, newFList); //This is the complete order method and will add all the food items to the order through the database -Jack
+				    	payForOrder(connection, oID);
 				    	nFoodNum=-1;
 				    }
 				    else
@@ -1360,6 +1366,109 @@ public class FoodOrdering {
 				break;
 			}
 		}
+	}
+
+
+
+	private static void payForOrder(Connection connection, int oID) {
+		// TODO Auto-generated method stub
+		String sqlS ="SELECT *"
+				+ "\nFROM CreditCard"
+				+ "\nWHERE customerID=?";
+		String r="Enter credit card to use:", creditCardNumber="";
+		try {
+			int counter=1;
+			PreparedStatement p=connection.prepareStatement(sqlS);
+			p.setInt(1, currentCustomer.getCustomerID());
+			ResultSet rs = p.executeQuery();
+			r+="\n[0] Insert new card";
+			if(rs.next()==false)
+				r+="";
+			else
+			{
+				do {
+					r+="\n["+counter+"] " +rs.getString("creditCardType") + ", "+rs.getString("creditCardNumber");
+					counter+=1;
+				} while (rs.next());
+			}
+			System.out.println(r);
+			Scanner cIN = new Scanner(System.in);
+			int id = cIN.nextInt();
+			cIN.nextLine();
+			if(id==0)
+			{
+				creditCardNumber=newCreditCard(connection);
+			}
+			else
+			{
+				ResultSet rs1 = p.executeQuery();
+				while(rs1.next())
+				{
+					if(id==1)
+					{
+						creditCardNumber = rs1.getString("creditCardNumber");
+						break;
+					}
+					else
+						id-=1;
+				}
+			}
+			makePayment(connection, oID, creditCardNumber);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+	}
+
+
+
+	private static void makePayment(Connection connection, int oID, String creditCardNumber) {
+		// TODO Auto-generated method stub
+		String sqlU="UPDATE [Order]"
+				+ "\nSET creditCardNumber=?, paid=1"
+				+ "\nWHERE orderID=?";
+		try {
+			PreparedStatement p = connection.prepareStatement(sqlU);
+			p.setString(1, creditCardNumber);
+			p.setInt(2, oID);
+			p.executeUpdate();
+			System.out.println("Payment succesfull");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+
+
+	private static String newCreditCard(Connection connection) {
+		String sqlI="INSERT CreditCard(creditCardNumber,  creditCardExpirationDate, customerID, creditCardType, creditCardCVV) VALUES(?, ?, ?, ?, ?);";
+		CreditCard c = new CreditCard();
+		Scanner cardIn = new Scanner(System.in);
+		System.out.println("Enter Card Number:");
+		c.setCreditCardNumber(cardIn.nextLine());
+		System.out.println("Enter Card Expiration date in the format yyyy-mm-dd, include the -:");
+		long d=cardIn.nextLong();
+		cardIn.nextLine();
+		c.setCreditCardExpirationDate(d);
+		System.out.println("Enter Card Type(Visa, Discover, MasterCard, Amex):");
+		c.setCreditCardType(cardIn.nextLine());
+		c.setCustomerID(currentCustomer.getCustomerID());
+		System.out.println("Enter the Card Security code:");
+		c.setCreditCardCVV(cardIn.nextInt());
+		try {
+			PreparedStatement p = connection.prepareStatement(sqlI);
+			p.setString(1, c.getCreditCardNumber());
+			java.sql.Date sqlDate = new java.sql.Date(c.getCreditCardExpirationDate());
+			p.setDate(2,  sqlDate);
+			p.setInt(3, c.getCustomerID());
+			p.setString(4, c.getCreditCardType());
+			p.setInt(5, c.getCreditCardCVV());
+			p.executeUpdate();
+			return c.getCreditCardNumber();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 
@@ -1605,6 +1714,10 @@ public class FoodOrdering {
 			else {
 			do {
 				String s = rs.getInt("orderID")+") " +rs.getString("orderStatus") +", "+rs.getFloat("totalPrice");
+				if(rs.getBoolean("paid")==false)
+					s+=", unpaid";
+				else
+					s+=", paid";
 				System.out.println(s);
 			}
 			while(rs.next());

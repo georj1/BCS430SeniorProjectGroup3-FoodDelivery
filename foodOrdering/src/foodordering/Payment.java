@@ -1,16 +1,16 @@
 package foodordering;
 
 public class Payment{
-	private double amount;
-	public Payment (double amount) {
-		this.amount=Math.round(amount*100)/100.0;
+	private float amount;
+	public Payment (float amount) {
+		this.amount=amount;
 
 	}
-	public double getAmount() {
+	public float getAmount() {
 		return this.amount;
 	}	
 
-	public void setAmount(double amount) {
+	public void setAmount(float amount) {
 		this.amount = amount;
 	}
 	public void paymentDetails() {
