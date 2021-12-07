@@ -1335,10 +1335,7 @@ public class FoodOrdering {
 				    	 // stores the FoodItem in a temporary FoodItem object where after the loop it will then remove the FoodItem from the ArrayList -Jack 	
 				    }
 				    else if(nFoodNum==-1)
-				    {
-				    	selectedRestaurant=null;
 					    break; //exits the loop -Jack
-				    }
 				    else if(nFoodNum==-2)
 				    {
 				    	int oID=addFood(connection, newFList); //This is the complete order method and will add all the food items to the order through the database -Jack
@@ -1350,6 +1347,7 @@ public class FoodOrdering {
 				    	addItemToFList(connection, nFoodNum, newFList);
 				    }
 				}
+				selectedRestaurant=null;
 				break;
 				}
 			case 3:
