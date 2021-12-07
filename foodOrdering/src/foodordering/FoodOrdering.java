@@ -1447,7 +1447,7 @@ public class FoodOrdering {
 		Scanner cardIn = new Scanner(System.in);
 		System.out.println("Enter Card Number:");
 		c.setCreditCardNumber(cardIn.nextLine());
-		System.out.println("Enter Card Expiration date in the format yyyy-mm-dd, include the -:");
+		System.out.println("Enter Card Expiration date in the format yyyymmdd:");
 		long d=cardIn.nextLong();
 		cardIn.nextLine();
 		c.setCreditCardExpirationDate(d);
