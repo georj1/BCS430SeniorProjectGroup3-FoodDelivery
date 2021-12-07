@@ -114,10 +114,13 @@ CREATE TABLE [Order](
 	driverID int,
 	orderStatus varChar(255),
 	totalPrice float,
-	totalPrepTime int
+	totalPrepTime int,
+	paid bit default 0,
+	creditCardNumber varChar(25),  
 	PRIMARY KEY(orderID),
 	FOREIGN KEY(customerID) REFERENCES Customer(customerID),
-	FOREIGN KEY(driverID) REFERENCES Driver(driverID)
+	FOREIGN KEY(driverID) REFERENCES Driver(driverID),
+	FOREIGN KEY(creditCardNumber) REFERENCES CreditCard(creditCardNumber)
 );
 
 
@@ -136,12 +139,10 @@ CREATE TABLE CreditCard (
 	creditCardNumber varChar(25),
 	creditCardExpirationDate date,
 	customerID int,
-	orderID int,
 	creditCardType varChar(15),
 	creditCardCVV int
-	PRIMARY KEY(creditCardNumber, creditCardExpirationDate),
-	FOREIGN KEY(customerID) REFERENCES Customer(customerID),
-	FOREIGN KEY(orderID) REFERENCES [Order](orderID)
+	PRIMARY KEY(creditCardNumber),
+	FOREIGN KEY(customerID) REFERENCES Customer(customerID)
 );
 
 CREATE TABLE Delivery (
