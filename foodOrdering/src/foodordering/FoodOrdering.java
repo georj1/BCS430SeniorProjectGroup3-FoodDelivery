@@ -1258,10 +1258,11 @@ public class FoodOrdering {
 			System.out.println("Welcome "+currentCustomer.getCustomerFName());
 			System.out.println("What would you like to do: "
 					+ "\n[0] Logout"
-					+ "\n[1] View/Update Account Information"
-					+ "\n[2] Place an Order"
-					+ "\n[3] View Order in Progress"
+					+ "\n[1] View/update account information"
+					+ "\n[2] Place an order"
+					+ "\n[3] View order in progress"
 					+ "\n[4] Leave a review"
+					+ "\n[5] View my reviews"
 					+"");
 			if(uInput.hasNextInt())
 			{
@@ -1332,6 +1333,8 @@ public class FoodOrdering {
 						    + "\n[-1] Cancel Order"
 						    + "\n[0] View Items in Order or remove items"); //little statement here to give user menu options -Jack
 				    displayMenu(connection); //will show the menu -Jack
+				    if(nFood.hasNextInt())
+				    {
 				    nFoodNum=nFood.nextInt();
 				    if(nFoodNum==0)
 				    {
@@ -1343,6 +1346,8 @@ public class FoodOrdering {
     				    			+ "\n[0] Go back");
 				    		viewFoodList(connection, newFList); //this will show what is currently in the order -Jack
 				    		rBack=remOrBack.nextInt();    
+				    		if(remOrBack.hasNextInt())
+				    		{
 				    		if(rBack==0)
 				    			break;
 				    		else
@@ -1355,6 +1360,12 @@ public class FoodOrdering {
 				    					
 				    			}
 				    			newFList.remove(foodRemove);
+				    		}
+				    		}
+				    		else
+				    		{
+				    			System.out.println("Please enter a valid input");
+								remOrBack.nextLine();
 				    		}
 				    			
 				    	} 
@@ -1378,28 +1389,74 @@ public class FoodOrdering {
 				    	addItemToFList(connection, nFoodNum, newFList);
 				    }
 				}
+				    else
+				    {
+				    	System.out.println("Please enter a valid input");
+						nFood.nextLine();
+				    }
+				}
 				selectedRestaurant=null;
 				break;
 				}
 			case 3:
 				viewOpenCustomerOrder(connection);
 				System.out.println("Enter the order id to view more or -3 to go back:");
+				if(uInput.hasNextInt())
+				{
 				uIn = uInput.nextInt();
 				uInput.nextLine();
 				if(uIn==-3)
 					break;
 				else
 					viewFullOrder(connection, uIn);
+				}
+				else
+				{
+					System.out.println("Please enter a valid input");
+					uInput.nextLine();
+				}
 				break;
 			case 4:
 				leaveReview(connection);
+				break;
+			case 5:
+				customerViewReviews(connection);
 				break;
 			default:
 				break;
 			}
 			}
 			else
+			{
 				System.out.println("Please enter a valid input");
+				uInput.nextLine();
+			}
+		}
+	}
+
+
+
+	private static void customerViewReviews(Connection connection) {
+		String sql="SELECT * "
+				+ "\nFROM Rating JOIN Restaurant ON Rating.restaurantID=Restaurant.restaurantID"
+				+ "\nWHERE customerID= ?";
+		try {
+			PreparedStatement p = connection.prepareStatement(sql);
+			p.setInt(1, currentCustomer.getCustomerID());
+			ResultSet rs = p.executeQuery();
+			if(rs.next() == false)
+				System.out.println("You have left no reviews");
+			else
+			{
+				do
+				{
+					String s=rs.getString("restaurantName") + ", " + rs.getInt("ratingScore") + ", "+rs.getString("ratingReview");
+					System.out.println(s);
+				}
+				while(rs.next());
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
 		}
 	}
 
