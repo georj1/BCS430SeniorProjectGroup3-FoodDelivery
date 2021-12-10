@@ -362,7 +362,7 @@ public class FoodOrdering {
 			rs = p.executeQuery(); //execute SQL statement
 			while(rs.next())
 			{
-				String s = "["+rs.getInt("foodItemID")+ "] "+rs.getString("foodName")+", "+rs.getString("description")+", "+rs.getString("categoryName")+", "+rs.getFloat("foodPrice"); //This is the display, it will show the foodItem ID which for now will be used for selecting and all the menu items separated by commas -Jack
+				String s = "["+rs.getInt("foodItemID")+ "] "+rs.getString("foodName")+", "+rs.getString("description")+", "+rs.getString("categoryName")+", "+rs.getFloat("foodPrice"); //This is the display, it will  the foodItem ID which for now will be used for selecting and all the menu items separated by commas -Jack
 				System.out.println(s); //displays the above information to the console -Jack
 			}
 		} catch (SQLException e) {
@@ -1281,7 +1281,9 @@ public class FoodOrdering {
 			case 2:
 				while (selectedRestaurant == null)
 				{
-					
+					boolean c=false;
+					while(!c)
+					{
 				System.out.println("How would you like to search for a restaurant"
 						+ "\n[-3] Go Back"
 						+ "\n[1] View All"
@@ -1289,6 +1291,10 @@ public class FoodOrdering {
 						+ "\n[3] Search by Type"
 						+ "\n[4] Search by Name"
 						+ "");
+				
+				if(uInput.hasNextInt())
+				{
+					c=true;
 				int uIn2 = uInput.nextInt();
 				uInput.nextLine();
 						switch(uIn2)
@@ -1314,6 +1320,15 @@ public class FoodOrdering {
 							break;
 						else
 							customerOrder(connection);
+				}
+				else
+				{
+					System.out.println("Please enter a valid input");
+					uInput.nextLine();
+				}
+				}
+				
+				
 				}
 				if (selectedRestaurant == null) //if the user hasn't selected a restaurant it will return them to the main menu -Jack
 				{
@@ -1591,10 +1606,19 @@ public class FoodOrdering {
 	private static void customerOrder(Connection connection) {
 		int rID=0;
 		Scanner uInput = new Scanner(System.in);
+		
 		System.out.println("Enter the number of the restaurant you want to select: ");
-		rID=uInput.nextInt();
-		uInput.nextLine();
-		selectRestaurant(connection, rID);
+		if(uInput.hasNextInt())
+		{
+			rID=uInput.nextInt();
+			uInput.nextLine();
+			selectRestaurant(connection, rID);
+		}
+		else
+		{
+			System.out.println("Please enter a valid input");
+			uInput.nextLine();
+		}
 	}
 
 
