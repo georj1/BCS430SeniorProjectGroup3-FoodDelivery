@@ -48,6 +48,8 @@ public class FoodOrdering {
 						+ "\n[0] Exit"
 						+ "\n[1] Create an account"
 						+ "\n[2] Login");
+				if(scin.hasNextInt())
+				{
 				userIn=scin.nextInt();
 				scin.nextLine();
 				switch(userIn)
@@ -62,6 +64,8 @@ public class FoodOrdering {
 							+ "\n[2] Restaurant"
 							+ "\n[3] Driver"
 							+ "\n[4] Go back");
+					if(scin.hasNextInt())
+					{
 					accC=scin.nextInt();
 					switch(accC)
 					{
@@ -79,6 +83,12 @@ public class FoodOrdering {
 					default:
 						break;
 					}
+					}
+					else
+					{
+						System.out.println("Please enter a valid input");
+						scin.nextLine();
+					}
 					break;
 				case 2:
 					int logIn=0;
@@ -87,6 +97,8 @@ public class FoodOrdering {
 							+ "\n[2] Restaurant"
 							+ "\n[3] Driver"
 							+ "\n[4] Go back");
+					if(scin.hasNextInt())
+					{
 					logIn=scin.nextInt();
 					switch(logIn)
 					{
@@ -105,8 +117,21 @@ public class FoodOrdering {
 						break;
 					}
 					break;
+					}
+					else
+					{
+						System.out.println("Please enter a valid input");
+						scin.nextLine();
+					}
 				}
 			}
+			else
+			{
+				System.out.println("Please enter a valid input");
+				scin.nextLine();
+			}
+			}
+			
 		} catch (SQLException e1) {
 			e1.printStackTrace();
 		}		
@@ -1238,6 +1263,9 @@ public class FoodOrdering {
 					+ "\n[3] View Order in Progress"
 					+ "\n[4] Leave a review"
 					+"");
+			if(uInput.hasNextInt())
+			{
+				
 			uIn=uInput.nextInt();
 			uInput.nextLine();
 			switch(uIn)
@@ -1301,7 +1329,7 @@ public class FoodOrdering {
 					
 				    System.out.println("Enter the number of the food you want to order:"
 				    		+ "\n[-2] Complete Order "
-						    + "\n[-1] Exit"
+						    + "\n[-1] Cancel Order"
 						    + "\n[0] View Items in Order or remove items"); //little statement here to give user menu options -Jack
 				    displayMenu(connection); //will show the menu -Jack
 				    nFoodNum=nFood.nextInt();
@@ -1335,7 +1363,10 @@ public class FoodOrdering {
 				    	 // stores the FoodItem in a temporary FoodItem object where after the loop it will then remove the FoodItem from the ArrayList -Jack 	
 				    }
 				    else if(nFoodNum==-1)
+				    {
+				    	System.out.println("Order Cancelled");
 					    break; //exits the loop -Jack
+					}
 				    else if(nFoodNum==-2)
 				    {
 				    	int oID=addFood(connection, newFList); //This is the complete order method and will add all the food items to the order through the database -Jack
@@ -1366,13 +1397,15 @@ public class FoodOrdering {
 			default:
 				break;
 			}
+			}
+			else
+				System.out.println("Please enter a valid input");
 		}
 	}
 
 
 
 	private static void payForOrder(Connection connection, int oID) {
-		// TODO Auto-generated method stub
 		String sqlS ="SELECT *"
 				+ "\nFROM CreditCard"
 				+ "\nWHERE customerID=?";
@@ -1424,7 +1457,6 @@ public class FoodOrdering {
 
 
 	private static void makePayment(Connection connection, int oID, String creditCardNumber) {
-		// TODO Auto-generated method stub
 		String sqlU="UPDATE [Order]"
 				+ "\nSET creditCardNumber=?, paid=1"
 				+ "\nWHERE orderID=?";
