@@ -44,7 +44,7 @@ public class FoodOrdering {
 			System.out.println("Connected"); //Display a message to show it successfully connected -Jack
 			while (userIn!=0)
 			{
-				System.out.println("Enter what you want to do: "
+				System.out.println("Enter what the number of what you want to do: "
 						+ "\n[0] Exit"
 						+ "\n[1] Create an account"
 						+ "\n[2] Login");
@@ -59,7 +59,7 @@ public class FoodOrdering {
 				case 1:
 					
 					int accC=0;
-					System.out.println("Please enter which account you want to create something for: "
+					System.out.println("Please enter the number for which account you want to create something for: "
 							+ "\n[1] Customer"
 							+ "\n[2] Restaurant"
 							+ "\n[3] Driver"
@@ -92,7 +92,7 @@ public class FoodOrdering {
 					break;
 				case 2:
 					int logIn=0;
-					System.out.println("Please enter which account you want to login for: "
+					System.out.println("Please enter the number for which account you want to login for: "
 							+ "\n[1] Customer"
 							+ "\n[2] Restaurant"
 							+ "\n[3] Driver"
@@ -455,7 +455,7 @@ public class FoodOrdering {
 				rs=p.executeQuery();
 				while(rs.next())
 				{
-					foodList.add(new FoodItem(rs.getInt("foodItemID"), rs.getString("foodName"), rs.getFloat("foodPrice"), rs.getInt("calories"), rs.getString("description"), rs.getString("type"), rs.getInt("prepTime"), rs.getString("categoryName"))); //Adds a foodItem to the list which is essentially a cart for right now -Jack
+					foodList.add(new FoodItem(rs.getInt("foodItemID"), rs.getString("foodName"), rs.getFloat("foodPrice"), rs.getInt("calories"), rs.getString("description"), rs.getInt("prepTime"), rs.getString("categoryName"))); //Adds a foodItem to the list which is essentially a cart for right now -Jack
 				}
 			} catch (SQLException e) {
 				e.printStackTrace();
@@ -517,7 +517,7 @@ public class FoodOrdering {
 		Scanner uInput = new Scanner(System.in);
 		while(uIn!=0) {
 			System.out.println("Welcome "+currentDriver.getFirstName());
-			System.out.println("What would you like to do: "
+			System.out.println("Please enter the number of What would you like to do: "
 					+ "\n[0] Logout"
 					+ "\n[1] View/Update Account Information"
 					+ "\n[2] Select an Order"
@@ -887,7 +887,7 @@ public class FoodOrdering {
 		Scanner uInput = new Scanner(System.in);
 		while(uIn!=0) {
 			System.out.println("Welcome "+currentRestaurant.getRestaurantName());
-			System.out.println("What would you like to do: "
+			System.out.println("Enter the number for what would you like to do: "
 					+ "\n[0] Logout"
 					+ "\n[1] View/Update Account Information"
 					+ "\n[2] Add items to Menu"
@@ -918,8 +918,6 @@ public class FoodOrdering {
 		        foodDataIn.nextLine();
 		        System.out.println("\nEnter description: ");
 		        f1.setDescription(foodDataIn.nextLine());
-		        System.out.println("\nEnter type: " );
-		        f1.setType(foodDataIn.nextLine());
 		        System.out.println("\nEnter preptime");
 		        f1.setPrepTime(foodDataIn.nextInt());
 		        //foodDataIn.nextLine();
@@ -1256,7 +1254,7 @@ public class FoodOrdering {
 		Scanner uInput = new Scanner(System.in);
 		while(uIn!=0) {
 			System.out.println("Welcome "+currentCustomer.getCustomerFName());
-			System.out.println("What would you like to do: "
+			System.out.println("Enter the number of what would you like to do: "
 					+ "\n[0] Logout"
 					+ "\n[1] View/update account information"
 					+ "\n[2] Place an order"
@@ -1284,7 +1282,7 @@ public class FoodOrdering {
 					boolean c=false;
 					while(!c)
 					{
-				System.out.println("How would you like to search for a restaurant"
+				System.out.println("Enter the number for how would you like to search for a restaurant"
 						+ "\n[-3] Go Back"
 						+ "\n[1] View All"
 						+ "\n[2] Search by Zip Code"
@@ -1350,60 +1348,63 @@ public class FoodOrdering {
 				    displayMenu(connection); //will show the menu -Jack
 				    if(nFood.hasNextInt())
 				    {
-				    nFoodNum=nFood.nextInt();
-				    if(nFoodNum==0)
-				    {
-				    	Scanner remOrBack = new Scanner(System.in);
-				    	int rBack = -1;
-				    	while(rBack!=0)
+				    	nFoodNum=nFood.nextInt();
+				    	nFood.nextLine();
+				    	if(nFoodNum==0)
 				    	{
-				    		System.out.println("Enter ID of the item you want to remove: "
+				    		
+				    		Scanner remOrBack = new Scanner(System.in);
+				    		int rBack = -1;
+				    		while(rBack!=0)
+				    		{
+				    			System.out.println("Enter ID of the item you want to remove: "
     				    			+ "\n[0] Go back");
-				    		viewFoodList(connection, newFList); //this will show what is currently in the order -Jack
-				    		rBack=remOrBack.nextInt();    
-				    		if(remOrBack.hasNextInt())
-				    		{
-				    		if(rBack==0)
-				    			break;
-				    		else
-				    		{
-				    			FoodItem foodRemove = null;
-				    			for(FoodItem i:newFList)
+				    			viewFoodList(connection, newFList); //this will show what is currently in the order -Jack  
+				    			if(remOrBack.hasNextInt())
 				    			{
-				    				if(i.getFoodItemID()==rBack)
-				    					foodRemove=i;
+				    				rBack=remOrBack.nextInt();
+				    				remOrBack.nextLine();
+				    				if(rBack==0)
+				    					break;
+				    				else
+				    				{
+				    					FoodItem foodRemove = null;
+				    					for(FoodItem i:newFList)
+				    					{
+				    						if(i.getFoodItemID()==rBack)
+				    							foodRemove=i;
 				    					
+				    					}
+				    					newFList.remove(foodRemove);
+				    				}
 				    			}
-				    			newFList.remove(foodRemove);
-				    		}
-				    		}
-				    		else
-				    		{
-				    			System.out.println("Please enter a valid input");
-								remOrBack.nextLine();
-				    		}
+				    			else
+				    			{
+				    				System.out.println("Please enter a valid input");
+				    				remOrBack.nextLine();
+				    			}
 				    			
-				    	} 
-				    	//Okay so the way this crazy thing works is it asks the user to enter the id of the item they want to remove, stores that then because of how ArrayList works
-				    	 // I need to get the object based on the id so it loops through the arrayList until the foodItemID matches the customer selected id to remove, from here it
-				    	 // stores the FoodItem in a temporary FoodItem object where after the loop it will then remove the FoodItem from the ArrayList -Jack 	
+				    		} 
+				    		//Okay so the way this crazy thing works is it asks the user to enter the id of the item they want to remove, stores that then because of how ArrayList works
+				    		// I need to get the object based on the id so it loops through the arrayList until the foodItemID matches the customer selected id to remove, from here it
+				    		// stores the FoodItem in a temporary FoodItem object where after the loop it will then remove the FoodItem from the ArrayList -Jack 	
+				    	}
+				    	else if(nFoodNum==-1)
+				    	{
+				    		System.out.println("Order Canceled");
+				    		break; //exits the loop -Jack
+				    	}
+				    	else if(nFoodNum==-2)
+				    	{
+				    		int oID=addFood(connection, newFList); //This is the complete order method and will add all the food items to the order through the database -Jack
+				    		payForOrder(connection, oID);
+				    		nFoodNum=-1;
+				    	}
+				    	else
+				    	{
+				    		addItemToFList(connection, nFoodNum, newFList);
+				    	}
 				    }
-				    else if(nFoodNum==-1)
-				    {
-				    	System.out.println("Order Cancelled");
-					    break; //exits the loop -Jack
-					}
-				    else if(nFoodNum==-2)
-				    {
-				    	int oID=addFood(connection, newFList); //This is the complete order method and will add all the food items to the order through the database -Jack
-				    	payForOrder(connection, oID);
-				    	nFoodNum=-1;
-				    }
-				    else
-				    {
-				    	addItemToFList(connection, nFoodNum, newFList);
-				    }
-				}
 				    else
 				    {
 				    	System.out.println("Please enter a valid input");
@@ -2095,17 +2096,16 @@ public class FoodOrdering {
     public static void insertFoodItem(FoodItem f1, Connection connection)
     {
     	//The below is the full insert SQL statement to add Food to the menu -Aayushma
-    	String fInsert = "INSERT FoodItem ([foodName], [foodPrice], [calories], [description], [type], [prepTime], [categoryID], [restaurantID]) VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
+    	String fInsert = "INSERT FoodItem ([foodName], [foodPrice], [calories], [description], [prepTime], [categoryID], [restaurantID]) VALUES (?, ?, ?, ?, ?, ?, ?);";
     	try {
     		PreparedStatement p = connection.prepareStatement(fInsert);
     		p.setString(1, f1.getFoodName());
     		p.setFloat(2, f1.getFoodPrice());
     		p.setInt(3, f1.getCalories());
     		p.setString(4, f1.getDescription());
-    		p.setString(5, f1.getType());
-    		p.setInt(6, f1.getPrepTime());
-    		p.setInt(7, f1.getCategoryID());
-    		p.setInt(8, currentRestaurant.getRestaurantID());
+    		p.setInt(5, f1.getPrepTime());
+    		p.setInt(6, f1.getCategoryID());
+    		p.setInt(7, currentRestaurant.getRestaurantID());
     		p.executeUpdate();
     			System.out.print("Menu data succesfully inserted: \n");
     			//The above inserts new data into the DB and then alerts the user that it was successful -Aayushma

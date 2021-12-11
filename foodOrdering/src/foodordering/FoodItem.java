@@ -12,7 +12,7 @@ package foodordering;
 public class FoodItem {
 
     private int foodItemID, calories, restaurantID, categoryID, prepTime;
-    private String foodName, description, type, categoryName;
+    private String foodName, description, categoryName;
     private float foodPrice;
     
     public FoodItem()
@@ -20,14 +20,13 @@ public class FoodItem {
         
         //basic constructor for food item -Jack
     }
-    public FoodItem(int foodItemID, String foodName, float foodPrice, int calories, String description, String type, int prepTime, String categoryName)
+    public FoodItem(int foodItemID, String foodName, float foodPrice, int calories, String description, int prepTime, String categoryName)
     {
     	this.foodItemID=foodItemID;
     	this.foodName=foodName;
     	this.foodPrice=foodPrice;
     	this.calories=calories;
     	this.description=description;
-    	this.type=type;
     	this.prepTime=prepTime;
     	this.categoryName=categoryName;
     	//this.categoryID=categoryID;
@@ -61,12 +60,6 @@ public class FoodItem {
 	}
 	public void setDescription(String description) {
 		this.description = description;
-	}
-	public String getType() {
-		return type;
-	}
-	public void setType(String type) {
-		this.type = type;
 	}
 	public int getPrepTime() {
 		return prepTime;
