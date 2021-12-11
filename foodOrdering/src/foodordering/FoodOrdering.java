@@ -2009,7 +2009,6 @@ public class FoodOrdering {
 		    } 
 			else 
 			{
-
 		        do 
 		        {
 		          String data = rs.getString("email")+" is already taken";
