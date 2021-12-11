@@ -45,5 +45,5 @@ public int getCreditCardCVV() {
 public void setCreditCardCVV(int creditCardCVV) {
 	this.creditCardCVV = creditCardCVV;
 }
-
+//All the code needed to create a credit card to be mimicked to the database -Ahsan
 }
