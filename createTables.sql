@@ -78,7 +78,6 @@ CREATE TABLE FoodItem (
 	foodPrice    Float,
 	calories	int,
 	[description]	varChar(255),
-	[type]		varChar(55),
 	prepTime	int,
 	categoryID int,
 	restaurantID int
