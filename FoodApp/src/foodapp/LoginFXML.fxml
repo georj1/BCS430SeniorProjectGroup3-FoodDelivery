@@ -32,7 +32,7 @@
             <Font size="8.0" />
          </font>
       </Text>
-      <Button fx:id="LoginBttn" layoutX="84.0" layoutY="225.0" mnemonicParsing="false" prefHeight="29.0" prefWidth="91.0" style="-fx-background-color: #5d9ecd#5d9ecd;" text="Login" textFill="WHITE" />
+      <Button fx:id="LoginBttn" layoutX="84.0" layoutY="225.0" mnemonicParsing="false" onAction="#LoadUserMainScreenActivity" prefHeight="29.0" prefWidth="91.0" style="-fx-background-color: #5d9ecd#5d9ecd;" text="Login" textFill="WHITE" />
       <Text fill="#b9b9b9" layoutX="124.0" layoutY="277.0" strokeType="OUTSIDE" strokeWidth="0.0" text="or" />
       <Text fill="#b2b2b2" layoutX="138.0" layoutY="277.0" strikethrough="true" strokeType="OUTSIDE" strokeWidth="0.0" text="----" />
       <Text fill="#bcbcbc" layoutX="97.0" layoutY="277.0" strikethrough="true" strokeType="OUTSIDE" strokeWidth="0.0" text="----" />

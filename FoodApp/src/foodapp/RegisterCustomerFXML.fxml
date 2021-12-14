@@ -42,6 +42,6 @@
       <TextField fx:id="PassTF" layoutX="256.0" layoutY="259.0" prefHeight="27.0" prefWidth="172.0" />
       <TextField fx:id="ConfPassTF" layoutX="257.0" layoutY="310.0" prefHeight="27.0" prefWidth="172.0" />
       <Text layoutX="258.0" layoutY="307.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Confirm Password" wrappingWidth="114.5361328125" />
-      <Button fx:id="CreateAccBttn" layoutX="58.0" layoutY="303.0" mnemonicParsing="false" prefHeight="29.0" prefWidth="172.0" style="-fx-background-color: #5d9ecd#5d9ecd;" text="Create Account!" textFill="WHITE" />
+      <Button fx:id="CreateAccBttn" layoutX="58.0" layoutY="303.0" mnemonicParsing="false" onAction="#LoadLoginActivity" prefHeight="29.0" prefWidth="172.0" style="-fx-background-color: #5d9ecd#5d9ecd;" text="Create Account!" textFill="WHITE" />
    </children>
 </AnchorPane>

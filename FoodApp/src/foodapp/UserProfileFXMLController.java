@@ -17,45 +17,50 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
-import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
-
 
 /**
  * FXML Controller class
  *
  * @author christophersisa
  */
-public class LoginFXMLController implements Initializable {
+public class UserProfileFXMLController implements Initializable {
 
     /**
      * Initializes the controller class.
      */
-    @FXML
-    private TextField EmailTF;
-
-    @FXML
-    private TextField PasswordTF;
-
-    @FXML
-    private Button LoginBttn;
-
     
-    public void LoadRegisterActivity(ActionEvent event) throws IOException{
-        try{
-            Parent root = FXMLLoader.load(getClass().getResource("RegisterFXML.fxml"));
-            Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-            Scene scene = new Scene(root);
-            stage.setTitle("Food Ordering Application");
-            stage.setScene(scene);
-            stage.show();
-        }catch(IOException e){
-            System.out.println("didnt work");
-            System.out.println(e.toString());
-        }
-    }
+    @FXML
+    private TextField ProfileTF;
+
+    @FXML
+    private TextField passwordTF;
+
+    @FXML
+    private TextField FirstName;
+
+    @FXML
+    private TextField LastName;
+
+    @FXML
+    private TextField AddressTF;
+
+    @FXML
+    private TextField PaymentInfoTF;
+
+    @FXML
+    private Button EditBttn;
+
+    @FXML
+    private Button CancelBttn;
+
+    @FXML
+    private Button SaveBttn;
     
-    public void LoadUserMainScreenActivity(ActionEvent event) throws IOException{
+    @FXML
+    private Button backBttn;
+    
+    public void LoadLastProfileActivity(ActionEvent event) throws IOException{
         try{
             Parent root = FXMLLoader.load(getClass().getResource("UserMainScreenFXML.fxml"));
             Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
@@ -69,12 +74,9 @@ public class LoginFXMLController implements Initializable {
         }
     }
     
-  
-     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        
-    }
+        // TODO
+    }    
     
-
 }

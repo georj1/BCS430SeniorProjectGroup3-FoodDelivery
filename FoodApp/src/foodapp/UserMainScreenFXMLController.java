@@ -16,34 +16,35 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
-
 
 /**
  * FXML Controller class
  *
  * @author christophersisa
  */
-public class LoginFXMLController implements Initializable {
+public class UserMainScreenFXMLController implements Initializable {
 
     /**
      * Initializes the controller class.
      */
-    @FXML
-    private TextField EmailTF;
-
-    @FXML
-    private TextField PasswordTF;
-
-    @FXML
-    private Button LoginBttn;
-
     
-    public void LoadRegisterActivity(ActionEvent event) throws IOException{
+    @FXML
+    private Text UserNameTxt;
+
+    @FXML
+    private Button ProfBttn;
+
+    @FXML
+    private Button AcceptOrderBttn;
+
+    @FXML
+    private Button LogoutBttn;
+    
+    public void LoadUserProfileActivity(ActionEvent event) throws IOException{
         try{
-            Parent root = FXMLLoader.load(getClass().getResource("RegisterFXML.fxml"));
+            Parent root = FXMLLoader.load(getClass().getResource("UserProfileFXML.fxml"));
             Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
             Scene scene = new Scene(root);
             stage.setTitle("Food Ordering Application");
@@ -54,27 +55,11 @@ public class LoginFXMLController implements Initializable {
             System.out.println(e.toString());
         }
     }
-    
-    public void LoadUserMainScreenActivity(ActionEvent event) throws IOException{
-        try{
-            Parent root = FXMLLoader.load(getClass().getResource("UserMainScreenFXML.fxml"));
-            Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-            Scene scene = new Scene(root);
-            stage.setTitle("Food Ordering Application");
-            stage.setScene(scene);
-            stage.show();
-        }catch(IOException e){
-            System.out.println("didnt work");
-            System.out.println(e.toString());
-        }
-    }
-    
-  
      
+    
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        
-    }
+        // TODO
+    }    
     
-
 }

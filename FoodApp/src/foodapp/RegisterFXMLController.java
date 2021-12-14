@@ -43,7 +43,22 @@ public class RegisterFXMLController implements Initializable {
         // TODO
     }    
     
-    
+    public void LoadRegisterDriverActivity(ActionEvent event) throws IOException{
+        try{
+            Parent root = FXMLLoader.load(getClass().getResource("RegisterDriverFXML.fxml"));
+            Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+            Scene scene = new Scene(root);
+            stage.setTitle("Food Ordering Application");
+            stage.setScene(scene);
+            stage.show();
+            
+         
+        }catch(IOException e){
+            System.out.println("Couldnt load Driver Activity");
+            System.out.println(e.toString());
+        }
+
+    }
     
     
     public void LoadRegisterCustomerActivity(ActionEvent event) throws IOException{
@@ -63,22 +78,7 @@ public class RegisterFXMLController implements Initializable {
 
     }
     
-    public void LoadRegisterDriverActivity(ActionEvent event) throws IOException{
-        try{
-            Parent root = FXMLLoader.load(getClass().getResource("RegisterDriverFXML.fxml"));
-            Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-            Scene scene = new Scene(root);
-            stage.setTitle("Food Ordering Application");
-            stage.setScene(scene);
-            stage.show();
-            
-         
-        }catch(IOException e){
-            System.out.println("Couldnt load Driver Activity");
-            System.out.println(e.toString());
-        }
-
-    }
+    
     
     public void LoadRegisterRestaurantActivity(ActionEvent event) throws IOException{
         try{
