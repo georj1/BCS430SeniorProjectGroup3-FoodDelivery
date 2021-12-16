@@ -2258,7 +2258,7 @@ public class FoodOrdering {
 		} 
     	
     	int totalTime=calcTotalTime(connection, orderID); //Calculates totalTime of the order, for now this just includes the food items, may later include driving time -Jack
-    	String sqlIn = "INSERT Delivery(estimatedTimeToArrival, startLocation, customerID, orderID, driverID) VALUES(?, ?, ?, ?, ?, ?, ?, ?)"; //SQL Insert statement that creates a delivery -Jack
+    	String sqlIn = "INSERT Delivery(estimatedTimeToArrival, startLocation, customerID, orderID, driverID) VALUES(?, ?, ?, ?, ?)"; //SQL Insert statement that creates a delivery -Jack
     	try {
     		PreparedStatement p2 = connection.prepareStatement(sqlIn);
     		p2.setInt(1, totalTime);
