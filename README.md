@@ -10,6 +10,7 @@ You will need a few things to get the Project running on your machine:
   1.  You will first need a Java IDE, I like Eclipse but any IDE should work https://www.eclipse.org/downloads/
   2.  You will need Microsoft SQL Server Express, I would also get the management tool https://www.microsoft.com/en-us/sql-server/sql-server-downloads
   3.  You will need the java drivers for SQL Server, make sure you get the correct driver for your version of Java, I also used windows authentication which requires an additional driver that is in the same folder https://docs.microsoft.com/en-us/sql/connect/jdbc/download-microsoft-jdbc-driver-for-sql-server?view=sql-server-ver15
-  4.  
+  4.  Next you will need to open up SQL Server Configuration Manager and right click the server browser and enable it and then switch it to automatic.
+  5.  In Java you will need to change the String url to be whatever the name of your server is on your local machine, from here you should be good to get started. 
 
 Once you have done the above run the sql file to insert the tables.
